@@ -1,0 +1,17 @@
+{
+  "name": "LeasePath — Find your footing",
+  "short_name": "LeasePath",
+  "description": "A housing journey companion for New Yorkers.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f7fb",
+  "theme_color": "#f4f7fb",
+  "icons": [
+    {
+      "src": "/leasepath-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

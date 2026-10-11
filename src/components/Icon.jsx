@@ -1,0 +1,78 @@
+export function Icon({ name, size = 20 }) {
+  const common = {
+    width: size,
+    height: size,
+    viewBox: '0 0 24 24',
+    fill: 'none',
+    stroke: 'currentColor',
+    strokeWidth: 1.8,
+    strokeLinecap: 'round',
+    strokeLinejoin: 'round',
+    'aria-hidden': true,
+  }
+  const paths = {
+    search: (
+      <>
+        <circle cx="11" cy="11" r="7" />
+        <path d="m16.5 16.5 4 4" />
+      </>
+    ),
+    steps: (
+      <>
+        <path d="M4 19h5v-4h5V9h6" />
+        <path d="m16 5 4 4-4 4" />
+      </>
+    ),
+    spark: (
+      <>
+        <path d="m12 3 1.6 4.8L18.5 9.5 13.6 11 12 16l-1.6-5L5.5 9.5 10.4 7.8 12 3Z" />
+        <path d="m18.5 14 .7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7.7-2Z" />
+      </>
+    ),
+    heart: <path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 4.6-7 9-7 9Z" />,
+    card: (
+      <>
+        <rect x="3" y="5" width="18" height="14" rx="2" />
+        <path d="M3 10h18" />
+      </>
+    ),
+    pin: (
+      <>
+        <path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11Z" />
+        <circle cx="12" cy="10" r="2.2" />
+      </>
+    ),
+    back: <path d="M15 5 8 12l7 7" />,
+    close: (
+      <>
+        <path d="m7 7 10 10" />
+        <path d="M17 7 7 17" />
+      </>
+    ),
+    heartFill: <path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 4.6-7 9-7 9Z" fill="currentColor" stroke="none" />,
+    external: (
+      <>
+        <path d="M14 5h5v5" />
+        <path d="M13 11 19 5" />
+        <path d="M18 13v5a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
+      </>
+    ),
+    check: <path d="m5 12 5 5L20 7" />,
+    chevron: <path d="m9 6 6 6-6 6" />,
+    plus: (
+      <>
+        <path d="M12 5v14" />
+        <path d="M5 12h14" />
+      </>
+    ),
+    blog: (
+      <>
+        <path d="M6 4h9l3 3v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z" />
+        <path d="M14 4v4h4" />
+        <path d="M8 12h8" />
+        <path d="M8 16h5" />
+      </>
+    ),
+  }
+  return <svg {...common}>{paths[name] || paths.search}</svg>
+}

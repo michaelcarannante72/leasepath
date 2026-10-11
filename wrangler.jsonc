@@ -1,0 +1,29 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "leasepath",
+  // Set this to today's date
+  "compatibility_date": "2026-10-08",
+  "main": "./worker/index.js",
+  "workers_dev": true,
+  "preview_urls": true,
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "routes": [
+    { "pattern": "leasepath.app", "custom_domain": true },
+    { "pattern": "www.leasepath.app", "custom_domain": true }
+  ],
+  "durable_objects": {
+    "bindings": [{ "name": "USAGE_METER", "class_name": "UsageMeter" }]
+  },
+  "migrations": [
+    { "tag": "v1-usage-meter", "new_sqlite_classes": ["UsageMeter"] }
+  ],
+  "observability": {
+    "enabled": true,
+    "logs": { "enabled": true, "head_sampling_rate": 1 },
+    "traces": { "enabled": true, "head_sampling_rate": 0.1 }
+  }
+}

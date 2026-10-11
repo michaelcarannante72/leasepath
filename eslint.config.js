@@ -18,4 +18,16 @@ export default defineConfig([
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
   },
+  {
+    files: ['vite.config.js', 'server/**/*.js', 'worker/**/*.js', 'test/**/*.js'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
+  {
+    files: ['public/service-worker.js'],
+    languageOptions: {
+      globals: globals.serviceworker,
+    },
+  },
 ])

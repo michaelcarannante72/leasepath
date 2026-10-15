@@ -91,24 +91,61 @@ async function readToken(token, secret) {
   }
 }
 
+const DISCOVERY_URL = 'https://accounts.google.com/.well-known/openid-configuration'
+const NONCE_SECONDS = 10 * 60
+
 let certCache = { keys: null, expires: 0 }
+let discoveryCache = { jwksUri: '', expires: 0 }
+
+function cacheMaxAge(response) {
+  const match = String(response.headers.get('cache-control') || '').match(/max-age=(\d+)/)
+  return match ? Number(match[1]) * 1000 : 60 * 60 * 1000
+}
+
+function newNonce() {
+  const bytes = new Uint8Array(32)
+  crypto.getRandomValues(bytes)
+  return bytesToB64url(bytes)
+}
+
+export function validNonce(value) {
+  return /^[A-Za-z0-9_-]{32,128}$/.test(String(value || ''))
+}
+
+export async function googleJwksUri(fetchImpl = fetch) {
+  if (discoveryCache.jwksUri && Date.now() < discoveryCache.expires) return discoveryCache.jwksUri
+  const response = await fetchImpl(DISCOVERY_URL)
+  if (!response.ok) throw new Error('discovery')
+  const body = await response.json()
+  const uri = body?.jwks_uri
+  let host
+  try {
+    host = new URL(uri).host
+  } catch {
+    host = ''
+  }
+  if (typeof uri !== 'string' || !uri.startsWith('https://') || (host !== 'www.googleapis.com' && host !== 'accounts.google.com')) {
+    throw new Error('jwks')
+  }
+  discoveryCache = { jwksUri: uri, expires: Date.now() + cacheMaxAge(response) }
+  return uri
+}
 
 export async function googleCerts(fetchImpl = fetch) {
   if (certCache.keys && Date.now() < certCache.expires) return certCache.keys
-  const response = await fetchImpl('https://www.googleapis.com/oauth2/v3/certs')
+  const response = await fetchImpl(await googleJwksUri(fetchImpl))
   if (!response.ok) throw new Error('certs')
   const body = await response.json()
-  const match = String(response.headers.get('cache-control') || '').match(/max-age=(\d+)/)
-  const maxAge = match ? Number(match[1]) * 1000 : 60 * 60 * 1000
-  certCache = { keys: body.keys || [], expires: Date.now() + maxAge }
+  certCache = { keys: body.keys || [], expires: Date.now() + cacheMaxAge(response) }
   return certCache.keys
 }
 
 export function clearGoogleCertCache() {
   certCache = { keys: null, expires: 0 }
+  discoveryCache = { jwksUri: '', expires: 0 }
 }
 
-export async function verifyGoogleIdToken(token, { clientId, certs }) {
+export async function verifyGoogleIdToken(token, { clientId, certs, nonce = null }) {
   const parts = String(token || '').split('.')
   if (parts.length !== 3) throw new Error('malformed')
   const header = JSON.parse(new TextDecoder().decode(b64urlToBytes(parts[0])))
@@ -116,7 +153,12 @@ export async function verifyGoogleIdToken(token, { clientId, certs }) {
   if (header.alg !== 'RS256') throw new Error('alg')
   if (payload.iss !== 'https://accounts.google.com' && payload.iss !== 'accounts.google.com') throw new Error('iss')
   if (!clientId || payload.aud !== clientId) throw new Error('aud')
-  if (typeof payload.exp !== 'number' || payload.exp * 1000 < Date.now() - 60_000) throw new Error('exp')
+  if (payload.azp != null && payload.azp !== clientId) throw new Error('azp')
+  const now = Date.now()
+  if (typeof payload.iat !== 'number' || payload.iat * 1000 > now + 60_000) throw new Error('iat')
+  if (payload.nbf != null && (typeof payload.nbf !== 'number' || payload.nbf * 1000 > now + 60_000)) throw new Error('nbf')
+  if (typeof payload.exp !== 'number' || payload.exp * 1000 < now - 60_000) throw new Error('exp')
+  if (nonce != null && (!validNonce(nonce) || typeof payload.nonce !== 'string' || !safeEqual(payload.nonce, nonce))) throw new Error('nonce')
   if (payload.email_verified !== true && payload.email_verified !== 'true') throw new Error('email')
   if (!payload.sub || !payload.email) throw new Error('subject')
   const keys = Array.isArray(certs?.keys) ? certs.keys : certs
@@ -146,6 +188,7 @@ function publicView(auth) {
     anonymousRemaining: auth.anonymousRemaining,
     accountRemaining: auth.accountRemaining,
     googleClientId: auth.googleClientId,
+    googleNonce: auth.nonce,
     secretReady: auth.secretReady,
     authReady: auth.secretReady && Boolean(auth.googleClientId),
   }
@@ -181,7 +224,10 @@ export async function openAuth({ cookieHeader, ip, secret, googleClientId = '', 
   const guestToken = secretReady
     ? await signToken({ id: guest.id, exp: now.getTime() + GUEST_SECONDS * 1000 }, secret)
     : ''
-  const baseCookies = guestToken ? [serializeCookie('lp_guest', guestToken, { maxAge: GUEST_SECONDS, secure })] : []
+  let nonce = readCookie(cookieHeader, 'lp_nonce')
+  if (!validNonce(nonce)) nonce = newNonce()
+  const nonceCookie = serializeCookie('lp_nonce', nonce, { maxAge: NONCE_SECONDS, secure })
+  const baseCookies = [...(guestToken ? [serializeCookie('lp_guest', guestToken, { maxAge: GUEST_SECONDS, secure })] : []), nonceCookie]
 
   async function consume(key, limit) {
     return usage.consume(key, limit)
@@ -195,7 +241,9 @@ export async function openAuth({ cookieHeader, ip, secret, googleClientId = '', 
     secretReady,
     usageReady,
     googleClientId,
+    nonce,
     signedIn,
+    sub: signedIn ? session.sub : '',
     email: signedIn ? session.email : '',
     anonymousRemaining: signedIn ? null : networkExhausted ? 0 : Math.max(0, ANON_FREE - anonymousUsed),
     accountRemaining,
@@ -220,14 +268,20 @@ export async function openAuth({ cookieHeader, ip, secret, googleClientId = '', 
         secret,
       )
       const accountUsed = usageReady ? await usage.read(`acct:${day}:${safeId(profile.sub)}`) : 0
+      const nextNonce = newNonce()
       return {
-        cookies: [...baseCookies, serializeCookie('lp_session', token, { maxAge: SESSION_SECONDS, secure })],
+        cookies: [
+          ...baseCookies.filter((cookie) => !cookie.startsWith('lp_nonce=')),
+          serializeCookie('lp_nonce', nextNonce, { maxAge: NONCE_SECONDS, secure }),
+          serializeCookie('lp_session', token, { maxAge: SESSION_SECONDS, secure }),
+        ],
         view: {
           signedIn: true,
           email: profile.email,
           anonymousRemaining: null,
           accountRemaining: Math.max(0, ACCOUNT_DAILY - accountUsed),
           googleClientId,
+          googleNonce: nextNonce,
           secretReady: true,
           authReady: Boolean(googleClientId),
         },

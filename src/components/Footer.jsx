@@ -1,6 +1,28 @@
 import { FOOTER_GROUPS, SITE_PAGES } from '../sitePages.js'
 
-export function Footer() {
+const COMPACT_SLUGS = ['help', 'privacy', 'terms', 'submit-listings']
+
+function pageHref(slug) {
+  if (slug === 'privacy' || slug === 'terms') return `/${slug}`
+  return `#/info/${slug}`
+}
+
+export function Footer({ compact = false }) {
+  if (compact) {
+    return (
+      <footer className="site-footer site-footer-compact">
+        <nav aria-label="Footer">
+          {COMPACT_SLUGS.map((slug) => {
+            const page = SITE_PAGES.find((item) => item.slug === slug)
+            return page ? (
+              <a key={page.slug} href={pageHref(page.slug)}>{page.title}</a>
+            ) : null
+          })}
+        </nav>
+      </footer>
+    )
+  }
+
   return (
     <footer className="site-footer">
       <div className="footer-grid">
@@ -10,7 +32,7 @@ export function Footer() {
             <ul>
               {SITE_PAGES.filter((page) => page.group === group).map((page) => (
                 <li key={page.slug}>
-                  <a href={`#/info/${page.slug}`}>{page.title}</a>
+                  <a href={pageHref(page.slug)}>{page.title}</a>
                 </li>
               ))}
             </ul>
@@ -34,7 +56,9 @@ export function InfoPage({ page }) {
     <article className="page">
       <p className="eyebrow">{page.group}</p>
       <h1>{page.title}</h1>
-      <p className="lede">{page.body}</p>
+      {String(page.body || '').split(/\n\n+/).filter(Boolean).map((part) => (
+        <p className="lede" key={part}>{part}</p>
+      ))}
       <a className="button button-quiet" href="#/">Back to search</a>
     </article>
   )

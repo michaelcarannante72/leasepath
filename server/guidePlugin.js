@@ -3,6 +3,8 @@ import { dirname, join } from 'node:path'
 import { randomBytes } from 'node:crypto'
 import { loadEnv } from 'vite'
 import { handleApi } from './api.js'
+import { policyHtml, policySlug } from './policyPages.js'
+import { createFileAccounts } from './accounts.js'
 import { createFileUsage } from './usage.js'
 
 function serverEnv(config) {
@@ -70,10 +72,27 @@ function send(res, result) {
 export function guidePlugin() {
   const attach = (server) => {
     const root = server.config.root || process.cwd()
-    const usage = createFileUsage(join(root, '.data', 'usage.json'), { readFile, writeFile, mkdir, dirname })
+    const io = { readFile, writeFile, mkdir, dirname }
+    const usage = createFileUsage(join(root, '.data', 'usage.json'), io)
+    const accounts = createFileAccounts(join(root, '.data', 'accounts.json'), io)
     let secretPromise
     server.middlewares.use(async (req, res, next) => {
       const path = (req.url || '').split('?')[0]
+      const slug = policySlug(path)
+      if (slug) {
+        if (req.method !== 'GET' && req.method !== 'HEAD') {
+          res.statusCode = 405
+          res.setHeader('allow', 'GET, HEAD')
+          res.end()
+          return
+        }
+        const html = policyHtml(slug)
+        res.statusCode = 200
+        res.setHeader('content-type', 'text/html; charset=utf-8')
+        res.setHeader('cache-control', 'public, max-age=300')
+        res.end(req.method === 'HEAD' ? undefined : html)
+        return
+      }
       if (!path.startsWith('/api/')) {
         next()
         return
@@ -82,7 +101,7 @@ export function guidePlugin() {
         if (!secretPromise) secretPromise = authSecret(server.config)
         const env = serverEnv(server.config)
         const secret = await secretPromise
-        const body = req.method === 'POST' ? await readBody(req) : {}
+        const body = req.method === 'POST' || req.method === 'PUT' ? await readBody(req) : {}
         const host = req.headers.host || 'localhost'
         const proto = req.headers['x-forwarded-proto'] || 'http'
         const result = await handleApi({
@@ -97,6 +116,7 @@ export function guidePlugin() {
           secret,
           googleClientId: env.googleClientId,
           usage,
+          accounts,
           secure: proto === 'https',
         })
         send(res, result)

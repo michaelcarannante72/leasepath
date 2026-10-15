@@ -6,7 +6,7 @@ import { BlogList, BlogPost } from './components/BlogPage.jsx'
 import { Dock } from './components/Dock.jsx'
 import { Footer, InfoPage } from './components/Footer.jsx'
 import { Header } from './components/Header.jsx'
-import { Icon } from './components/Icon.jsx'
+import { CookiePrompt } from './components/CookiePrompt.jsx'
 import { Onboarding } from './components/Onboarding.jsx'
 import { Paywall } from './components/Paywall.jsx'
 import { PlanPage } from './components/PlanPage.jsx'
@@ -15,7 +15,7 @@ import { SearchPage } from './components/SearchPage.jsx'
 import { StepsPage } from './components/StepsPage.jsx'
 import { FREE_COACH_QUESTIONS } from './coachLimit.js'
 import { POSTS } from './blog.js'
-import { ACCESS_HRA_URL, LISTINGS } from './data.js'
+import { LISTINGS } from './data.js'
 import { SITE_PAGES } from './sitePages.js'
 import { PROGRAMS, VOUCHER_PROGRAMS, assessListing, filterListings } from './fit.js'
 import { onInstallAvailable, promptInstall } from './install.js'
@@ -24,6 +24,8 @@ const PLAN_KEY = 'leasepath.plan'
 const SAVED_KEY = 'leasepath.saved'
 const STEPS_KEY = 'leasepath.steps'
 const ONBOARD_KEY = 'leasepath.onboarded'
+const INTENT_KEY = 'leasepath.intent'
+const NEIGHBORHOOD_KEY = 'leasepath.neighborhood'
 
 const WELCOME = {
   role: 'assistant',
@@ -75,16 +77,6 @@ function parseHash() {
   return { name: 'search' }
 }
 
-function nextStep(plan) {
-  if (plan.receiving === 'none') {
-    return { href: ACCESS_HRA_URL, label: 'Apply on ACCESS HRA', external: true }
-  }
-  if (VOUCHER_PROGRAMS.includes(plan.program) && Number(plan.letterRent)) {
-    return { href: '#/steps', label: 'Open the step guide' }
-  }
-  return { action: 'onboard', label: 'Add your voucher details' }
-}
-
 export default function App() {
   const [route, setRoute] = useState(parseHash)
   const [plan, setPlan] = useState(loadPlan)
@@ -99,7 +91,7 @@ export default function App() {
   const [filters, setFilters] = useState(() => {
     const initial = loadPlan()
     return {
-      q: '',
+      q: localStorage.getItem(NEIGHBORHOOD_KEY) || '',
       program: PROGRAMS.includes(initial.program) ? initial.program : 'All',
       borough: 'All',
       beds: 'Any',
@@ -108,10 +100,11 @@ export default function App() {
       sort: 'rent-asc',
     }
   })
-  const [onboardingOpen, setOnboardingOpen] = useState(() => {
-    if (localStorage.getItem(ONBOARD_KEY) === '1') return false
-    const initial = loadPlan()
-    return !initial.receiving && !VOUCHER_PROGRAMS.includes(initial.program)
+  const [onboardingOpen, setOnboardingOpen] = useState(false)
+  const [onboardingPreset, setOnboardingPreset] = useState(null)
+  const [intent, setIntent] = useState(() => {
+    const stored = localStorage.getItem(INTENT_KEY)
+    return stored === 'letter' || stored === 'apply' ? stored : ''
   })
   const [paywall, setPaywall] = useState(null)
   const [assistantOpen, setAssistantOpen] = useState(false)
@@ -122,6 +115,8 @@ export default function App() {
   const [includePlan, setIncludePlan] = useState(true)
   const [configured, setConfigured] = useState(null)
   const [canInstall, setCanInstall] = useState(false)
+  const [accountLive, setAccountLive] = useState(false)
+  const [accountTracksSignIn, setAccountTracksSignIn] = useState(false)
   const [signingIn, setSigningIn] = useState(false)
   const [signInError, setSignInError] = useState('')
   const [session, setSession] = useState({
@@ -131,11 +126,17 @@ export default function App() {
     anonymousRemaining: FREE_COACH_QUESTIONS,
     accountRemaining: null,
     googleClientId: '',
+    googleNonce: '',
     secretReady: true,
     authReady: false,
   })
 
-  const applyAccess = (data) => {
+  if (session.signedIn !== accountTracksSignIn) {
+    setAccountTracksSignIn(session.signedIn)
+    setAccountLive(false)
+  }
+
+  const applyAccess = useCallback((data) => {
     setSession((current) => ({
       loaded: true,
       signedIn: Boolean(data.signedIn),
@@ -143,11 +144,40 @@ export default function App() {
       anonymousRemaining: Number.isInteger(data.anonymousRemaining) ? data.anonymousRemaining : current.anonymousRemaining,
       accountRemaining: Number.isInteger(data.accountRemaining) ? data.accountRemaining : data.signedIn ? current.accountRemaining : null,
       googleClientId: typeof data.googleClientId === 'string' ? data.googleClientId : current.googleClientId,
+      googleNonce: typeof data.googleNonce === 'string' ? data.googleNonce : current.googleNonce,
       secretReady: data.secretReady !== false,
       authReady: Boolean(data.authReady),
     }))
     if (typeof data.configured === 'boolean') setConfigured(data.configured)
-  }
+  }, [])
+
+  const writeAccountPlace = useCallback((place) => {
+    setPlan((current) => {
+      const next = {
+        ...current,
+        program: place.program || '',
+        household: place.household || '',
+        letterRent: place.letterRent || '',
+        utilities: place.utilities || '',
+        receiving: place.receiving || '',
+        situation: place.situation || '',
+      }
+      localStorage.setItem(PLAN_KEY, JSON.stringify(next))
+      return next
+    })
+    const savedIds = Array.isArray(place.savedIds) ? place.savedIds.filter((id) => typeof id === 'string') : []
+    const steps = Array.isArray(place.steps) ? place.steps.filter((index) => Number.isInteger(index)) : []
+    localStorage.setItem(SAVED_KEY, JSON.stringify(savedIds))
+    localStorage.setItem(STEPS_KEY, JSON.stringify(steps))
+    localStorage.setItem(NEIGHBORHOOD_KEY, place.neighborhood || '')
+    setSaved(savedIds)
+    setChecked(steps)
+    setFilters((current) => ({
+      ...current,
+      q: place.neighborhood || '',
+      program: PROGRAMS.includes(place.program) ? place.program : 'All',
+    }))
+  }, [])
 
   const stageRef = useRef(null)
   const scrollStage = () => stageRef.current?.scrollTo({ top: 0 })
@@ -176,7 +206,90 @@ export default function App() {
     return () => {
       cancel = true
     }
-  }, [])
+  }, [applyAccess])
+
+  useEffect(() => {
+    localStorage.setItem(NEIGHBORHOOD_KEY, filters.q)
+  }, [filters.q])
+
+  useEffect(() => {
+    if (!session.loaded || !session.signedIn) return undefined
+    const controller = new AbortController()
+    const storedPlan = loadPlan()
+    const storedSaved = loadJson(SAVED_KEY, [])
+    const storedSteps = loadJson(STEPS_KEY, [])
+    const place = {
+      program: storedPlan.program,
+      neighborhood: localStorage.getItem(NEIGHBORHOOD_KEY) || '',
+      letterRent: storedPlan.letterRent,
+      utilities: storedPlan.utilities,
+      household: storedPlan.household,
+      receiving: storedPlan.receiving,
+      situation: storedPlan.situation,
+      savedIds: Array.isArray(storedSaved) ? storedSaved : [],
+      steps: Array.isArray(storedSteps) ? storedSteps : [],
+    }
+    fetch('/api/account', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      signal: controller.signal,
+      body: JSON.stringify({ place }),
+    })
+      .then(async (response) => {
+        const data = await response.json().catch(() => ({}))
+        if (controller.signal.aborted) return
+        applyAccess(data)
+        if (!response.ok || !data.place) {
+          setSignInError(data.message || 'Your account did not load. Your letter stays on this phone.')
+          return
+        }
+        setSignInError('')
+        if (data.adopted === false) writeAccountPlace(data.place)
+        setAccountLive(true)
+      })
+      .catch((error) => {
+        if (error?.name === 'AbortError') return
+        setSignInError('LeasePath could not reach your account. Your letter stays on this phone.')
+      })
+    return () => controller.abort()
+  }, [session.loaded, session.signedIn, applyAccess, writeAccountPlace])
+
+  useEffect(() => {
+    if (!accountLive || !session.signedIn) return undefined
+    const controller = new AbortController()
+    const timer = setTimeout(() => {
+      fetch('/api/account', {
+        method: 'PUT',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
+        body: JSON.stringify({
+          place: {
+            program: plan.program,
+            neighborhood: filters.q,
+            letterRent: plan.letterRent,
+            utilities: plan.utilities,
+            household: plan.household,
+            receiving: plan.receiving,
+            situation: plan.situation,
+            savedIds: saved,
+            steps: checked,
+          },
+        }),
+      })
+        .then(async (response) => {
+          if (response.status !== 401) return
+          const data = await response.json().catch(() => ({}))
+          applyAccess(data)
+        })
+        .catch(() => {})
+    }, 400)
+    return () => {
+      clearTimeout(timer)
+      controller.abort()
+    }
+  }, [accountLive, session.signedIn, plan, saved, checked, filters.q, applyAccess])
 
   useEffect(() => {
     if (!assistantOpen) return undefined
@@ -213,6 +326,24 @@ export default function App() {
   const closeOnboarding = () => {
     localStorage.setItem(ONBOARD_KEY, '1')
     setOnboardingOpen(false)
+    setOnboardingPreset(null)
+  }
+
+  const chooseIntent = (next) => {
+    localStorage.setItem(INTENT_KEY, next)
+    localStorage.setItem(ONBOARD_KEY, '1')
+    setIntent(next)
+    if (next === 'letter') {
+      updatePlan({ receiving: 'has' })
+      setOnboardingPreset('letter')
+      setOnboardingOpen(true)
+      return
+    }
+    if (next === 'apply') {
+      updatePlan({ receiving: 'none' })
+      setOnboardingOpen(false)
+      setOnboardingPreset(null)
+    }
   }
 
   const saveOnboarding = (draft) => {
@@ -263,7 +394,47 @@ export default function App() {
     } finally {
       setSigningIn(false)
     }
-  }, [])
+  }, [applyAccess])
+
+  const signUpWithEmail = useCallback(async ({ email, password, mode }) => {
+    setSignInError('')
+    setSigningIn(true)
+    try {
+      const response = await fetch('/api/auth/email', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, mode }),
+      })
+      const data = await response.json().catch(() => ({}))
+      applyAccess(data)
+      if (!response.ok) {
+        setSignInError(data.message || 'That email sign-up did not finish. Try again.')
+        return
+      }
+      if (data.created) {
+        setOnboardingPreset('account')
+        setOnboardingOpen(true)
+      }
+    } catch {
+      setSignInError('LeasePath could not reach sign-in. Check your connection and try again.')
+    } finally {
+      setSigningIn(false)
+    }
+  }, [applyAccess])
+
+  const deleteAccount = useCallback(async () => {
+    if (!window.confirm('Delete the LeasePath account? The letter stays on this phone.')) return
+    setSignInError('')
+    try {
+      const response = await fetch('/api/account', { method: 'DELETE', credentials: 'same-origin' })
+      const data = await response.json().catch(() => ({}))
+      applyAccess(data)
+      if (!response.ok) setSignInError(data.message || 'The account could not be deleted. Try again.')
+    } catch {
+      setSignInError('LeasePath could not reach the account. Check your connection and try again.')
+    }
+  }, [applyAccess])
 
   const signOut = useCallback(async () => {
     setSignInError('')
@@ -274,7 +445,7 @@ export default function App() {
     } catch {
       setSignInError('LeasePath could not sign you out. Try again.')
     }
-  }, [])
+  }, [applyAccess])
 
   const openResources = useCallback(() => {
     setAssistantOpen(false)
@@ -329,7 +500,7 @@ export default function App() {
     } finally {
       setPending(false)
     }
-  }, [assistantListingId, includePlan, messages, pending, plan, session])
+  }, [assistantListingId, includePlan, messages, pending, plan, session, applyAccess])
 
   const askAboutListing = (listingId, prompt) => {
     setAssistantListingId(listingId)
@@ -339,7 +510,6 @@ export default function App() {
   const listing = route.name === 'detail' ? LISTINGS.find((item) => item.id === route.id) : null
   const post = route.name === 'post' ? POSTS.find((item) => item.slug === route.id) : null
   const infoPage = route.name === 'info' ? SITE_PAGES.find((item) => item.slug === route.id) : null
-  const step = nextStep(plan)
   const dockActive = assistantOpen
     ? 'assistant'
     : route.name === 'detail'
@@ -350,35 +520,21 @@ export default function App() {
 
   return (
     <div className="app">
-      <Header canInstall={canInstall} onInstall={() => promptInstall()} planCurrent={route.name === 'plan'} />
-      <p className="sample-banner">Sample apartments for practice. A real apartment still has to be confirmed with the broker and your worker.</p>
+      <Header
+        canInstall={canInstall}
+        onInstall={() => promptInstall()}
+        planCurrent={route.name === 'plan'}
+        session={session}
+        signingIn={signingIn}
+        signInError={signInError}
+        onGoogleCredential={signIn}
+        onEmailAuth={signUpWithEmail}
+        onSignOut={signOut}
+        onDeleteAccount={deleteAccount}
+      />
       <main className="stage" ref={stageRef}>
         <div className="view" key={route.id ? `${route.name}-${route.id}` : route.name}>
         {route.name === 'search' && (
-          <>
-            <div className="welcome-row">
-              <div>
-                <p className="eyebrow">The search starts here</p>
-                <h1>Actual “voucher-friendly” units.</h1>
-                <p className="pitch">
-                  No more “Let me give you a call back.” No more “I’ll transfer you to that department. Just a sec.” No more bullshit.<br />
-                  Apartments ready to take HASA, CityFHEPS, or Section{'\u00A0'}8.
-                </p>
-              </div>
-              {step.external ? (
-                <a className="setup-cta" href={step.href} target="_blank" rel="noreferrer">
-                  <Icon name="external" size={17} /> {step.label}
-                </a>
-              ) : step.action === 'onboard' ? (
-                <button type="button" className="setup-cta" onClick={() => setOnboardingOpen(true)}>
-                  <Icon name="plus" size={17} /> {step.label}
-                </button>
-              ) : (
-                <a className="setup-cta" href={step.href}>
-                  <Icon name="plus" size={17} /> {step.label}
-                </a>
-              )}
-            </div>
             <SearchPage
               listings={listings}
               total={LISTINGS.length}
@@ -388,8 +544,9 @@ export default function App() {
               onToggleSave={toggleSaved}
               onOpen={(id) => go(`#/listing/${id}`)}
               planFlags={(item) => assessListing(item, plan)}
+              intent={intent}
+              onIntent={chooseIntent}
             />
-          </>
         )}
         {route.name === 'detail' && listing && (
           <DetailPage
@@ -416,8 +573,9 @@ export default function App() {
         {route.name === 'post' && <BlogPost post={post} />}
         {route.name === 'info' && <InfoPage page={infoPage} />}
         </div>
-        <Footer />
+        <Footer compact={route.name === 'search'} />
       </main>
+      <CookiePrompt />
       <Dock
         active={dockActive}
         onSelect={(id) => {
@@ -448,7 +606,7 @@ export default function App() {
         />
       )}
       {onboardingOpen && (
-        <Onboarding plan={plan} onSave={saveOnboarding} onSkip={closeOnboarding} />
+        <Onboarding plan={plan} onSave={saveOnboarding} onSkip={closeOnboarding} preset={onboardingPreset} />
       )}
       {paywall && <Paywall feature={paywall} onClose={() => setPaywall(null)} />}
     </div>

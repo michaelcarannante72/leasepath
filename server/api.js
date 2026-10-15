@@ -1,4 +1,6 @@
-import { openAuth, verifyGoogleIdToken, googleCerts } from './auth.js'
+import { accountKey, emailAccountKey, emptyPlace, normalizeEmail } from './accounts.js'
+import { checkPassword, hashPassword, passwordAccepted } from './passwords.js'
+import { openAuth, readCookie, validNonce, verifyGoogleIdToken, googleCerts } from './auth.js'
 import { MODEL, prepareGuide, completeGuide } from './guide.js'
 import { loadPantries } from './pantries.js'
 
@@ -29,6 +31,7 @@ export async function handleApi({
   secret = '',
   googleClientId = '',
   usage,
+  accounts = null,
   secure = false,
   now,
   callModel,
@@ -59,13 +62,19 @@ export async function handleApi({
     }
   }
 
-  if (pathname !== '/api/guide' && pathname !== '/api/auth/google' && pathname !== '/api/auth/logout') {
+  if (
+    pathname !== '/api/guide' &&
+    pathname !== '/api/auth/google' &&
+    pathname !== '/api/auth/email' &&
+    pathname !== '/api/auth/logout' &&
+    pathname !== '/api/account'
+  ) {
     return { status: 404, json: { error: 'not_found' }, cookies: [] }
   }
 
   if (method === 'OPTIONS') return { status: 204, json: {}, cookies: [] }
 
-  if (method === 'POST' && (!origin || origin !== requestOrigin)) {
+  if ((method === 'POST' || method === 'PUT' || method === 'DELETE') && (!origin || origin !== requestOrigin)) {
     return {
       status: 403,
       json: { error: 'origin', message: 'That request did not come from LeasePath.' },
@@ -74,6 +83,10 @@ export async function handleApi({
   }
 
   const auth = await openAuth({ cookieHeader, ip, secret, googleClientId, usage, secure, now })
+
+  if (pathname === '/api/account') {
+    return handleAccount({ method, body, auth, accounts, now })
+  }
 
   if (pathname === '/api/auth/logout' && method === 'POST') {
     return withAccess(200, { ok: true, signedIn: false, email: '', accountRemaining: null }, auth, [
@@ -93,9 +106,13 @@ export async function handleApi({
     if (!credential || credential.length > 8000) {
       return withAccess(400, { error: 'bad_request', message: 'Google did not send a sign-in. Try again.' }, auth)
     }
+    const nonce = readCookie(cookieHeader, 'lp_nonce')
+    if (!validNonce(nonce)) {
+      return withAccess(401, { error: 'google', message: 'Google did not accept that sign-in. Try again.' }, auth)
+    }
     try {
       const certs = await loadCerts()
-      const profile = await verifyToken(credential, { clientId: googleClientId, certs })
+      const profile = await verifyToken(credential, { clientId: googleClientId, certs, nonce })
       const signed = await auth.signIn(profile)
       return {
         status: 200,
@@ -105,6 +122,10 @@ export async function handleApi({
     } catch {
       return withAccess(401, { error: 'google', message: 'Google did not accept that sign-in. Try again.' }, auth)
     }
+  }
+
+  if (pathname === '/api/auth/email' && method === 'POST') {
+    return handleEmailAccount({ body, auth, accounts, usage, ip, now })
   }
 
   if (pathname !== '/api/guide') {
@@ -158,4 +179,130 @@ export async function handleApi({
     anonymousRemaining: decision.anonymousRemaining,
     accountRemaining: decision.accountRemaining,
   }, auth)
+}
+
+async function limitPasswordTries(usage, ip, now) {
+  if (!usage) return true
+  try {
+    const day = (now instanceof Date ? now : new Date()).toISOString().slice(0, 10)
+    const cleanIp = String(ip || 'unknown').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 80) || 'unknown'
+    const result = await usage.consume(`pw:${day}:${cleanIp}`, 20)
+    return Boolean(result?.ok)
+  } catch {
+    return true
+  }
+}
+
+async function handleEmailAccount({ body, auth, accounts, usage, ip, now }) {
+  if (!auth.secretReady) {
+    return withAccess(503, {
+      error: 'auth_not_configured',
+      message: 'Sign-in is not set up on this server yet. Search stays open.',
+    }, auth)
+  }
+  if (!accounts) {
+    return withAccess(503, {
+      error: 'accounts_not_ready',
+      message: 'Accounts are not ready on this server yet. Your letter stays on this phone.',
+    }, auth)
+  }
+  const email = normalizeEmail(body?.email)
+  const password = body?.password
+  if (!email || !passwordAccepted(password)) {
+    return withAccess(400, {
+      error: 'bad_request',
+      message: 'Use an email address and a password of at least 8 characters.',
+    }, auth)
+  }
+  if (!(await limitPasswordTries(usage, ip, now))) {
+    return withAccess(429, {
+      error: 'rate_limit',
+      message: 'Too many tries from this network. Wait and try again. Search stays open.',
+    }, auth)
+  }
+  const key = await emailAccountKey(email)
+  const when = (now instanceof Date ? now : new Date()).toISOString()
+  try {
+    if (body?.mode === 'create') {
+      const secret = await hashPassword(password)
+      const created = await accounts.register(key, { email, secret, now: when })
+      if (!created?.ok) {
+        return withAccess(409, {
+          error: 'exists',
+          message: 'That email already has an account. Sign in instead.',
+        }, auth)
+      }
+      const signed = await auth.signIn({ sub: key, email, name: '' })
+      return { status: 200, cookies: signed.cookies, json: { ok: true, created: true, ...signed.view } }
+    }
+    const current = await accounts.read(key)
+    const matches = current?.secret ? await checkPassword(password, current.secret) : false
+    if (!matches) {
+      return withAccess(401, {
+        error: 'password',
+        message: 'That email and password did not match.',
+      }, auth)
+    }
+    const signed = await auth.signIn({ sub: key, email: current.email || email, name: '' })
+    return { status: 200, cookies: signed.cookies, json: { ok: true, created: false, ...signed.view } }
+  } catch {
+    return withAccess(503, {
+      error: 'accounts_not_ready',
+      message: 'Accounts are not ready on this server yet. Your letter stays on this phone.',
+    }, auth)
+  }
+}
+
+async function handleAccount({ method, body, auth, accounts, now }) {
+  if (!auth.signedIn || !accountKey(auth.sub)) {
+    return withAccess(401, {
+      error: 'sign_in_required',
+      message: 'Sign in to keep your letter on an account.',
+    }, auth)
+  }
+  if (!accounts) {
+    return withAccess(503, {
+      error: 'accounts_not_ready',
+      message: 'Accounts are not ready on this server yet. Your letter stays on this phone.',
+    }, auth)
+  }
+  const when = (now instanceof Date ? now : new Date()).toISOString()
+  try {
+    if (method === 'DELETE') {
+      await accounts.remove(accountKey(auth.sub))
+      return withAccess(200, { ok: true, signedIn: false, email: '', accountRemaining: null }, auth, [
+        ...auth.cookies,
+        auth.clearedSessionCookie(),
+      ])
+    }
+    if (method === 'GET') {
+      const current = await accounts.read(accountKey(auth.sub))
+      return withAccess(200, { ok: true, place: current?.place || emptyPlace() }, auth)
+    }
+    if (method !== 'POST' && method !== 'PUT') return withAccess(405, { error: 'method' }, auth)
+    const place = body?.place
+    if (!place || typeof place !== 'object' || Array.isArray(place)) {
+      return withAccess(400, { error: 'bad_request', message: 'That account update could not be saved.' }, auth)
+    }
+    const input = { email: auth.email, place, now: when }
+    const decision = method === 'POST'
+      ? await accounts.claim(accountKey(auth.sub), input)
+      : await accounts.save(accountKey(auth.sub), input)
+    if (!decision?.record?.place) {
+      return withAccess(503, {
+        error: 'accounts_not_ready',
+        message: 'Accounts are not ready on this server yet. Your letter stays on this phone.',
+      }, auth)
+    }
+    return withAccess(200, {
+      ok: true,
+      adopted: method === 'POST' ? Boolean(decision.adopted) : undefined,
+      place: decision.record.place,
+    }, auth)
+  } catch {
+    return withAccess(503, {
+      error: 'accounts_not_ready',
+      message: 'Accounts are not ready on this server yet. Your letter stays on this phone.',
+    }, auth)
+  }
 }

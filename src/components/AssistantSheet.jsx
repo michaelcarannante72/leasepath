@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { FREE_COACH_QUESTIONS } from '../coachLimit.js'
+import { GoogleSignInButton } from './GoogleSignInButton.jsx'
 import { Icon } from './Icon.jsx'
-import { loadGoogleSignIn } from '../googleSignIn.js'
 
 function finePrint(configured, access) {
   if (configured === false) return 'No API key on this server yet. Search and resources still work.'
@@ -42,8 +42,6 @@ export function AssistantSheet({
 }) {
   const closeButton = useRef(null)
   const thread = useRef(null)
-  const googleButton = useRef(null)
-  const [googleError, setGoogleError] = useState('')
 
   const locked = Boolean(access && !access.signedIn && access.anonymousRemaining <= 0)
   const paused = Boolean(access?.loaded && access.secretReady === false)
@@ -61,38 +59,6 @@ export function AssistantSheet({
     const node = thread.current
     if (node) node.scrollTop = node.scrollHeight
   }, [messages, pending, locked])
-
-  useEffect(() => {
-    const node = googleButton.current
-    if (!locked || !access?.googleClientId || !node) return undefined
-    let cancel = false
-    setGoogleError('')
-    loadGoogleSignIn()
-      .then(() => {
-        if (cancel || !googleButton.current || !window.google?.accounts?.id) return
-        googleButton.current.replaceChildren()
-        window.google.accounts.id.initialize({
-          client_id: access.googleClientId,
-          callback: (response) => onGoogleCredential(response?.credential || ''),
-          auto_select: false,
-          cancel_on_tap_outside: true,
-          use_fedcm_for_prompt: false,
-        })
-        window.google.accounts.id.renderButton(googleButton.current, {
-          theme: 'outline',
-          size: 'large',
-          text: 'continue_with',
-          shape: 'pill',
-          width: 280,
-        })
-      })
-      .catch(() => {
-        if (!cancel) setGoogleError('Google’s sign-in button did not load. Check your connection and try again.')
-      })
-    return () => {
-      cancel = true
-    }
-  }, [locked, access?.googleClientId, onGoogleCredential])
 
   return (
     <div className="sheet-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose() }}>
@@ -122,10 +88,7 @@ export function AssistantSheet({
           <div className="gate">
             <h3>Sign in to ask another question</h3>
             <p>{FREE_COACH_QUESTIONS} questions are free on this browser. Sign in with Google to ask more. Search and resources stay open.</p>
-            {access.googleClientId ? <div className="google-button" ref={googleButton} /> : (
-              <p>This server does not have a Google client id yet, so the button cannot load.</p>
-            )}
-            {googleError && <p className="fine">{googleError}</p>}
+            <GoogleSignInButton clientId={access.googleClientId} nonce={access.googleNonce} onCredential={onGoogleCredential} active={locked} />
             {access.signInError && <p className="fine">{access.signInError}</p>}
             <button type="button" className="button button-quiet" onClick={onOpenResources} disabled={access.signingIn}>See resources</button>
           </div>

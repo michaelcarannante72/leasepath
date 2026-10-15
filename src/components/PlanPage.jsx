@@ -15,7 +15,7 @@ export function PlanPage({ plan, onChange }) {
       <p className="eyebrow">My voucher</p>
       <h1>The figures on your letter</h1>
       <p className="lede">
-        LeasePath stores this in this browser so search can compare sample rents with it. It does not decide eligibility, and it does not leave the phone unless you choose to include it in an assistant question.
+        LeasePath keeps this on this phone so search can compare sample rents with it. If you sign in, the same figures stay on your account. It does not decide eligibility.
       </p>
       <p className="next-action">
         {plan.receiving === 'none'

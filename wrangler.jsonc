@@ -9,17 +9,21 @@
   "assets": {
     "directory": "./dist",
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/api/*"]
+    "run_worker_first": ["/api/*", "/privacy", "/privacy/", "/terms", "/terms/"]
   },
   "routes": [
     { "pattern": "leasepath.app", "custom_domain": true },
     { "pattern": "www.leasepath.app", "custom_domain": true }
   ],
   "durable_objects": {
-    "bindings": [{ "name": "USAGE_METER", "class_name": "UsageMeter" }]
+    "bindings": [
+      { "name": "USAGE_METER", "class_name": "UsageMeter" },
+      { "name": "ACCOUNT_BOOK", "class_name": "AccountBook" }
+    ]
   },
   "migrations": [
-    { "tag": "v1-usage-meter", "new_sqlite_classes": ["UsageMeter"] }
+    { "tag": "v1-usage-meter", "new_sqlite_classes": ["UsageMeter"] },
+    { "tag": "v2-account-book", "new_sqlite_classes": ["AccountBook"] }
   ],
   "observability": {
     "enabled": true,

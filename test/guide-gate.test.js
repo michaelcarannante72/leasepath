@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { ACCOUNT_DAILY, ANON_FREE, clearGoogleCertCache, verifyGoogleIdToken } from '../server/auth.js'
+import { ACCOUNT_DAILY, ANON_FREE, clearGoogleCertCache, googleCerts, verifyGoogleIdToken } from '../server/auth.js'
 import { handleApi } from '../server/api.js'
 import { prepareGuide } from '../server/guide.js'
 import { HRA_KNOWLEDGE } from '../server/hraKnowledge.js'
@@ -9,6 +9,7 @@ import { RESOURCES } from '../src/data.js'
 
 const now = new Date('2026-10-08T15:00:00.000Z')
 const origin = 'http://localhost:5183'
+const NONCE = 'test-nonce-value-0123456789abcdef0123456789'
 
 function cookieJar(result) {
   return (result.cookies || []).map((cookie) => cookie.split(';')[0]).join('; ')
@@ -123,16 +124,22 @@ test('a signed-in account stops at the daily cap', async () => {
     method: 'POST',
     pathname: '/api/auth/google',
     body: { credential: 'stub-token' },
+    cookieHeader: `lp_nonce=${NONCE}`,
     origin,
     requestOrigin: origin,
     secret: 'test-secret',
     googleClientId: 'client-id',
     usage,
     now,
-    verifyToken: async () => ({ sub: 'abc', email: 'ada@example.com', name: 'Ada' }),
+    verifyToken: async (_credential, options) => {
+      assert.equal(options.nonce, NONCE)
+      return { sub: 'abc', email: 'ada@example.com', name: 'Ada' }
+    },
     loadCerts: async () => [],
   })
   assert.equal(signed.status, 200)
+  const nextNonce = signed.cookies.find((cookie) => cookie.startsWith('lp_nonce=')).split(';')[0].slice('lp_nonce='.length)
+  assert.notEqual(nextNonce, NONCE)
   assert.equal(signed.json.signedIn, true)
   assert.equal(signed.json.email, 'ada@example.com')
   let calls = 0
@@ -164,6 +171,64 @@ test('the policy pack is what the model sees, and resources stay public', () => 
   assert.equal(new Set(RESOURCES.map((item) => item.group)).has('Food'), true)
 })
 
+test('Google sign-in rejects a missing nonce before it trusts the token', async () => {
+  let called = false
+  const refused = await handleApi({
+    method: 'POST',
+    pathname: '/api/auth/google',
+    body: { credential: 'stub-token' },
+    origin,
+    requestOrigin: origin,
+    secret: 'test-secret',
+    googleClientId: 'client-id',
+    usage: createMemoryUsage(),
+    now,
+    verifyToken: async () => {
+      called = true
+      return { sub: 'abc', email: 'ada@example.com', name: 'Ada' }
+    },
+    loadCerts: async () => [],
+  })
+  assert.equal(refused.status, 401)
+  assert.equal(called, false)
+})
+
+test('certificate lookup follows the OpenID discovery document', async () => {
+  clearGoogleCertCache()
+  const calls = []
+  const keys = [{ kid: 'k' }]
+  const fetchImpl = async (url) => {
+    calls.push(url)
+    if (String(url).includes('openid-configuration')) {
+      return {
+        ok: true,
+        headers: { get: () => 'public, max-age=10' },
+        json: async () => ({ jwks_uri: 'https://www.googleapis.com/oauth2/v3/certs' }),
+      }
+    }
+    return {
+      ok: true,
+      headers: { get: () => 'public, max-age=10' },
+      json: async () => ({ keys }),
+    }
+  }
+  const first = await googleCerts(fetchImpl)
+  const second = await googleCerts(fetchImpl)
+  assert.deepEqual(first, keys)
+  assert.equal(second, first)
+  assert.deepEqual(calls, [
+    'https://accounts.google.com/.well-known/openid-configuration',
+    'https://www.googleapis.com/oauth2/v3/certs',
+  ])
+  clearGoogleCertCache()
+  await assert.rejects(googleCerts(async () => ({
+    ok: true,
+    headers: { get: () => 'max-age=10' },
+    json: async () => ({ jwks_uri: 'https://evil.example/certs' }),
+  })))
+  clearGoogleCertCache()
+})
+
 test('a Google ID token must match the client id and the signature', async () => {
   clearGoogleCertCache()
   const pair = await crypto.subtle.generateKey(
@@ -183,7 +248,10 @@ test('a Google ID token must match the client id and the signature', async () =>
   const payload = encode({
     iss: 'https://accounts.google.com',
     aud: 'client-id',
+    azp: 'client-id',
+    iat: Math.floor(Date.now() / 1000),
     exp: Math.floor(Date.now() / 1000) + 3600,
+    nonce: NONCE,
     email: 'ada@example.com',
     email_verified: true,
     sub: 'abc',
@@ -197,8 +265,10 @@ test('a Google ID token must match the client id and the signature', async () =>
   let encoded = ''
   for (const byte of new Uint8Array(signature)) encoded += String.fromCharCode(byte)
   const token = `${header}.${payload}.${btoa(encoded).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '')}`
-  const profile = await verifyGoogleIdToken(token, { clientId: 'client-id', certs: [jwk] })
+  const profile = await verifyGoogleIdToken(token, { clientId: 'client-id', certs: [jwk], nonce: NONCE })
+  assert.equal(profile.sub, 'abc')
   assert.equal(profile.email, 'ada@example.com')
-  await assert.rejects(verifyGoogleIdToken(token, { clientId: 'other', certs: [jwk] }))
-  await assert.rejects(verifyGoogleIdToken(`${token}x`, { clientId: 'client-id', certs: [jwk] }))
+  await assert.rejects(verifyGoogleIdToken(token, { clientId: 'other', certs: [jwk], nonce: NONCE }))
+  await assert.rejects(verifyGoogleIdToken(token, { clientId: 'client-id', certs: [jwk], nonce: `x${NONCE.slice(1)}` }))
+  await assert.rejects(verifyGoogleIdToken(`${token}x`, { clientId: 'client-id', certs: [jwk], nonce: NONCE }))
 })

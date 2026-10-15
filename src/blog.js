@@ -18,7 +18,7 @@ export const POSTS = [
     body: [
       'Write down the monthly amount on your letter before you open a listing. If the asking rent is higher, you already know the first question for the broker.',
       'Sample apartments in LeasePath are practice listings. Use them to rehearse the comparison. A real apartment still has to be confirmed with the broker and your worker.',
-      'Save the ones you want to revisit. Saving stays on this phone. It does not send an application.',
+      'Save the ones you want to revisit. Saving stays on this phone, and on your account if you are signed in. It does not send an application.',
     ],
   },
   {

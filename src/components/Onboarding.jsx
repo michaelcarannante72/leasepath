@@ -15,11 +15,11 @@ const UTILITIES = [
   ['I would pay one or more utilities', 'I would pay one or more utilities'],
 ]
 
-export function Onboarding({ plan, onSave, onSkip }) {
+export function Onboarding({ plan, onSave, onSkip, preset }) {
   const closeButton = useRef(null)
   const [draft, setDraft] = useState(() => ({
     ...plan,
-    receiving: plan.receiving || (VOUCHER_PROGRAMS.includes(plan.program) ? 'has' : ''),
+    receiving: preset === 'letter' ? 'has' : plan.receiving || (VOUCHER_PROGRAMS.includes(plan.program) ? 'has' : ''),
   }))
 
   useEffect(() => {
@@ -42,8 +42,8 @@ export function Onboarding({ plan, onSave, onSkip }) {
           <Icon name="close" size={18} />
         </button>
         <p className="eyebrow">Your voucher</p>
-        <h2 id="onboard-title">Which voucher do you have?</h2>
-        <p className="setup-intro">This stays in this browser. It does not decide whether you qualify.</p>
+        <h2 id="onboard-title">{preset === 'account' ? 'Save your letter on this account' : preset === 'letter' || draft.receiving === 'has' ? 'What’s on your shopping letter?' : 'Which voucher do you have?'}</h2>
+        <p className="setup-intro">{preset === 'account' ? 'You signed up without Google. This account can open the same letter on another phone. It does not decide whether you qualify.' : 'This stays on this phone. If you sign in, it also stays on your account. It does not decide whether you qualify.'}</p>
         <form
           className="setup-fields"
           onSubmit={(event) => {
@@ -52,6 +52,7 @@ export function Onboarding({ plan, onSave, onSkip }) {
           }}
         >
           <div className="setup-scroll">
+          {preset !== 'letter' && (
           <fieldset>
             <legend>Are you receiving a housing voucher?</legend>
             <div className="choice-grid">
@@ -68,6 +69,7 @@ export function Onboarding({ plan, onSave, onSkip }) {
               ))}
             </div>
           </fieldset>
+          )}
 
           {draft.receiving === 'none' && (
             <div className="apply-note">

@@ -17,7 +17,8 @@ export function Header({ canInstall, onInstall, planCurrent, session, signingIn,
       <div className="topbar-actions">
         {canInstall && (
           <button type="button" className="install-button" onClick={onInstall}>
-            Install app
+            <span className="install-long">Install app</span>
+            <span className="install-short">Install</span>
           </button>
         )}
         <a className="plan-pill" href="#/plan" aria-current={planCurrent ? 'page' : undefined}>
@@ -32,7 +33,10 @@ export function Header({ canInstall, onInstall, planCurrent, session, signingIn,
               <span className="account-long">Sign out</span>
               <span className="account-short">Sign out</span>
             </button>
-            <button type="button" className="account-delete" onClick={onDeleteAccount}>Delete account</button>
+            <button type="button" className="account-delete" onClick={onDeleteAccount}>
+              <span className="account-long">Delete account</span>
+              <span className="account-short">Delete</span>
+            </button>
           </>
         ) : (
           <button type="button" className="account-button" onClick={() => setAccountOpen(true)}>

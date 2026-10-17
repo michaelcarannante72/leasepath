@@ -180,7 +180,7 @@ export function SearchPage({
                 ))}
               </select>
             </label>
-            <label className={`search-field${filters.maxRent ? ' is-set' : ''}`}>
+            <label className={`search-field rent-field${filters.maxRent ? ' is-set' : ''}`}>
               <span>Max monthly rent</span>
               <span className="rent-input">
                 <span>$</span>
@@ -194,22 +194,6 @@ export function SearchPage({
               </span>
             </label>
           </div>
-          {chips.length > 0 && (
-            <div className="filter-chips">
-              {chips.map((chip) => (
-                <button key={chip.key} type="button" className="filter-chip" onClick={() => onChange(chip.patch)} aria-label={`Remove ${chip.label}`}>
-                  {chip.label}
-                  <span aria-hidden="true">×</span>
-                </button>
-              ))}
-              {chips.length > 1 && (
-                <button type="button" className="filter-chip filter-chip-clear" onClick={() => onChange({ q: '', program: 'All', borough: 'All', beds: 'Any', maxRent: '', savedOnly: false, sort: 'rent-asc' })}>
-                  Clear all
-                </button>
-              )}
-            </div>
-          )}
-          <button className="show-apartments" type="submit">Show apartments</button>
           <div className="search-controls search-controls-extra">
             <label className={`search-field${filters.borough !== 'All' ? ' is-set' : ''}`}>
               <span>Borough</span>
@@ -237,6 +221,22 @@ export function SearchPage({
               Saved only
             </label>
           </div>
+          {chips.length > 0 && (
+            <div className="filter-chips">
+              {chips.map((chip) => (
+                <button key={chip.key} type="button" className="filter-chip" onClick={() => onChange(chip.patch)} aria-label={`Remove ${chip.label}`}>
+                  {chip.label}
+                  <span aria-hidden="true">×</span>
+                </button>
+              ))}
+              {chips.length > 1 && (
+                <button type="button" className="filter-chip filter-chip-clear" onClick={() => onChange({ q: '', program: 'All', borough: 'All', beds: 'Any', maxRent: '', savedOnly: false, sort: 'rent-asc' })}>
+                  Clear all
+                </button>
+              )}
+            </div>
+          )}
+          <button className="show-apartments" type="submit">Show apartments</button>
         </form>
         )}
       </section>

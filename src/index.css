@@ -39,12 +39,14 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 ::selection { color: var(--navy); background: #f4e1b0; }
 
 .app {
+  position: relative;
   height: 100dvh;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto auto;
 }
 
 .topbar {
+  container: topbar / inline-size;
   position: sticky;
   top: 0;
   z-index: 20;
@@ -95,6 +97,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   min-height: 40px;
   padding: 6px 14px;
 }
+.install-short { display: none; }
 .account-button {
   min-height: 40px;
   padding: 6px 14px;
@@ -242,13 +245,15 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   margin: 0 auto;
   padding: 16px 0;
   overflow: auto;
+  overscroll-behavior: contain;
 }
 
 .landing { display: grid; gap: 16px; }
+.hero-copy { container: hero-copy / inline-size; }
 .landing-hero {
   color: white;
-  margin: -16px calc(50% - 50vw) 0;
-  padding: 20px max(16px, calc(50vw - 50%)) 24px;
+  margin: 0;
+  padding: 20px 16px 24px;
   background:
     radial-gradient(120% 80% at 90% -10%, rgba(242, 169, 0, 0.22), transparent 46%),
     linear-gradient(165deg, #162433 0%, #1c2d42 48%, #2a4158 100%);
@@ -310,6 +315,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .audience button.is-on { background: white; color: var(--navy); }
 .audience button.is-on span { color: var(--muted); }
 .hero-search {
+  container: hero-search / inline-size;
   color: var(--navy);
   padding: 12px;
   border: 1px solid var(--line);
@@ -484,6 +490,9 @@ button.setup-cta { cursor: pointer; }
 .search-field select {
   appearance: none;
   padding-right: 18px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%231c2d42' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right center;
@@ -1088,25 +1097,106 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   .neighborhood-field, .search-controls-extra .check-line { grid-column: 1 / -1; }
 }
 
+@media (max-width: 799px) {
+  .stage { width: 100%; padding-top: 0; }
+  .landing-hero { padding: 18px 16px 20px; }
+  .landing > :not(.landing-hero),
+  .site-footer { margin-inline: 14px; }
+  .view > :not(.landing) { margin: 12px 14px 0; }
+}
+
 @media (max-width: 720px) {
   .results-bar { display: grid; }
-  .topbar { min-height: 64px; padding-inline: 14px; }
+  .topbar {
+    flex-wrap: nowrap;
+    gap: 8px;
+    min-height: 56px;
+    padding: max(8px, env(safe-area-inset-top)) 12px 8px;
+  }
   .topbar-note { display: none; }
-  .brand-name { font-size: 1.05rem; }
-  .topbar { gap: 8px; }
+  .brand { flex: 0 1 auto; min-width: 0; gap: 8px; }
+  .brand-mark { flex: none; }
+  .brand-name {
+    overflow: hidden;
+    font-size: 1.05rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .topbar-actions { flex: none; flex-wrap: nowrap; gap: 6px; }
   .install-button, .account-button { padding-inline: 10px; font-size: 0.8rem; }
-  .account-long, .account-email { display: none; }
-  .account-short { display: inline; }
-  .cookie-prompt { width: calc(100% - 12px); }
-  .cookie-actions .button { margin-left: 0; }
+  .install-long, .account-long, .account-email { display: none; }
+  .install-short, .account-short { display: inline; }
+  .account-delete { padding-inline: 4px; white-space: nowrap; }
+  .cookie-prompt {
+    width: calc(100% - 12px);
+    margin-bottom: 4px;
+    padding: 8px 12px;
+    gap: 4px;
+  }
+  .cookie-prompt h2 { margin: 0; font-size: 0.86rem; }
+  .cookie-prompt p { font-size: 0.78rem; line-height: 1.35; }
+  .cookie-actions { flex-wrap: wrap; gap: 2px 12px; }
+  .cookie-actions a { min-height: 36px; font-size: 0.8rem; }
+  .cookie-actions .button { margin-left: auto; min-height: 36px; padding-inline: 14px; }
   .dock { width: calc(100% - 12px); padding: 6px 4px; }
-  .dock-label { white-space: normal; text-overflow: clip; line-height: 1.1; text-align: center; }
+  .dock-label { line-height: 1.1; text-align: center; }
   .dock-center .dock-icon { width: 44px; height: 44px; }
   .plan-pill-label, .plan-pill > svg { display: none; }
-  .plan-pill { padding: 4px; border: 0; background: transparent; }
-  .stage { padding-top: 0; }
-  .landing-hero { margin-top: 0; padding-top: 18px; }
+  .plan-pill {
+    width: 36px;
+    height: 36px;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid var(--line);
+    background: white;
+  }
   .search-panel { padding: 14px 12px 12px; }
+}
+
+@media (max-width: 380px) {
+  .topbar { padding-inline: 8px; gap: 6px; }
+  .brand { gap: 6px; }
+  .brand-name { font-size: 1rem; }
+  .topbar-actions { gap: 4px; }
+  .install-button, .account-button { padding-inline: 8px; }
+}
+
+@media (max-width: 520px) {
+  .dock {
+    width: calc(100% - 8px);
+    gap: 0;
+    padding: 6px 2px 7px;
+    grid-template-columns: 0.9fr 0.78fr 1.12fr 1.28fr 0.7fr 1.12fr;
+  }
+  .dock-label {
+    font-size: 0.62rem;
+    letter-spacing: -0.03em;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .dock-center .dock-icon { width: 42px; height: 42px; border-width: 3px; }
+}
+
+@container topbar (inline-size < 900px) {
+  .topbar-note { display: none; }
+}
+
+@container hero-copy (inline-size < 440px) {
+  .audience { grid-template-columns: 1fr; }
+  .audience button {
+    min-height: 48px;
+    padding: 10px 14px;
+    text-align: left;
+  }
+}
+
+@container hero-search (inline-size < 520px) {
+  .hero-search .search-controls { grid-template-columns: 1fr 1fr; }
+  .hero-search .neighborhood-field,
+  .hero-search .rent-field,
+  .hero-search .search-controls-extra .search-field,
+  .hero-search .search-controls-extra .check-line { grid-column: 1 / -1; }
+  .hero-search .search-controls-extra { grid-template-columns: 1fr; }
 }
 
 @keyframes view-in {

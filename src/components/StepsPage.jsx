@@ -8,7 +8,7 @@ export function StepsPage({ checked, onToggle }) {
       <p className="eyebrow">Steps</p>
       <h1>From the letter to the lease</h1>
       <p className="lede">{done} of {STEPS.length} checked. Your worker’s instructions come first if they differ.</p>
-      <div className="step-progress" role="presentation">
+      <div className="step-progress" role="progressbar" aria-label="Steps checked" aria-valuemin={0} aria-valuemax={STEPS.length} aria-valuenow={done}>
         <span style={{ width: `${STEPS.length ? Math.round((done / STEPS.length) * 100) : 0}%` }} />
       </div>
       <ol className="steps">

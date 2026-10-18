@@ -131,7 +131,7 @@ export function PantryFinder() {
   return (
     <section className="pantry-finder" aria-labelledby="pantry-finder-title">
       <h2 id="pantry-finder-title">Pantries near you</h2>
-      <p className="lede">No sign-in. This uses the Food Help NYC list. Your location stays on this phone and is used to measure distance. LeasePath does not save it.</p>
+      <p className="lede">No sign-in. This uses the Food Help NYC list. A location you share stays on this phone and is used to measure distance. An address you type is sent to the NYC Planning Labs address search to find the spot. LeasePath does not save either one.</p>
       <form className="finder-form" onSubmit={searchAddress}>
         <label>
           <span>Address or intersection</span>

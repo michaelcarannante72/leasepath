@@ -1,14 +1,18 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "leasepath",
-  // Set this to today's date
+  // Pin to a date you have tested against. Bump it on purpose after running `wrangler dev` and the tests,
+  // not on every deploy. See https://developers.cloudflare.com/workers/configuration/compatibility-dates/
   "compatibility_date": "2026-10-08",
   "main": "./worker/index.js",
   "workers_dev": true,
   "preview_urls": true,
   "assets": {
     "directory": "./dist",
-    "not_found_handling": "single-page-application",
+    // The app routes with the URL hash (#/steps), so only "/" is an app page. /privacy and /terms are
+    // rendered by the Worker. Any other path is a real 404 (public/404.html) instead of the app shell,
+    // so /.well-known/*, /robots.txt, and missing images or scripts no longer return 200 HTML.
+    "not_found_handling": "404-page",
     "run_worker_first": ["/api/*", "/privacy", "/privacy/", "/terms", "/terms/"]
   },
   "routes": [

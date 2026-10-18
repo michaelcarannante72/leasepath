@@ -1,7 +1,9 @@
 import { money, sizeLabel, utilityLabel } from '../src/fit.js'
+import { LARGE_HOUSEHOLD, askFor, isLargeHousehold, normalizeHousehold, rentFlags, sourceText } from '../src/rentCheck.js'
 import { HRA_KNOWLEDGE } from './hraKnowledge.js'
 
 export const MODEL = 'grok-4.7'
+const MODEL_TIMEOUT_MS = 45_000
 
 const SYSTEM = `You are the LeasePath coach. You help a New Yorker use a housing voucher they already have, or take the next step to qualify for one. The vouchers in your policy pack are HASA, CityFHEPS, FHEPS, and Section 8.
 
@@ -14,10 +16,12 @@ Rules:
 - Never say someone qualifies, that a landlord must rent them a particular apartment, or that a rent will be approved. If they want to qualify, name the rule that matters and where to ask.
 - Never ask for a Social Security number, case number, benefit ID, medical record, diagnosis, HIV status, or immigration detail. If a message includes one, tell the person to remove it and do not repeat the number or the medical detail.
 - HASA is the HIV/AIDS Services Administration inside NYC HRA. Talk about it only as a housing and benefits program. Do not ask about health.
-- A household may already have a HASA voucher. Do not tell them to apply for HASA unless they ask how someone new gets in. The caseworker sets that rent. Do not use the CityFHEPS chart for a HASA voucher.
+- A household may already have a HASA voucher. Do not tell them to apply for HASA unless they ask how someone new gets in. HASA has its own rent schedule in the policy pack, and the caseworker approves the rent. Never use a CityFHEPS or Section 8 figure for a HASA voucher.
 - Food help, the food box, pantries, and the resource list do not need a LeasePath account. Mention that only when they ask where to look something up.
 - People may spell CityFHEPS as CityPHEPS or CityFHEPs. The program name is CityFHEPS.
 - If a number, form, phone number, or deadline is not in the policy pack, say you do not have it and point to the agency. Do not invent one. Do not describe a program that is not in the pack as if it is open.
+- Income lines: give one only from the INCOME PRE-SCREEN LINES block, as the "2026 HHS poverty guidelines", with the program name, effective date, and source link. HASA says below 200 percent and CityFHEPS says at or below 200 percent. HASA also needs HIV illness or AIDS and New York City residence. Never give an income limit for Section 8, FHEPS, SOTA, supportive housing, or a new or expanded program, and never use an area-median-income figure. Say you do not have it. Never say DSS or HRA confirmed the dollar figures. A person under the line is not approved, and a person over it may not qualify and should ask the caseworker.
+- Rent figures: give one only from the PROGRAM RENT FIGURES block, always with the program name, its effective date, and the source link. Keep HASA, CityFHEPS, and Section 8 apart. If the person has not named a program, ask which one before you give a figure. If a figure is missing, marked not yet loaded, or the block says to ask the caseworker, say "ask your caseworker" (for Section 8, "ask your housing specialist") and do not estimate. Never state a household share percentage, a HASA broker fee percentage, or an expansion of CityFHEPS as fact.
 
 ${HRA_KNOWLEDGE}
 
@@ -30,28 +34,35 @@ When you draft a message to a broker or landlord:
 
 Listings the app attaches are illustrative samples, not verified vacancies. Say that if you talk about a specific listing.
 
-A PLAN block and a LISTING block may be attached by the app. Use those figures. If the letter amount and the asking rent disagree, say so, and tell the person to confirm with their worker before viewing or paying anything.`
+A PLAN block and a LISTING block may be attached by the app. Use those figures. If the letter amount and the asking rent disagree, say so, and tell the person to confirm with their worker before viewing or paying anything. A RENT CHECK block, when present, was worked out by the app from that program’s own table. Repeat it with the program name, effective date, and source. Do not add figures to it.`
 
 function json(status, body) {
   return { status, json: body }
 }
 
 function scrub(value) {
-  return String(value || '')
+  // Only plain text is accepted. An object with its own toString would otherwise throw.
+  const text = typeof value === 'string' ? value : typeof value === 'number' && Number.isFinite(value) ? String(value) : ''
+  return text
     .replace(/\b\d{3}-\d{2}-\d{4}\b/g, '[removed]')
     .replace(/\b\d{9,}\b/g, '[removed]')
     .slice(0, 2000)
+}
+
+function num(value) {
+  return typeof value === 'number' || typeof value === 'string' ? Number(value) : 0
 }
 
 function planBlock(plan) {
   if (!plan || typeof plan !== 'object') return ''
   const lines = []
   const program = scrub(plan.program).slice(0, 40)
-  const household = Number(plan.household)
-  const letter = Number(plan.letterRent)
+  const household = num(plan.household)
+  const letter = num(plan.letterRent)
   const utilities = scrub(plan.utilities).slice(0, 40)
   if (program) lines.push(`Program: ${program}`)
-  if (household > 0 && household < 20) lines.push(`Household size: ${household}`)
+  if (isLargeHousehold(normalizeHousehold(plan.household))) lines.push('Household size: 9 or more. LeasePath shows no rent or income figure for this size. Say to ask the caseworker.')
+  else if (household > 0 && household <= 8) lines.push(`Household size: ${household}`)
   if (letter > 0 && letter < 100000) lines.push(`Amount typed from their letter: ${money(letter)} a month`)
   if (utilities) lines.push(`Utilities note they typed: ${utilities}`)
   if (!lines.length) return ''
@@ -65,10 +76,32 @@ function listingBlock(listing) {
     'LISTING (illustrative sample, not a verified vacancy)',
     `${sizeLabel(listing)} in ${scrub(listing.neighborhood)}, ${scrub(listing.borough)}`,
     `Near: ${scrub(listing.crossStreets)}`,
-    `Asking rent: ${money(Number(listing.rent) || 0)}`,
+    `Asking rent: ${money(num(listing.rent) || 0)}`,
     `Marked programs: ${programs.join(', ') || 'none'}`,
     `Utilities: ${utilityLabel(listing.utilities)}`,
   ].join('\n')
+}
+
+const UNIT_KINDS = new Set(['apartment', 'studio', 'sro', 'room'])
+
+/** The same program-specific check the app shows, for one listing. Built only from the program's own table. */
+function rentCheckBlock(plan, listing) {
+  if (!plan || typeof plan !== 'object' || !listing || typeof listing !== 'object') return ''
+  const program = scrub(plan.program).slice(0, 40)
+  if (!program) return 'RENT CHECK\nNo program is chosen. Ask which program before you give any rent figure.'
+  const unitKind = UNIT_KINDS.has(listing.unitKind) ? listing.unitKind : ''
+  const rent = num(listing.rent)
+  const bedrooms = Number.isInteger(listing.bedrooms) ? listing.bedrooms : null
+  if (!unitKind || !(rent > 0)) return ''
+  const household = num(plan.household)
+  const flags = rentFlags(
+    { unitKind, bedrooms, rent, utilities: typeof listing.utilities === 'string' ? listing.utilities : '' },
+    { program, household: normalizeHousehold(plan.household) === LARGE_HOUSEHOLD ? LARGE_HOUSEHOLD : household > 0 && household <= 8 ? household : '' },
+    {},
+  )
+  if (!flags.length) return `RENT CHECK\nThe app has no ${program} rent check. Say you do not have one and ${askFor(program).toLowerCase()}.`
+  const lines = flags.map((flag) => `- ${flag.text}${flag.source ? ` (${sourceText(flag.source)}${flag.source.url ? ` · ${flag.source.url}` : ''})` : ''}`)
+  return `RENT CHECK (${program}, from the app’s separate ${program} data)\n${lines.join('\n')}`
 }
 
 function replyText(response) {
@@ -95,6 +128,7 @@ async function callXai(key, input) {
       input,
       store: false,
     }),
+    signal: AbortSignal.timeout(MODEL_TIMEOUT_MS),
   })
   const data = await response.json().catch(() => ({}))
   if (!response.ok) {
@@ -108,7 +142,8 @@ async function callXai(key, input) {
 export function prepareGuide(body) {
   const history = Array.isArray(body?.messages) ? body.messages.slice(-8) : []
   const input = [{ role: 'system', content: SYSTEM }]
-  const context = [planBlock(body?.includePlan ? body.plan : null), listingBlock(body?.listing)].filter(Boolean).join('\n\n')
+  const plan = body?.includePlan ? body.plan : null
+  const context = [planBlock(plan), listingBlock(body?.listing), rentCheckBlock(plan, body?.listing)].filter(Boolean).join('\n\n')
 
   for (const message of history) {
     const role = message?.role === 'assistant' ? 'assistant' : 'user'

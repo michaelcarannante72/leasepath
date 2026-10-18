@@ -1,38 +1,20 @@
-// CityFHEPS figures from DSS-8j (E), "CityFHEPS Frequently Asked Questions
-// for Landlords and Brokers", dated 01/28/2026. The 2026 column applies to
-// new packages submitted on or after March 1, 2026, or leases starting
-// April 1, 2026 or later. Amounts are maximum rent when every utility is
-// included in the lease. A utility the tenant pays is subtracted as a
-// utility allowance. LeasePath does not decide anyone's official maximum.
+// Rent figures live in src/data/ (one module per program) and are checked in src/rentCheck.js.
+// This file only holds listing helpers that do not carry a program figure of their own.
+import { money, rentFlags } from './rentCheck.js'
 
-export const CITYFHEPS_SOURCE =
-  'DSS-8j (E), 01/28/2026, CityFHEPS FAQ for landlords and brokers'
-
-export const CITYFHEPS_2026 = [
-  { unitKind: 'sro', family: [1], bedrooms: 0, label: 'SRO', maxRentAllUtilities: 1953 },
-  { unitKind: 'studio', family: [1], bedrooms: 0, label: 'Studio', maxRentAllUtilities: 2604 },
-  { unitKind: 'apartment', family: [1, 2], bedrooms: 1, label: '1 bedroom', maxRentAllUtilities: 2734 },
-  { unitKind: 'apartment', family: [3, 4], bedrooms: 2, label: '2 bedrooms', maxRentAllUtilities: 2997 },
-  { unitKind: 'apartment', family: [5, 6], bedrooms: 3, label: '3 bedrooms', maxRentAllUtilities: 3753 },
-  { unitKind: 'apartment', family: [7, 8], bedrooms: 4, label: '4 bedrooms', maxRentAllUtilities: 4077 },
-]
-
-export const CITYFHEPS_ROOM_MAX = 1100
+export { money }
 
 export const PROGRAMS = ['CityFHEPS', 'HASA', 'Section 8']
 
 /** Programs a person can already be receiving. FHEPS is not a search filter. */
 export const VOUCHER_PROGRAMS = [...PROGRAMS, 'FHEPS']
 
-export function money(value) {
-  return `$${Number(value).toLocaleString('en-US')}`
-}
-
 export function sizeLabel(listing) {
   if (listing.unitKind === 'room') return 'Room'
   if (listing.unitKind === 'sro') return 'SRO'
   if (listing.unitKind === 'studio') return 'Studio'
-  const beds = listing.bedrooms
+  const beds = typeof listing.bedrooms === 'number' ? listing.bedrooms : Number.NaN
+  if (!Number.isFinite(beds)) return 'Apartment'
   return beds === 1 ? '1 bed' : `${beds} beds`
 }
 
@@ -43,116 +25,96 @@ export function utilityLabel(utilities) {
   return 'Ask which utilities are included'
 }
 
-export function cityfhepsRow(listing, household) {
-  const size = Number(household)
-  if (!size) return null
-  if (listing.unitKind === 'room') {
-    return { unitKind: 'room', label: 'Room', maxRentAllUtilities: CITYFHEPS_ROOM_MAX, family: [] }
-  }
-  return (
-    CITYFHEPS_2026.find(
-      (row) =>
-        row.unitKind === listing.unitKind &&
-        row.bedrooms === listing.bedrooms &&
-        row.family.includes(size),
-    ) || null
-  )
-}
-
-export function assessListing(listing, plan) {
+export function assessListing(listing, plan, options = {}) {
   const flags = []
   const program = plan?.program
   const knownProgram = PROGRAMS.includes(program)
 
   if (knownProgram && listing.programs.includes(program)) {
     flags.push({
+      kind: 'marked',
       level: 'good',
       text: `Marked for ${program}. Confirm it with the broker and your worker before you visit or pay anyone.`,
     })
   } else if (knownProgram) {
     flags.push({
+      kind: 'marked',
       level: 'watch',
       text: `This sample is not marked for ${program}.`,
     })
   } else if (program === 'FHEPS') {
     flags.push({
+      kind: 'marked',
       level: 'note',
-      text: 'Your plan says FHEPS. These samples are marked for CityFHEPS, HASA, or Section 8. Compare the asking rent with the amount on your letter, then confirm the program with your worker.',
+      text: 'Your plan says FHEPS. These samples are marked for CityFHEPS, HASA, or Section 8. LeasePath has no FHEPS rent figures. Compare the asking rent with the amount on your letter, then confirm the program with your worker.',
     })
   }
 
   const letter = Number(plan?.letterRent)
   if (letter > 0) {
+    // The figure is the person's own. Without a program it says so, so it is not mistaken for a program limit.
+    const named = VOUCHER_PROGRAMS.includes(program)
+    const label = named ? `${program} letter` : 'No program selected'
+    const whose = named ? `Your ${program} letter` : 'No program selected. Your letter'
     if (listing.rent > letter) {
       flags.push({
+        kind: 'letter',
+        label,
         level: 'watch',
-        text: `Your letter says ${money(letter)}. This asking rent is ${money(listing.rent - letter)} higher.`,
+        text: `${whose} says ${money(letter)}. This asking rent is ${money(listing.rent - letter)} higher.`,
       })
     } else {
       flags.push({
+        kind: 'letter',
+        label,
         level: 'good',
-        text: `Your letter says ${money(letter)}. This asking rent is within that amount.`,
+        text: `${whose} says ${money(letter)}. This asking rent is within that amount.`,
       })
     }
   }
 
-  if (program === 'CityFHEPS') {
-    const size = Number(plan.household)
-    if (!size) {
-      flags.push({
-        level: 'note',
-        text: 'Add your household size under My voucher to compare this with the published CityFHEPS chart.',
-      })
-    } else if (listing.unitKind === 'room') {
-      if (listing.rent > CITYFHEPS_ROOM_MAX) {
-        flags.push({
-          level: 'watch',
-          text: `The CityFHEPS landlord FAQ caps a rented room in NYC at ${money(CITYFHEPS_ROOM_MAX)}. This asking rent is higher.`,
-        })
-      } else {
-        flags.push({
-          level: 'note',
-          text: `A CityFHEPS room in NYC is capped at ${money(CITYFHEPS_ROOM_MAX)} in the landlord FAQ. Heat, hot water, electricity, and cooking gas (when the stove is not electric) have to be included. Ask your worker whether a room works for your household.`,
-        })
-      }
-      if (listing.utilities !== 'all') {
-        flags.push({
-          level: 'watch',
-          text: 'This room does not include every utility. The CityFHEPS room rule requires those utilities in the rent.',
-        })
-      }
-    } else {
-      const row = cityfhepsRow(listing, size)
-      if (!row) {
-        flags.push({
-          level: 'watch',
-          text: `A ${sizeLabel(listing).toLowerCase()} is not the size on the CityFHEPS chart for a household of ${size}. Ask your worker before you treat this as an option.`,
-        })
-      } else if (listing.rent > row.maxRentAllUtilities) {
-        flags.push({
-          level: 'watch',
-          text: `Above the published CityFHEPS 2026 maximum for a ${row.label.toLowerCase()} when all utilities are included (${money(row.maxRentAllUtilities)}).`,
-        })
-      } else {
-        flags.push({
-          level: 'good',
-          text: `Within the published CityFHEPS 2026 maximum for a ${row.label.toLowerCase()} when all utilities are included (${money(row.maxRentAllUtilities)}).`,
-        })
-      }
-      if (listing.utilities !== 'all') {
-        flags.push({
-          level: 'note',
-          text: 'You would pay a utility here. DSS subtracts a utility allowance, so the rent that can be approved can be lower than the chart. The allowance table is at nyc.gov/dsshousing.',
-        })
-      }
-    }
-  }
-
+  flags.push(...rentFlags(listing, plan, options).map((item) => ({ ...item, kind: 'program' })))
   return flags
 }
 
 export function leadFlag(flags) {
   return flags.find((flag) => flag.level === 'watch') || flags.find((flag) => flag.level === 'good') || flags[0] || null
+}
+
+/**
+ * The lines a search card shows. The program result always comes first, so a "within your letter" line can never
+ * hide a program caveat (a tenant-paid utility, an ask-your-caseworker result, a size mismatch). A second line
+ * shows the most useful of the other flags. At most two lines.
+ */
+export function cardFlags(flags) {
+  const program = flags.find((flag) => flag.kind === 'program') || null
+  const rest = flags.filter((flag) => flag.kind !== 'program')
+  const other = rest.find((flag) => flag.kind === 'letter') || rest.find((flag) => flag.level === 'watch') || rest[0] || null
+  return [program, other].filter(Boolean)
+}
+
+/** Short text label for a flag or card line, so its meaning never depends on color alone. It says what was compared, so "within" never reads as an approval. */
+export function cardLabel(flag) {
+  if (flag.label) return flag.label
+  if (flag.kind === 'program' && flag.summary) {
+    const program = flag.source?.program || 'program'
+    if (flag.level === 'watch') return `Above ${program} limit`
+    if (flag.level === 'good') return `Within ${program} limit`
+    return 'Check utilities'
+  }
+  if (flag.kind === 'program') return flag.source ? `${flag.source.program} note` : 'Ask'
+  if (flag.kind === 'marked') return flag.level === 'good' ? 'Marked' : flag.level === 'watch' ? 'Not marked' : 'Note'
+  return flag.level === 'watch' ? 'Look closer' : flag.level === 'good' ? 'Good sign' : 'Note'
+}
+
+/** Text for a card line. A line with a program figure shows its no-figure summary, never the figure without a link. */
+export function cardText(flag) {
+  if (flag.source) {
+    if (flag.summary) return flag.summary
+    // An ask or caveat line with no dollar figure is safe to show as written.
+    return /\$\d/.test(flag.text) ? `${flag.source.program}: open this apartment for the details and the source.` : flag.text
+  }
+  return flag.text
 }
 
 function sizeMatches(listing, beds) {

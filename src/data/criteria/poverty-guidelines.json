@@ -1,0 +1,115 @@
+{
+  "app_note": "Re-check in January 2027 when new HHS guidelines are published",
+  "year": 2026,
+  "publication_date": "2026-01-15",
+  "effective_date": "2026-01-13",
+  "effective_date_note": "Federal Register: 'Effective Date: January 13, 2026 unless an office administering a program using the guidelines specifies a different effective date for that particular program.'",
+  "source_title": "Annual Update of the HHS Poverty Guidelines (Federal Register notice, 91 FR 1797, FR Doc. 2026-00755, published 2026-01-15); also ASPE 'Poverty Guidelines' page (HHS Poverty Guidelines for 2026)",
+  "source_url": "https://www.govinfo.gov/content/pkg/FR-2026-01-15/html/2026-00755.htm",
+  "source_url_federal_register_web": "https://www.federalregister.gov/documents/2026/01/15/2026-00755/annual-update-of-the-hhs-poverty-guidelines",
+  "source_url_aspe": "https://aspe.hhs.gov/topics/poverty-economic-mobility/poverty-guidelines",
+  "source_url_aspe_multiples_chart": "https://aspe.hhs.gov/sites/default/files/documents/b1bfa16b20ae9b89d525bc35de7c1643/detailed-guidelines-2026.pdf",
+  "jurisdiction": "48 contiguous states and DC",
+  "confidence": "official",
+  "rows": [
+    {
+      "household_size": 1,
+      "fpl_100_annual": 15960,
+      "fpl_200_annual": 31920,
+      "fpl_200_monthly": 2660,
+      "fpl_200_monthly_exact": "2660",
+      "fpl_200_monthly_exact_fraction": "2660",
+      "fpl_200_monthly_floor": 2660,
+      "fpl_200_monthly_rounded_overstates": false
+    },
+    {
+      "household_size": 2,
+      "fpl_100_annual": 21640,
+      "fpl_200_annual": 43280,
+      "fpl_200_monthly": 3607,
+      "fpl_200_monthly_exact": "3606.666667",
+      "fpl_200_monthly_exact_fraction": "10820/3",
+      "fpl_200_monthly_floor": 3606,
+      "fpl_200_monthly_rounded_overstates": true
+    },
+    {
+      "household_size": 3,
+      "fpl_100_annual": 27320,
+      "fpl_200_annual": 54640,
+      "fpl_200_monthly": 4553,
+      "fpl_200_monthly_exact": "4553.333333",
+      "fpl_200_monthly_exact_fraction": "13660/3",
+      "fpl_200_monthly_floor": 4553,
+      "fpl_200_monthly_rounded_overstates": false
+    },
+    {
+      "household_size": 4,
+      "fpl_100_annual": 33000,
+      "fpl_200_annual": 66000,
+      "fpl_200_monthly": 5500,
+      "fpl_200_monthly_exact": "5500",
+      "fpl_200_monthly_exact_fraction": "5500",
+      "fpl_200_monthly_floor": 5500,
+      "fpl_200_monthly_rounded_overstates": false
+    },
+    {
+      "household_size": 5,
+      "fpl_100_annual": 38680,
+      "fpl_200_annual": 77360,
+      "fpl_200_monthly": 6447,
+      "fpl_200_monthly_exact": "6446.666667",
+      "fpl_200_monthly_exact_fraction": "19340/3",
+      "fpl_200_monthly_floor": 6446,
+      "fpl_200_monthly_rounded_overstates": true
+    },
+    {
+      "household_size": 6,
+      "fpl_100_annual": 44360,
+      "fpl_200_annual": 88720,
+      "fpl_200_monthly": 7393,
+      "fpl_200_monthly_exact": "7393.333333",
+      "fpl_200_monthly_exact_fraction": "22180/3",
+      "fpl_200_monthly_floor": 7393,
+      "fpl_200_monthly_rounded_overstates": false
+    },
+    {
+      "household_size": 7,
+      "fpl_100_annual": 50040,
+      "fpl_200_annual": 100080,
+      "fpl_200_monthly": 8340,
+      "fpl_200_monthly_exact": "8340",
+      "fpl_200_monthly_exact_fraction": "8340",
+      "fpl_200_monthly_floor": 8340,
+      "fpl_200_monthly_rounded_overstates": false
+    },
+    {
+      "household_size": 8,
+      "fpl_100_annual": 55720,
+      "fpl_200_annual": 111440,
+      "fpl_200_monthly": 9287,
+      "fpl_200_monthly_exact": "9286.666667",
+      "fpl_200_monthly_exact_fraction": "27860/3",
+      "fpl_200_monthly_floor": 9286,
+      "fpl_200_monthly_rounded_overstates": true
+    }
+  ],
+  "per_additional_person": {
+    "applies_to": "households with more than 8 persons",
+    "fpl_100_annual": 5680,
+    "fpl_200_annual": 11360,
+    "fpl_200_monthly": 947,
+    "fpl_200_monthly_exact": "946.666667",
+    "fpl_200_monthly_exact_fraction": "2840/3"
+  },
+  "notes": [
+    "Only fpl_100_annual values and the per-additional-person $5,680 are as stated by the source. fpl_200_* and monthly values are computed by LeasePath tooling: 200% = 2 x 100% annual; monthly = annual/12, rounded to nearest dollar (half up), exact value also shown.",
+    "Figures read directly from the Federal Register notice text (govinfo.gov) and the ASPE poverty-guidelines page; both agree. The ASPE 2026 multiples chart PDF (detailed-guidelines-2026.pdf) lists 200% annual values identical to the computed fpl_200_annual (31,920 ... 111,440) and 100% monthly values to the cent.",
+    "Alaska and Hawaii have separate, higher tables; not recorded here. New York and DC use the 48 contiguous states and DC table.",
+    "The Federal Register effective date (2026-01-13) applies 'unless an office administering a program using the guidelines specifies a different effective date for that particular program.' HRA/DSS have not been found to state a program-specific effective date.",
+    "ASPE page notes the 2026 calculation compared the average CPI-U for 11 available months of 2025 (October excluded due to the federal shutdown) with all 12 months of 2024; the notice states a 2.63 percent price increase.",
+    "HRA HASA FAQ SPSVC-18 (E) 06/12/2026 uses '200% x $15,960 FPL = $31,920' in an example, consistent with these 2026 figures.",
+    "Retrieved 2026-10-18 via curl/WebFetch/WebSearch. Federal Register govinfo HTML was fetched directly; the federalregister.gov web page was seen via search result only."
+  ],
+  "monthly_note": "fpl_200_monthly is rounded to the nearest dollar and overstates the limit for sizes 2, 5 and 8. Compare income in annual dollars (monthly x 12) against fpl_200_annual. If a monthly figure is shown, use fpl_200_monthly_floor ('or less'). Corrected 2026-10-18.",
+  "recheck": "New HHS guidelines expected around January 2027; re-check then."
+}

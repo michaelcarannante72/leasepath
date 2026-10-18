@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { ACCESS_HRA_URL, HOMEBASE_URL } from '../data.js'
 import { VOUCHER_PROGRAMS } from '../fit.js'
+import { HOUSEHOLD_CHOICES, LARGE_HOUSEHOLD } from '../rentCheck.js'
 import { Icon } from './Icon.jsx'
 
 const RECEIVING = [
@@ -109,7 +110,7 @@ export function Onboarding({ plan, onSave, onSkip, preset }) {
           )}
 
           {draft.program === 'HASA' && (
-            <p className="setup-note">Your caseworker sets the HASA rent. You can still save the amount on your letter.</p>
+            <p className="setup-note">LeasePath has the HASA rent schedule on My voucher, as HASA’s own figures. Your caseworker sets the rent that applies to you. You can still save the amount on your letter.</p>
           )}
           {draft.program === 'FHEPS' && (
             <p className="setup-note">LeasePath does not keep a FHEPS rent chart. Save the amount on your letter if you have it.</p>
@@ -121,8 +122,8 @@ export function Onboarding({ plan, onSave, onSkip, preset }) {
                 <span>People in the household</span>
                 <select value={draft.household} onChange={(event) => set({ household: event.target.value })}>
                   <option value="">Select</option>
-                  {Array.from({ length: 8 }, (_, index) => index + 1).map((count) => (
-                    <option key={count} value={count}>{count}</option>
+                  {HOUSEHOLD_CHOICES.map((count) => (
+                    <option key={count} value={count}>{count === LARGE_HOUSEHOLD ? '9 or more' : count}</option>
                   ))}
                 </select>
               </label>

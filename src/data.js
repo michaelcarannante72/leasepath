@@ -238,7 +238,7 @@ export const STEPS = [
   },
   {
     title: 'Gather what your worker asked for',
-    detail: 'Keep the letter, photo ID, and any forms your worker named. Some CityFHEPS packets use a broker declaration (CAS-517), a landlord statement (W-147M), and a security voucher (W-147N-a). Ask which current forms apply to you.',
+    detail: 'Keep the letter, photo ID, and any forms your worker named. Some CityFHEPS packets use a landlord statement about the broker (W-147M, only when a broker fee is requested) and an HRA security voucher (W-147N). Ask which current forms apply to you.',
   },
   {
     title: 'Search, then ask',
@@ -261,7 +261,7 @@ export const RESOURCES = [
   {
     group: 'HASA voucher',
     title: 'HASA services',
-    detail: 'Case management, rental assistance, SNAP, Medicaid, transportation, and home care. The rent on a HASA voucher is set with your caseworker, not from the CityFHEPS chart.',
+    detail: 'Case management, rental assistance, SNAP, Medicaid, transportation, and home care. HASA has its own rent schedule, shown on My voucher. Your caseworker sets the rent that applies to you. It is not the CityFHEPS chart.',
     href: 'https://www.nyc.gov/site/hra/help/hiv-aids-services.page',
     action: 'Open HASA services',
   },
@@ -338,7 +338,7 @@ export const RESOURCES = [
   {
     group: 'Rent help next to HASA',
     title: 'Section 8 at NYCHA',
-    detail: 'Housing Choice Voucher. Your payment standard is on your own paperwork. NYCHA and HPD run it, not HRA.',
+    detail: 'Housing Choice Voucher. Your payment standard is on your own paperwork. NYCHA and HPD run it, not HRA. NYCHA standards are on My voucher.',
     href: 'https://www.nyc.gov/site/nycha/section-8/about-section-8.page',
     action: 'Open NYCHA Section 8',
   },

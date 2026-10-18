@@ -1,18 +1,12 @@
 import { Building } from './Building.jsx'
 import { Icon } from './Icon.jsx'
 import { ACCESS_HRA_URL, BOROUGHS, HOMEBASE_URL } from '../data.js'
-import { PROGRAMS, leadFlag, money, sizeLabel, utilityLabel } from '../fit.js'
+import { PROGRAMS, cardFlags, cardLabel, cardText, money, sizeLabel, utilityLabel } from '../fit.js'
 
 const SORT_LABELS = {
   'rent-asc': 'Rent, low to high',
   'rent-desc': 'Rent, high to low',
   neighborhood: 'Neighborhood',
-}
-
-const MATCH_LABEL = {
-  good: 'Fits the letter',
-  watch: 'Look closer',
-  note: 'Worth a note',
 }
 
 const APPLY_DOORS = [
@@ -271,7 +265,7 @@ export function SearchPage({
         ) : (
           <ul className="cards">
             {listings.map((listing) => {
-              const flag = leadFlag(planFlags(listing))
+              const lines = cardFlags(planFlags(listing))
               const savedHere = saved.includes(listing.id)
               return (
                 <li key={listing.id}>
@@ -279,12 +273,12 @@ export function SearchPage({
                     <button type="button" className="card-open" onClick={() => onOpen(listing.id)}>
                       <Building tone={listing.facade} />
                       <div className="card-body">
-                        {flag && (
-                          <p className={`match match-${flag.level}`}>
-                            <span>{MATCH_LABEL[flag.level] || 'Note'}</span>
-                            {flag.text}
+                        {lines.map((line) => (
+                          <p key={`${line.kind}-${line.text}`} className={`match match-${line.level}`}>
+                            <span>{cardLabel(line)}</span>
+                            {cardText(line)}
                           </p>
-                        )}
+                        ))}
                         <div className="card-top">
                           <p className="rent">{money(listing.rent)}<span>/mo</span></p>
                           <p className="size">{sizeLabel(listing)} · {listing.baths} bath</p>

@@ -6,18 +6,17 @@ export function loadGoogleSignIn() {
   if (window.google?.accounts?.id) return Promise.resolve()
   if (pending) return pending
   pending = new Promise((resolve, reject) => {
-    const done = () => {
-      if (window.google?.accounts?.id) resolve()
-      else {
-        pending = null
-        reject(new Error('google'))
-      }
-    }
+    let script = document.querySelector(`script[src="${SCRIPT_SRC}"]`)
+    // A failed script tag stays in the page and never fires again, so a retry would hang. Remove it.
     const fail = () => {
       pending = null
+      script?.remove()
       reject(new Error('google'))
     }
-    let script = document.querySelector(`script[src="${SCRIPT_SRC}"]`)
+    const done = () => {
+      if (window.google?.accounts?.id) resolve()
+      else fail()
+    }
     if (!script) {
       script = document.createElement('script')
       script.src = SCRIPT_SRC

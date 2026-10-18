@@ -1,0 +1,6 @@
+# Applied by Workers static assets. The Worker adds the same security headers to /api, /privacy, and /terms.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: geolocation=(self), camera=(), microphone=(), payment=()

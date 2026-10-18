@@ -1,5 +1,8 @@
 import { ACCESS_HRA_URL, HOMEBASE_URL } from '../data.js'
-import { CITYFHEPS_2026, CITYFHEPS_ROOM_MAX, CITYFHEPS_SOURCE, VOUCHER_PROGRAMS, money } from '../fit.js'
+import { VOUCHER_PROGRAMS } from '../fit.js'
+import { HOUSEHOLD_CHOICES, LARGE_HOUSEHOLD } from '../rentCheck.js'
+import { IncomePrescreen } from './IncomePrescreen.jsx'
+import { CityfhepsPanel, HasaPanel, Section8Panel } from './ProgramPanels.jsx'
 
 const SITUATIONS = [
   'Shelter or transitional housing',
@@ -9,13 +12,13 @@ const SITUATIONS = [
   'Unsure',
 ]
 
-export function PlanPage({ plan, onChange }) {
+export function PlanPage({ plan, onChange, checks, onChecks, onClearIncome }) {
   return (
     <div className="page">
       <p className="eyebrow">My voucher</p>
       <h1>The figures on your letter</h1>
       <p className="lede">
-        LeasePath keeps this on this phone so search can compare sample rents with it. If you sign in, the same figures stay on your account. It does not decide eligibility.
+        LeasePath keeps this on this phone so search can compare sample rents with it. The shopping letter date and the other check answers below stay on this phone only. If you sign in, the same figures stay on your account. It does not decide eligibility.
       </p>
       <p className="next-action">
         {plan.receiving === 'none'
@@ -68,8 +71,8 @@ export function PlanPage({ plan, onChange }) {
           <span>People in the household</span>
           <select value={plan.household} onChange={(event) => onChange({ household: event.target.value })}>
             <option value="">Select</option>
-            {Array.from({ length: 8 }, (_, index) => index + 1).map((count) => (
-              <option key={count} value={count}>{count}</option>
+            {HOUSEHOLD_CHOICES.map((count) => (
+              <option key={count} value={count}>{count === LARGE_HOUSEHOLD ? '9 or more' : count}</option>
             ))}
           </select>
         </label>
@@ -101,39 +104,11 @@ export function PlanPage({ plan, onChange }) {
         </label>
       </form>
 
-      {plan.program === 'CityFHEPS' && (
-        <section className="panel">
-          <h2>Published CityFHEPS maximums, 2026</h2>
-          <p>These are maximum rents when every utility is in the lease. Your shopping letter can be lower. If you pay a utility, DSS subtracts an allowance.</p>
-          <table>
-            <thead>
-              <tr><th>Household</th><th>Size</th><th>Maximum</th></tr>
-            </thead>
-            <tbody>
-              {CITYFHEPS_2026.map((row) => (
-                <tr key={row.label}>
-                  <td>{row.family.join(' or ')}</td>
-                  <td>{row.label}</td>
-                  <td>{money(row.maxRentAllUtilities)}</td>
-                </tr>
-              ))}
-              <tr>
-                <td>Room, NYC</td>
-                <td>Room</td>
-                <td>{money(CITYFHEPS_ROOM_MAX)}</td>
-              </tr>
-            </tbody>
-          </table>
-          <p className="fine">Source: {CITYFHEPS_SOURCE}. New packages on or after March 1, 2026 use this column.</p>
-        </section>
-      )}
+      <IncomePrescreen plan={plan} checks={checks} onChecks={onChecks} onClear={onClearIncome} />
 
-      {plan.program === 'HASA' && (
-        <section className="panel">
-          <h2>HASA sets the rent with you</h2>
-          <p>LeasePath does not keep a HASA rent chart. Your caseworker has the amount for your household. HASA ServiceLine is 718-557-1399, weekdays 9am to 5pm. Food, the food box, and the other city programs are on Resources. That list does not ask you to sign in.</p>
-        </section>
-      )}
+      {plan.program === 'CityFHEPS' && <CityfhepsPanel checks={checks} onChecks={onChecks} />}
+
+      {plan.program === 'HASA' && <HasaPanel checks={checks} onChecks={onChecks} />}
 
       {plan.program === 'FHEPS' && (
         <section className="panel">
@@ -143,12 +118,7 @@ export function PlanPage({ plan, onChange }) {
         </section>
       )}
 
-      {plan.program === 'Section 8' && (
-        <section className="panel">
-          <h2>Use the payment standard on your voucher</h2>
-          <p>NYCHA and HPD set Section 8 payment standards. LeasePath does not copy those dollar amounts into a chart. Type the figure from your paperwork above, and the cards will compare asking rent with it.</p>
-        </section>
-      )}
+      {plan.program === 'Section 8' && <Section8Panel checks={checks} onChecks={onChecks} />}
     </div>
   )
 }

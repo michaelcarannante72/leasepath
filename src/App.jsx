@@ -19,6 +19,11 @@ import { LISTINGS } from './data.js'
 import { SITE_PAGES } from './sitePages.js'
 import { PROGRAMS, VOUCHER_PROGRAMS, assessListing, filterListings } from './fit.js'
 import { onInstallAvailable, promptInstall } from './install.js'
+import { readItem, readJson, writeItem } from './storage.js'
+import { dayNumber } from './dates.js'
+import { SECTION8_AGENCIES } from './data/section8.js'
+import { cityfhepsAllowance, normalizeHousehold } from './rentCheck.js'
+import { incomePeriod, storedIncome } from './incomePrescreen.js'
 
 const PLAN_KEY = 'leasepath.plan'
 const SAVED_KEY = 'leasepath.saved'
@@ -26,6 +31,10 @@ const STEPS_KEY = 'leasepath.steps'
 const ONBOARD_KEY = 'leasepath.onboarded'
 const INTENT_KEY = 'leasepath.intent'
 const NEIGHBORHOOD_KEY = 'leasepath.neighborhood'
+// Device-only answers for the rent checks and the income pre-screen (letter issue date, voucher agency and size,
+// utility amounts, household income).
+// Never sent to /api/account or /api/guide.
+const CHECKS_KEY = 'leasepath.checks'
 
 const WELCOME = {
   role: 'assistant',
@@ -35,14 +44,7 @@ const WELCOME = {
 }
 
 function loadJson(key, fallback) {
-  try {
-    const raw = localStorage.getItem(key)
-    if (!raw) return fallback
-    const parsed = JSON.parse(raw)
-    return parsed ?? fallback
-  } catch {
-    return fallback
-  }
+  return readJson(key, fallback)
 }
 
 function emptyPlan() {
@@ -55,11 +57,30 @@ function loadPlan() {
   const receiving = ['has', 'none', 'unsure'].includes(stored.receiving) ? stored.receiving : ''
   return {
     program: VOUCHER_PROGRAMS.includes(stored.program) ? stored.program : '',
-    household: stored.household ? String(stored.household) : '',
+    household: normalizeHousehold(stored.household),
     letterRent: stored.letterRent ? String(stored.letterRent).replace(/[^\d]/g, '') : '',
     utilities: typeof stored.utilities === 'string' ? stored.utilities : '',
     situation: typeof stored.situation === 'string' ? stored.situation : '',
     receiving,
+  }
+}
+
+function emptyChecks() {
+  return { letterDate: '', section8Agency: '', voucherBedrooms: '', hasaDeduction: '', cityfhepsAllowance: '', incomeAmount: '', incomePeriod: 'month' }
+}
+
+function loadChecks() {
+  const stored = loadJson(CHECKS_KEY, {})
+  if (!stored || typeof stored !== 'object' || Array.isArray(stored)) return emptyChecks()
+  const empty = emptyChecks()
+  return {
+    letterDate: typeof stored.letterDate === 'string' && dayNumber(stored.letterDate) !== null ? stored.letterDate : empty.letterDate,
+    section8Agency: SECTION8_AGENCIES.includes(stored.section8Agency) ? stored.section8Agency : empty.section8Agency,
+    voucherBedrooms: ['0', '1', '2', '3', '4', '5', '6', '7', '8'].includes(String(stored.voucherBedrooms)) ? String(stored.voucherBedrooms) : empty.voucherBedrooms,
+    hasaDeduction: stored.hasaDeduction ? String(stored.hasaDeduction).replace(/[^\d]/g, '').slice(0, 5) : empty.hasaDeduction,
+    cityfhepsAllowance: typeof stored.cityfhepsAllowance === 'string' && cityfhepsAllowance(stored.cityfhepsAllowance) ? stored.cityfhepsAllowance : empty.cityfhepsAllowance,
+    incomeAmount: storedIncome(stored.incomeAmount),
+    incomePeriod: incomePeriod(stored.incomePeriod),
   }
 }
 
@@ -80,6 +101,7 @@ function parseHash() {
 export default function App() {
   const [route, setRoute] = useState(parseHash)
   const [plan, setPlan] = useState(loadPlan)
+  const [checks, setChecks] = useState(loadChecks)
   const [saved, setSaved] = useState(() => {
     const stored = loadJson(SAVED_KEY, [])
     return Array.isArray(stored) ? stored.filter((id) => typeof id === 'string') : []
@@ -91,7 +113,7 @@ export default function App() {
   const [filters, setFilters] = useState(() => {
     const initial = loadPlan()
     return {
-      q: localStorage.getItem(NEIGHBORHOOD_KEY) || '',
+      q: readItem(NEIGHBORHOOD_KEY) || '',
       program: PROGRAMS.includes(initial.program) ? initial.program : 'All',
       borough: 'All',
       beds: 'Any',
@@ -103,7 +125,7 @@ export default function App() {
   const [onboardingOpen, setOnboardingOpen] = useState(false)
   const [onboardingPreset, setOnboardingPreset] = useState(null)
   const [intent, setIntent] = useState(() => {
-    const stored = localStorage.getItem(INTENT_KEY)
+    const stored = readItem(INTENT_KEY)
     return stored === 'letter' || stored === 'apply' ? stored : ''
   })
   const [paywall, setPaywall] = useState(null)
@@ -156,20 +178,20 @@ export default function App() {
       const next = {
         ...current,
         program: place.program || '',
-        household: place.household || '',
+        household: normalizeHousehold(place.household),
         letterRent: place.letterRent || '',
         utilities: place.utilities || '',
         receiving: place.receiving || '',
         situation: place.situation || '',
       }
-      localStorage.setItem(PLAN_KEY, JSON.stringify(next))
+      writeItem(PLAN_KEY, JSON.stringify(next))
       return next
     })
     const savedIds = Array.isArray(place.savedIds) ? place.savedIds.filter((id) => typeof id === 'string') : []
     const steps = Array.isArray(place.steps) ? place.steps.filter((index) => Number.isInteger(index)) : []
-    localStorage.setItem(SAVED_KEY, JSON.stringify(savedIds))
-    localStorage.setItem(STEPS_KEY, JSON.stringify(steps))
-    localStorage.setItem(NEIGHBORHOOD_KEY, place.neighborhood || '')
+    writeItem(SAVED_KEY, JSON.stringify(savedIds))
+    writeItem(STEPS_KEY, JSON.stringify(steps))
+    writeItem(NEIGHBORHOOD_KEY, place.neighborhood || '')
     setSaved(savedIds)
     setChecked(steps)
     setFilters((current) => ({
@@ -209,7 +231,7 @@ export default function App() {
   }, [applyAccess])
 
   useEffect(() => {
-    localStorage.setItem(NEIGHBORHOOD_KEY, filters.q)
+    writeItem(NEIGHBORHOOD_KEY, filters.q)
   }, [filters.q])
 
   useEffect(() => {
@@ -220,7 +242,7 @@ export default function App() {
     const storedSteps = loadJson(STEPS_KEY, [])
     const place = {
       program: storedPlan.program,
-      neighborhood: localStorage.getItem(NEIGHBORHOOD_KEY) || '',
+      neighborhood: readItem(NEIGHBORHOOD_KEY) || '',
       letterRent: storedPlan.letterRent,
       utilities: storedPlan.utilities,
       household: storedPlan.household,
@@ -318,20 +340,28 @@ export default function App() {
   const updatePlan = (patch) => {
     setPlan((current) => {
       const next = { ...current, ...patch }
-      localStorage.setItem(PLAN_KEY, JSON.stringify(next))
+      writeItem(PLAN_KEY, JSON.stringify(next))
+      return next
+    })
+  }
+
+  const updateChecks = (patch) => {
+    setChecks((current) => {
+      const next = { ...current, ...patch }
+      writeItem(CHECKS_KEY, JSON.stringify(next))
       return next
     })
   }
 
   const closeOnboarding = () => {
-    localStorage.setItem(ONBOARD_KEY, '1')
+    writeItem(ONBOARD_KEY, '1')
     setOnboardingOpen(false)
     setOnboardingPreset(null)
   }
 
   const chooseIntent = (next) => {
-    localStorage.setItem(INTENT_KEY, next)
-    localStorage.setItem(ONBOARD_KEY, '1')
+    writeItem(INTENT_KEY, next)
+    writeItem(ONBOARD_KEY, '1')
     setIntent(next)
     if (next === 'letter') {
       updatePlan({ receiving: 'has' })
@@ -363,7 +393,7 @@ export default function App() {
   const toggleSaved = (id) => {
     setSaved((current) => {
       const next = current.includes(id) ? current.filter((item) => item !== id) : [...current, id]
-      localStorage.setItem(SAVED_KEY, JSON.stringify(next))
+      writeItem(SAVED_KEY, JSON.stringify(next))
       return next
     })
   }
@@ -371,7 +401,7 @@ export default function App() {
   const toggleStep = (index) => {
     setChecked((current) => {
       const next = current.includes(index) ? current.filter((item) => item !== index) : [...current, index]
-      localStorage.setItem(STEPS_KEY, JSON.stringify(next))
+      writeItem(STEPS_KEY, JSON.stringify(next))
       return next
     })
   }
@@ -423,8 +453,19 @@ export default function App() {
     }
   }, [applyAccess])
 
+  // Income typed into the pre-screen lives only on this device. It is cleared on sign-out and when the account is deleted,
+  // so the next person on a shared phone does not see it.
+  const clearIncome = useCallback(() => {
+    setChecks((current) => {
+      const next = { ...current, incomeAmount: '', incomePeriod: 'month' }
+      writeItem(CHECKS_KEY, JSON.stringify(next))
+      return next
+    })
+  }, [])
+
   const deleteAccount = useCallback(async () => {
-    if (!window.confirm('Delete the LeasePath account? The letter stays on this phone.')) return
+    if (!window.confirm('Delete the LeasePath account? The letter stays on this phone. Income you typed in the pre-screen is cleared.')) return
+    clearIncome()
     setSignInError('')
     try {
       const response = await fetch('/api/account', { method: 'DELETE', credentials: 'same-origin' })
@@ -434,9 +475,10 @@ export default function App() {
     } catch {
       setSignInError('LeasePath could not reach the account. Check your connection and try again.')
     }
-  }, [applyAccess])
+  }, [applyAccess, clearIncome])
 
   const signOut = useCallback(async () => {
+    clearIncome()
     setSignInError('')
     try {
       const response = await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' })
@@ -445,7 +487,7 @@ export default function App() {
     } catch {
       setSignInError('LeasePath could not sign you out. Try again.')
     }
-  }, [applyAccess])
+  }, [applyAccess, clearIncome])
 
   const openResources = useCallback(() => {
     setAssistantOpen(false)
@@ -543,7 +585,7 @@ export default function App() {
               saved={saved}
               onToggleSave={toggleSaved}
               onOpen={(id) => go(`#/listing/${id}`)}
-              planFlags={(item) => assessListing(item, plan)}
+              planFlags={(item) => assessListing(item, plan, checks)}
               intent={intent}
               onIntent={chooseIntent}
             />
@@ -551,8 +593,9 @@ export default function App() {
         {route.name === 'detail' && listing && (
           <DetailPage
             listing={listing}
-            flags={assessListing(listing, plan)}
+            flags={assessListing(listing, plan, checks)}
             plan={plan}
+            checks={checks}
             saved={saved.includes(listing.id)}
             onToggleSave={() => toggleSaved(listing.id)}
             onBack={() => go('#/')}
@@ -568,7 +611,7 @@ export default function App() {
         )}
         {route.name === 'steps' && <StepsPage checked={checked} onToggle={toggleStep} />}
         {route.name === 'resources' && <ResourcesPage />}
-        {route.name === 'plan' && <PlanPage plan={plan} onChange={updatePlan} />}
+        {route.name === 'plan' && <PlanPage plan={plan} onChange={updatePlan} checks={checks} onChecks={updateChecks} onClearIncome={clearIncome} />}
         {route.name === 'blog' && <BlogList />}
         {route.name === 'post' && <BlogPost post={post} />}
         {route.name === 'info' && <InfoPage page={infoPage} />}

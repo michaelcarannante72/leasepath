@@ -2,11 +2,19 @@ import { useState } from 'react'
 import { Building } from './Building.jsx'
 import { Icon } from './Icon.jsx'
 import { money, sizeLabel, starterMessage, utilityLabel } from '../fit.js'
+import { brokerFeeNotices, cashDepositNotice, fareNotices, securityVoucherNotices } from '../fees.js'
+import { FlagList } from './SourceLine.jsx'
 
 export function DetailPage({ listing, flags, plan, saved, onToggleSave, onBack, onAsk, onDraft }) {
   const [copied, setCopied] = useState(false)
   const [copyError, setCopyError] = useState('')
   const draft = starterMessage(listing, plan)
+  // Typed here for this visit only. Not saved and not sent anywhere.
+  const [tenantFee, setTenantFee] = useState('')
+  const [cashAsked, setCashAsked] = useState(false)
+  const program = plan?.program || ''
+  const feeNotices = [...brokerFeeNotices(program, listing.rent, Number(tenantFee) || 0), ...fareNotices(program)]
+  const depositNotices = [...securityVoucherNotices(program), ...(cashAsked ? [cashDepositNotice(program)] : [])]
 
   const copyDraft = async () => {
     try {
@@ -52,11 +60,7 @@ export function DetailPage({ listing, flags, plan, saved, onToggleSave, onBack, 
         {flags.length === 0 ? (
           <p>Add a program and the amount from your letter under My voucher. LeasePath will compare this sample with those figures. The comparison is a reading aid. Your worker decides.</p>
         ) : (
-          <ul className="flag-list">
-            {flags.map((flag) => (
-              <li key={flag.text} className={`flag flag-${flag.level}`}>{flag.text}</li>
-            ))}
-          </ul>
+          <FlagList flags={flags} />
         )}
         <div className="button-row">
           <button type="button" className="button" onClick={() => onAsk(`Does the asking rent on this sample look workable with my voucher? Tell me what I should confirm before I contact anyone.`)}>
@@ -68,6 +72,28 @@ export function DetailPage({ listing, flags, plan, saved, onToggleSave, onBack, 
           <button type="button" className={`button button-quiet ${saved ? 'is-saved' : ''}`} onClick={onToggleSave}>
             <Icon name={saved ? 'heartFill' : 'heart'} size={16} /> {saved ? 'Saved' : 'Save'}
           </button>
+        </div>
+      </section>
+
+      <section className="panel">
+        <h2>Broker fee</h2>
+        <FlagList flags={feeNotices} />
+        <div className="stack">
+          <label>
+            <span>Does this listing ask you to pay a broker fee? Amount (optional)</span>
+            <input inputMode="numeric" value={tenantFee} onChange={(event) => setTenantFee(event.target.value.replace(/[^\d]/g, '').slice(0, 6))} placeholder="Leave blank if none" />
+          </label>
+        </div>
+      </section>
+
+      <section className="panel">
+        <h2>Security deposit</h2>
+        <FlagList flags={depositNotices} />
+        <div className="stack">
+          <label className="check-line">
+            <input type="checkbox" checked={cashAsked} onChange={(event) => setCashAsked(event.target.checked)} />
+            This listing asks for a cash deposit
+          </label>
         </div>
       </section>
 

@@ -125,7 +125,7 @@ export async function handleApi({
   }
 
   if (pathname === '/api/auth/email' && method === 'POST') {
-    return handleEmailAccount({ body, auth, accounts, usage, ip, now })
+    return handleEmailAccount({ body, auth, accounts, usage, ip, now, secret })
   }
 
   if (pathname !== '/api/guide') {
@@ -167,33 +167,42 @@ export async function handleApi({
   }
 
   const result = await completeGuide({ key, input: prepared.input, callModel })
-  if (result.json?.error === 'bad_key' && decision.refund) {
+  let refunded = 0
+  if (result.status !== 200 && decision.refund) {
+    // The person got no answer (rejected key, upstream error, timeout, empty reply), so the question is not used up.
     try {
       await decision.refund()
+      refunded = 1
     } catch {
-      // The question was refused by the model host. Losing the refund still fails closed.
+      // Losing the refund still fails closed.
     }
   }
+  const back = (value) => (Number.isInteger(value) ? value + refunded : value)
   return withAccess(result.status, {
     ...result.json,
-    anonymousRemaining: decision.anonymousRemaining,
-    accountRemaining: decision.accountRemaining,
+    anonymousRemaining: back(decision.anonymousRemaining),
+    accountRemaining: back(decision.accountRemaining),
   }, auth)
 }
 
-async function limitPasswordTries(usage, ip, now) {
+async function hashedNetwork(secret, ip) {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`${secret}:${ip || 'unknown'}`))
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('').slice(0, 32)
+}
+
+async function limitPasswordTries(usage, ip, now, secret) {
   if (!usage) return true
   try {
     const day = (now instanceof Date ? now : new Date()).toISOString().slice(0, 10)
-    const cleanIp = String(ip || 'unknown').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 80) || 'unknown'
-    const result = await usage.consume(`pw:${day}:${cleanIp}`, 20)
+    // The counter is stored under a keyed hash, so a raw IP address is never written to storage.
+    const result = await usage.consume(`pw:${day}:${await hashedNetwork(secret, ip)}`, 20)
     return Boolean(result?.ok)
   } catch {
     return true
   }
 }
 
-async function handleEmailAccount({ body, auth, accounts, usage, ip, now }) {
+async function handleEmailAccount({ body, auth, accounts, usage, ip, now, secret }) {
   if (!auth.secretReady) {
     return withAccess(503, {
       error: 'auth_not_configured',
@@ -214,7 +223,7 @@ async function handleEmailAccount({ body, auth, accounts, usage, ip, now }) {
       message: 'Use an email address and a password of at least 8 characters.',
     }, auth)
   }
-  if (!(await limitPasswordTries(usage, ip, now))) {
+  if (!(await limitPasswordTries(usage, ip, now, secret))) {
     return withAccess(429, {
       error: 'rate_limit',
       message: 'Too many tries from this network. Wait and try again. Search stays open.',

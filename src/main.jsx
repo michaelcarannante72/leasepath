@@ -11,15 +11,11 @@ createRoot(document.getElementById('root')).render(
 )
 
 if ('serviceWorker' in navigator) {
-  const hadController = Boolean(navigator.serviceWorker.controller)
+  // The worker is network first, so a page that loaded before it took control keeps working.
+  // Reloading here would throw away anything typed in the first seconds of a first visit.
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/service-worker.js').catch((error) => {
       console.error('LeasePath could not register the service worker:', error)
     })
   })
-  if (!hadController) {
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      window.location.reload()
-    }, { once: true })
-  }
 }

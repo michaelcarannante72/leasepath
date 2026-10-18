@@ -58,7 +58,7 @@ export function sanitizePlace(input) {
     neighborhood: cleanLine(source.neighborhood, 80),
     letterRent: String(source.letterRent || '').replace(/[^\d]/g, '').slice(0, 6),
     utilities: UTILITIES.includes(source.utilities) ? source.utilities : '',
-    household: /^[1-8]$/.test(household) ? household : '',
+    household: /^([1-8]|9\+)$/.test(household) ? household : '',
     receiving: RECEIVING.includes(source.receiving) ? source.receiving : '',
     situation: SITUATIONS.includes(source.situation) ? source.situation : '',
     savedIds,

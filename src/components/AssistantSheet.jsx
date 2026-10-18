@@ -116,7 +116,7 @@ export function AssistantSheet({
               )}
               <label className="check-line">
                 <input type="checkbox" checked={includePlan} onChange={(event) => onIncludePlan(event.target.checked)} />
-                Include the amount on my letter
+                Include my voucher details (program, household size, letter amount, utilities)
               </label>
               <div className="composer-row">
                 <textarea

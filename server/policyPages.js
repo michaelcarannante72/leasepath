@@ -31,6 +31,9 @@ export function policyHtml(slug) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${escapeHtml(page.title)} · LeasePath</title>
+  <meta name="theme-color" content="#1C2D42">
+  <meta name="description" content="${escapeHtml(page.title)} for LeasePath, a practice guide for people with a New York City housing voucher.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="canonical" href="https://leasepath.app/${slug}">
   <style>
     body { margin: 0; font-family: Inter, system-ui, sans-serif; color: #1c2d42; background: #fff; }

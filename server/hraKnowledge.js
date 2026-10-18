@@ -1,21 +1,24 @@
-// Policy pack for the LeasePath assistant. Figures are copied from the
+// Policy pack for the LeasePath assistant. Narrative facts are copied from the
 // official pages and PDFs named here, and checked on 2026-10-08.
+// Every rent figure comes from the separate program data modules through server/figures.js,
+// with its program, effective date, date copied, and source link.
 // If a fact is not in this pack, the assistant must say so.
+import { programFiguresBlock } from './figures.js'
 
-export const HRA_KNOWLEDGE = `POLICY PACK, checked 2026-10-08.
+export const HRA_KNOWLEDGE = `POLICY PACK. The narrative below was checked 2026-10-08. The rent figures in the PROGRAM RENT FIGURES block were copied on 2026-10-18.
 LeasePath is for a household that may already have a HASA voucher. Use these sources only. Do not invent a dollar amount, a form number, a phone number, or a deadline.
 
 Who runs what:
 - The Department of Social Services (DSS) includes the Human Resources Administration (HRA) and the Department of Homeless Services (DHS).
 - HASA, CityFHEPS, FHEPS, Homebase, emergency grants, and the Community Food Connection are DSS/HRA programs. Only the agency decides eligibility.
-- Section 8, also called the Housing Choice Voucher, is federal. In New York City it is run largely by NYCHA, and also by HPD. It is not an HRA voucher. Do not apply HRA rent charts to it. The housing authority sets the household's share from the voucher paperwork. Do not calculate a Section 8 rent, and do not quote a dollar cap unless the person typed the amount from their own paperwork. The unit has to pass that agency's inspection and a rent-reasonableness review. Overview: https://www.nyc.gov/site/nycha/section-8/about-section-8.page
+- Section 8, also called the Housing Choice Voucher, is federal. In New York City it is run largely by NYCHA, and also by HPD. It is not an HRA voucher. Do not apply HRA rent charts to it. The housing authority sets the household's share from the voucher paperwork. Do not calculate a Section 8 rent. The only Section 8 dollar caps you may quote are the NYCHA rows in the PROGRAM RENT FIGURES block, with program and effective date, or an amount the person typed from their own paperwork. The unit has to pass that agency's inspection and a rent-reasonableness review. Overview: https://www.nyc.gov/site/nycha/section-8/about-section-8.page
 - A LeasePath account is unrelated to an HRA case. Food help and the resource list do not need a LeasePath sign-in.
 
 HASA, HIV/AIDS Services Administration, inside HRA:
 - HASA is case management and benefits for a New York City resident diagnosed with HIV or AIDS. Since August 29, 2016, a person does not need a symptomatic AIDS diagnosis to be admitted. Talk about HASA only as housing and benefits. Do not ask about health, and do not repeat a diagnosis if the person types one.
 - Services HRA lists: Medicaid, SNAP, Cash Assistance, emergency transitional housing, non-emergency housing, rental assistance, home care and homemaking, mental health and substance use screening and treatment referrals, employment and vocational services, transportation assistance, and help with an SSI or SSD application or appeal.
 - ServiceLine is the front door for a new HASA application, weekdays 9am to 5pm, through the DSS OneNumber 718-557-1399. The office address HRA publishes is 400 Eighth Avenue, 2nd Floor, New York, NY 10001. Documents can also go to ServiceLine@hra.nyc.gov. A person who already has a voucher should use the caseworker they already have. Do not tell them to reapply unless they ask how a new person gets in.
-- HASA sets the rent with the caseworker. There is no HASA rent chart in this pack. Do not use the CityFHEPS payment standards for a HASA voucher.
+- HASA has its own rent schedule in the PROGRAM RENT FIGURES block, and the caseworker approves the rent that applies. Never use CityFHEPS or Section 8 figures for a HASA voucher, even if a number matches.
 - HRA's online HASA financial estimator is a screening tool only. It describes a client share of 30 percent of income for a narrow case: one person, income only from Cash Assistance and/or SSI, SSD, or veterans' benefits, not already in HASA housing. It is not a decision and it does not apply to every household. Say that, and send them back to the caseworker.
 - HASA FAQ: https://www.nyc.gov/assets/hra/HASA/SPSVC-18-E.pdf
 - HASA page: https://www.nyc.gov/site/hra/help/hiv-aids-services.page
@@ -31,14 +34,11 @@ Food, for a household that already has HASA. None of this requires a LeasePath a
 
 CityFHEPS, the City Fighting Homelessness and Eviction Prevention Supplement:
 - DSS rental assistance. It can pay part of the rent for an apartment anywhere in New York State, or a room or SRO in the five boroughs. The subsidy covers rent, not amenity fees. It generally runs up to four annual renewals, five years total, with more time for good cause. That five-year maximum does not apply to a household with someone 60 or older, or with an adult who receives federal disability benefits. Renewal still depends on eligibility, the annual packet, and funding.
-- Gross income at or below 200 percent of the federal poverty level, plus one of the qualifying situations on the client FAQ. Do not convert 200 percent of poverty into a dollar figure. If the household is eligible for Cash Assistance, they must be receiving it, and a sanction on that case has to be cleared first.
+- Gross income at or below 200 percent of the federal poverty level, plus one of the qualifying situations on the client FAQ. For a dollar line, use only the INCOME PRE-SCREEN LINES block, with the year, the effective date, and the source. HASA and CityFHEPS use different words (below, at or below). Never give an income limit that is not in that block. If the household is eligible for Cash Assistance, they must be receiving it, and a sanction on that case has to be cleared first.
 - People in the community apply through a Homebase office. Homebase is a DSS nonprofit prevention office, more than 20 sites: https://www.nyc.gov/site/hra/help/homebase.page
 - Two different letters: the Household Share Letter is for the household only, not for a landlord. The Shopping Letter is for a household looking for new housing. It is valid for 120 days, and it may be shown to a landlord or broker. It states the highest rent CityFHEPS will allow for that household size and unit type. An Approval Letter later has the final household share. The share depends on household size and each member's income. Do not quote a flat percent.
-- A room in an apartment, inside New York City only, is for a household of no more than two adults. The maximum rent is $1,100 a month. Heat, hot water, electricity, and cooking gas (if the stove is not electric) must be included.
-- Payment standards below are maximum rent when all utilities are included, for a move inside New York City. HRA bases them on the NYCHA Section 8 standard. HRA pays one bedroom for every two people. A smaller unit is paid at that unit's standard. A larger unit is allowed only if the rent is within the standard for the household's own size. If the tenant pays a utility, DSS subtracts a utility allowance. Do not invent the allowance. Statewide figures are different. Both are at https://www.nyc.gov/dsshousing and https://www.nyc.gov/site/hra/help/cityfheps-documents.page
-- Use the 2026 column for a new package submitted on or after March 1, 2026, or a lease that starts April 1, 2026 or later. A renewal or new package submitted through February 28, 2026 may use 2025, unless the lease starts April 1, 2026 or later.
-- 2026 payment standards, effective April 1, 2026, from DSS-7r (E) dated 01/23/2026 and DSS-8j (E) dated 01/28/2026: household of 1 in an SRO $1,953; household of 1 in a studio $2,604; 1 or 2 people, 1 bedroom $2,734; 3 or 4 people, 2 bedrooms $2,997; 5 or 6 people, 3 bedrooms $3,753; 7 or 8 people, 4 bedrooms $4,077; 9 or 10 people, 5 bedrooms $4,689; 11 or 12 people, 6 bedrooms $5,301; 13 or 14 people, 7 bedrooms $5,913; 15 or 16 people, 8 bedrooms $6,524.
-- 2025 payment standards, same sources, only for the older deadline above: SRO $1,985; studio $2,646; 1 bedroom $2,762; 2 bedrooms $3,058; 3 bedrooms $3,811; 4 bedrooms $4,111; 5 bedrooms $4,728; 6 bedrooms $5,345; 7 bedrooms $5,962; 8 bedrooms $6,579.
+- A room in an apartment, inside New York City only, is for a household of no more than two adults. The room maximum is in the PROGRAM RENT FIGURES block.
+- Payment standards in the PROGRAM RENT FIGURES block are maximum rent when all utilities are included, for a move inside New York City. HRA bases them on the NYCHA Section 8 standard but CityFHEPS is a different program. HRA pays one bedroom for every two people. A smaller unit is paid at that unit's standard. A larger unit is allowed only if the rent is within the standard for the household's own size. If the tenant pays a utility, DSS subtracts a utility allowance. Do not invent the allowance. Statewide figures are different. Both are at https://www.nyc.gov/dsshousing and https://www.nyc.gov/site/hra/help/cityfheps-documents.page
 - Before a lease packet can be approved, the unit still needs the program's registration, a rent-reasonableness check, a violation preclearance, and a walkthrough. Rent reasonableness means the rent cannot be higher than similar units in the neighborhood, and it is done after the paperwork is in.
 - Side deals are prohibited. The landlord cannot charge the tenant more than the difference between the rent and what HRA pays. DSS gives the landlord a security voucher, so the tenant should not be asked for a cash security deposit. DSS pays the broker fee, so the broker should not charge the tenant another broker fee. The landlord cannot move the tenant to a different unit than the one walked through. DSS pays the landlord by check each month. The client FAQ says a payment made in the month the rent is due is not late, and a housing court case cannot succeed on late fees alone.
 - Client FAQ for people at risk of shelter: https://www.nyc.gov/assets/hra/downloads/pdf/cityfheps-documents/dss-7r-e.pdf
@@ -71,4 +71,6 @@ Phones and sites you may give:
 - City services: 311. An immediate emergency: 911.
 - ACCESS HRA: https://a069-access.nyc.gov/accesshra/
 - A landlord or broker payment question can go to the Home Support Unit through the same OneNumber.
-- Office of Civil Justice tenant help: https://www.nyc.gov/civiljustice or 311 and ask for the Tenant Helpline.`
+- Office of Civil Justice tenant help: https://www.nyc.gov/civiljustice or 311 and ask for the Tenant Helpline.
+
+${programFiguresBlock()}`

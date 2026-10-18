@@ -3,6 +3,8 @@
   "name": "LeasePath",
   "short_name": "LeasePath",
   "description": "NYC apartments that take HASA, CityFHEPS, and Section 8.",
+  "lang": "en-US",
+  "dir": "ltr",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -32,6 +34,33 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "categories": [
+    "lifestyle",
+    "utilities"
+  ],
+  "shortcuts": [
+    {
+      "name": "Search apartments",
+      "short_name": "Search",
+      "url": "/#/",
+      "description": "Compare sample rents with your letter"
+    },
+    {
+      "name": "Steps from letter to lease",
+      "short_name": "Steps",
+      "url": "/#/steps"
+    },
+    {
+      "name": "Food and city resources",
+      "short_name": "Resources",
+      "url": "/#/resources"
+    },
+    {
+      "name": "My voucher",
+      "short_name": "My voucher",
+      "url": "/#/plan"
     }
   ]
 }

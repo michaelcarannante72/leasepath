@@ -597,11 +597,7 @@ button.setup-cta { cursor: pointer; }
 .rent span, .size, .where, .utilities { color: var(--muted); font-size: 0.92rem; font-weight: 500; }
 .card h2 { margin: 4px 0; font-size: 1.15rem; }
 .match {
-  display: -webkit-box;
   margin: 0 0 8px;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
   font-size: 0.82rem;
   font-weight: 600;
   line-height: 1.35;
@@ -1086,7 +1082,7 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   .search-note { margin-top: 6px; }
   .results-bar p { margin-bottom: 6px; }
   .card-body { padding: 8px 48px 8px 12px; }
-  .match { -webkit-line-clamp: 1; margin-bottom: 4px; }
+  .match { margin-bottom: 4px; }
   .card h2 { margin: 1px 0; }
   .utilities { margin: 2px 0; }
   .card .pills { margin-top: 4px; }
@@ -1210,3 +1206,50 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   .card, .save, .step-progress span, .dock-tab, .dock-center { transition: none; }
   .view, .save.is-saved { animation: none; }
 }
+
+/* Sources, rent tables, and device-only checks */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.source-line { display: block; margin-top: 4px; font-size: 0.875rem; line-height: 1.4; font-weight: 500; color: var(--muted); overflow-wrap: anywhere; }
+.source-line a { color: var(--navy); font-weight: 700; }
+.flag .source-line { color: inherit; }
+.flag-tag { display: block; margin-bottom: 2px; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; }
+.flag .source-line a { color: inherit; text-decoration: underline; }
+.rent-table { overflow-x: auto; }
+.rent-table caption { text-align: left; font-weight: 700; padding: 0 0 6px; }
+.rent-table table { min-width: 0; }
+.rent-table td, .rent-table th { overflow-wrap: anywhere; }
+.device-note { margin: 0 0 12px; padding: 8px 10px; border-radius: 10px; background: var(--note-bg); color: var(--note); font-size: 0.82rem; }
+.timer { margin: 12px 0 0; padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: white; }
+.timer-empty { margin: 0; padding: 0; border: 0; }
+.timer strong { display: block; font-size: 1.25rem; }
+.timer-expired { border-color: var(--watch); }
+.timer-expired strong { color: var(--watch); }
+.stack { display: grid; gap: 12px; margin-top: 12px; }
+.stack label { display: grid; gap: 6px; font-size: 0.82rem; font-weight: 600; }
+.stack input, .stack select { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: white; }
+.stack .check-line { display: flex; }
+.stack .check-line input { width: 18px; min-height: 0; }
+.plain-list { margin: 8px 0 0; padding-left: 18px; }
+
+/* Income pre-screen. Calm by design: every result uses the neutral note palette, and the over-the-line result is a plain note. */
+.prescreen-results { display: grid; gap: 12px; margin-top: 14px; }
+.prescreen-result { padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--note-bg); color: var(--note); }
+.prescreen-result h3 { margin: 0 0 4px; font-size: 1rem; }
+.prescreen-result p { margin: 6px 0 0; font-size: 0.9rem; line-height: 1.4; }
+.prescreen-result .prescreen-tag { margin: 0; font-size: 0.875rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; }
+.prescreen-result .prescreen-headline { font-weight: 700; }
+.prescreen-under, .prescreen-at { background: var(--ok-bg); color: var(--ok); }
+.prescreen-sources { display: grid; gap: 4px; }
+.prescreen-result .source-line a { color: inherit; text-decoration: underline; }
+.prescreen .fine, .prescreen .device-note, .prescreen .stack label, .prescreen .stack label span { font-size: 0.875rem; }
+.prescreen-tag [aria-hidden], .flag-tag [aria-hidden] { text-transform: none; }

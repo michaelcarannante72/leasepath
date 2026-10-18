@@ -29,7 +29,7 @@ export const POSTS = [
     body: [
       'CityFHEPS and Cash Assistance applications go through ACCESS HRA. A community application for CityFHEPS or FHEPS can also go through Homebase.',
       'A new HASA application is by phone. Call HASA ServiceLine at 718-557-1399, weekdays 9am to 5pm.',
-      'Section 8 depends on the agency that issued your voucher. Use the paperwork from that agency for the rent share. LeasePath does not keep a Section 8 payment chart.',
+      'Section 8 depends on the agency that issued your voucher. Use the paperwork from that agency for the rent share. LeasePath has the NYCHA payment standards only, kept apart from CityFHEPS and HASA. For HPD, use the figure on your voucher.',
     ],
   },
 ]

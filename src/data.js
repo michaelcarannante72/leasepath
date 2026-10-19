@@ -406,6 +406,13 @@ export const RESOURCES = [
     action: 'Find legal help',
   },
   {
+    group: 'Jobs and training',
+    title: 'Free online courses (NYS Department of Labor and Coursera)',
+    detail: 'Free Coursera courses and certificates through NYS DOL, in tech, business, and more. Who qualifies: New York residents over 18 who are unemployed or underemployed, or people outside New York who get New York unemployment benefits. Sign up from the DOL page with your NY.GOV ID, and use the same email for Coursera. Signing up on Coursera directly does not get you the free account. LeasePath is not affiliated with NYS DOL or Coursera.',
+    href: 'https://dol.ny.gov/online-learning-coursera',
+    action: 'See if you qualify',
+  },
+  {
     group: 'Call',
     title: 'DSS OneNumber',
     detail: 'HASA ServiceLine and HRA rental assistance. Weekdays. Call 311 for other city services. Call 911 in an emergency.',

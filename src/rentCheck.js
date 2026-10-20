@@ -82,8 +82,8 @@ function verdict(level, text, source, summary = '') {
     level === 'watch'
       ? `Asking rent is above the ${program} limit. Open it for the figure and source.`
       : level === 'good'
-        ? `Asking rent is within the ${program} limit. Open it for the figure and source.`
-        : `Asking rent is within the ${program} limit before any utility is subtracted. Open it for the figure and source.`
+        ? `Asking rent may fit the ${program} limit. It is not an approval. Open it for the figure and source.`
+        : `Asking rent may fit the ${program} limit before any utility is subtracted. Open it for the figure and source.`
   return { level, text, source, summary: summary || fallback }
 }
 

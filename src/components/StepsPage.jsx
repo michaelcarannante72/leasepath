@@ -11,6 +11,7 @@ export function StepsPage({ checked, onToggle }) {
       <div className="step-progress" role="progressbar" aria-label="Steps checked" aria-valuemin={0} aria-valuemax={STEPS.length} aria-valuenow={done}>
         <span style={{ width: `${STEPS.length ? Math.round((done / STEPS.length) * 100) : 0}%` }} />
       </div>
+      <p className="after-link"><a href="#/after-you-find">After you find an apartment: rent review, inspection, and move-in →</a></p>
       <ol className="steps">
         {STEPS.map((step, index) => {
           const on = checked.includes(index)

@@ -350,7 +350,7 @@ test('a within-limit result with a tenant-paid utility carries the "before any u
   for (const [plan, options] of cases) {
     const main = rentFlags(tenantPays, plan, options).find((flag) => flag.summary)
     assert.equal(main.level, 'note', plan.program)
-    assert.match(main.summary, new RegExp(`within the ${plan.program} limit before any utility is subtracted`))
+    assert.match(main.summary, new RegExp(`may fit the ${plan.program} limit before any utility is subtracted`))
     assert.doesNotMatch(main.summary, /\$\d/)
     const allIn = rentFlags({ ...tenantPays, utilities: 'all' }, plan, options).find((flag) => flag.summary)
     assert.equal(allIn.level, 'good')

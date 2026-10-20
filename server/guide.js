@@ -2,6 +2,16 @@ import { money, sizeLabel, utilityLabel } from '../src/fit.js'
 import { LARGE_HOUSEHOLD, askFor, isLargeHousehold, normalizeHousehold, rentFlags, sourceText } from '../src/rentCheck.js'
 import { HRA_KNOWLEDGE } from './hraKnowledge.js'
 
+// Short lease-up notes in LeasePath's own words, from the NYCHA, HPD, and HRA pages on the After you find an apartment page.
+export const LEASE_UP_KNOWLEDGE = `LEASE-UP NOTES (after someone finds an apartment). Reviewed 2026-10-19. Always add: confirm with your agency or caseworker (for Section 8, your housing specialist).
+- The top rent on a voucher or shopping letter is a ceiling, not an approved rent. The agency also checks rent reasonableness against similar apartments, utilities the tenant pays, and the legal rent if the apartment is rent-stabilized.
+- The landlord submits a package (Section 8: NYCHA or HPD forms; CityFHEPS: through the shelter or provider to HRA). The tenant name, address, apartment number, rent, utilities, and start date must match on every page.
+- Section 8 (NYCHA or HPD): the apartment must pass inspection before final approval. CityFHEPS: HRA clears the building, then the apartment gets a walkthrough. A tenant can pre-check smoke and CO alarms, heat, hot water, locks, leaks, and peeling paint.
+- Do not take keys, move in, or pay anything until there is written final approval or a move-in authorization. Never pay a fee outside the lease and program paperwork. Under the FARE Act, a broker the landlord hired cannot charge the tenant the broker fee.
+- After move-in, the agency share and the tenant share are paid separately. The tenant should keep their own record of what they pay.
+- Refusing a voucher or rental assistance is source-of-income discrimination under the NYC Human Rights Law. Report it to the NYC Commission on Human Rights.
+- CHAP (City Housing Assistance Program) is NOT open yet. This is press reporting (City Limits, Aug 21, 2026), not official rules. It is a new city voucher run by HPD, not HRA, for people in any city shelter or facing eviction from a rent-stabilized apartment. It reportedly has an income cap and no work requirement barrier; do not quote an income figure for CHAP, point to the After you find an apartment page and HPD. Tenants of buildings with a regulatory agreement are not eligible (check ACRIS). Capped at $175 million, about 5,600 households, so a waitlist is possible. Applications expected by January 2027, first eligibility decisions March 2027. Never say CHAP is open or that someone qualifies; tell shelter residents to ask their housing specialist.`
+
 export const MODEL = 'grok-4.7'
 const MODEL_TIMEOUT_MS = 45_000
 
@@ -33,6 +43,8 @@ Rules:
 - Rent figures: give one only from the PROGRAM RENT FIGURES block, always with the program name, its effective date, and the source link. Keep HASA, CityFHEPS, and Section 8 apart. If the person has not named a program, ask which one before you give a figure. If a figure is missing, marked not yet loaded, or the block says to ask the caseworker, say "ask your caseworker" (for Section 8, "ask your housing specialist") and do not estimate. Never state a household share percentage, a HASA broker fee percentage, or an expansion of CityFHEPS as fact.
 
 ${HRA_KNOWLEDGE}
+
+${LEASE_UP_KNOWLEDGE}
 
 When you draft a message to a broker or landlord:
 - Keep it under 120 words.

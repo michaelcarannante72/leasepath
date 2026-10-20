@@ -25,7 +25,7 @@ export function Paywall({ feature, onClose }) {
         <p className="eyebrow">Paid</p>
         <h2 id="paywall-title">{item.title}</h2>
         <p className="setup-intro">{item.detail}</p>
-        <p className="setup-intro">Search, resources, the pantry finder, the steps, and the letter comparison stay free. {FREE_COACH_QUESTIONS} coach questions are free on this browser, then a Google account. This screen does not take payment.</p>
+        <p className="setup-intro">Search, resources, the pantry finder, the steps, and the letter comparison stay free. {FREE_COACH_QUESTIONS} questions to Ruby are free on this browser, then a Google account. This screen does not take payment.</p>
         <button type="button" className="button" onClick={onClose}>Back to the listing</button>
       </section>
     </div>

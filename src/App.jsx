@@ -40,7 +40,7 @@ const WELCOME = {
   role: 'assistant',
   local: true,
   content:
-    'I can help you use a voucher, or take the next step to qualify for one. I can’t approve an apartment.',
+    "Hi, I'm Ruby. I'm designed to assist you in your housing search and help you navigate the complex and fiercely competitive NYC rental market.\n\nI help you stay focused on finding that apartment with a housing voucher.\n\nI know it can be difficult, even exhausting, to search for an apartment with a voucher.\n\nFrom here on out, you don't have to do it alone. I will walk you through every step: from homeless to shelter, to SRO, to navigating the complexities of HRA's bureaucracy. I'll help you keep track of your documents and deadlines for your landlord, broker and caseworker.\n\nWelcome to LeasePath. Let's get you into an apartment.\n\nHave you been given a shopping letter yet by your caseworker?",
 }
 
 function loadJson(key, fallback) {
@@ -537,7 +537,7 @@ export default function App() {
     } catch {
       setMessages((current) => [
         ...current,
-        { role: 'assistant', content: 'LeasePath could not reach the assistant. Check your connection and try again.' },
+        { role: 'assistant', content: 'LeasePath could not reach Ruby. Check your connection and try again.' },
       ])
     } finally {
       setPending(false)
@@ -559,10 +559,21 @@ export default function App() {
       : route.name === 'post'
         ? 'blog'
         : route.name
+  const navSelect = (id) => {
+    if (id === 'assistant') {
+      setAssistantListingId(route.name === 'detail' ? route.id : null)
+      setAssistantOpen(true)
+      return
+    }
+    setAssistantOpen(false)
+    go(id === 'search' ? '#/' : `#/${id}`)
+  }
 
   return (
     <div className="app">
       <Header
+        navActive={dockActive}
+        onNav={navSelect}
         canInstall={canInstall}
         onInstall={() => promptInstall()}
         planCurrent={route.name === 'plan'}
@@ -620,18 +631,7 @@ export default function App() {
         <Footer compact={route.name === 'search'} />
       </main>
       <CookiePrompt />
-      <Dock
-        active={dockActive}
-        onSelect={(id) => {
-          if (id === 'assistant') {
-            setAssistantListingId(route.name === 'detail' ? route.id : null)
-            setAssistantOpen(true)
-            return
-          }
-          setAssistantOpen(false)
-          go(id === 'search' ? '#/' : `#/${id}`)
-        }}
-      />
+      <Dock active={dockActive} onSelect={navSelect} />
       {assistantOpen && (
         <AssistantSheet
           messages={messages}

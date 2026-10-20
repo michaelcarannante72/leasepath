@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { HERO_PHOTO, LANDING_STEPS, NOT_AFFILIATED, landingSample, openAccount } from '../landing.js'
 
 function PhoneMockup() {
@@ -20,22 +21,35 @@ function PhoneMockup() {
   )
 }
 
+const WIDE = '(min-width: 900px)'
+
+/** Phones never download the photo: it is only rendered on wide screens. */
+function useWide() {
+  const query = typeof window !== 'undefined' && window.matchMedia ? window.matchMedia(WIDE) : null
+  const [wide, setWide] = useState(() => Boolean(query?.matches))
+  useEffect(() => {
+    if (!query) return undefined
+    const update = () => setWide(query.matches)
+    query.addEventListener('change', update)
+    return () => query.removeEventListener('change', update)
+  }, [query])
+  return wide
+}
+
 export function LandingHero({ onCheck }) {
+  const wide = useWide()
   return (
     <section className="hero-split" aria-labelledby="hero-title">
+      {wide && (
       <div className="hero-photo">
         <picture>
-          <source type="image/avif" media="(min-width: 900px)" srcSet="/images/brownstone-desktop.avif" />
-          <source type="image/webp" media="(min-width: 900px)" srcSet="/images/brownstone-desktop.webp" />
-          <source type="image/avif" srcSet="/images/brownstone-mobile.avif" />
-          <source type="image/webp" srcSet="/images/brownstone-mobile.webp" />
+          <source type="image/avif" srcSet="/images/brownstone-desktop.avif" />
+          <source type="image/webp" srcSet="/images/brownstone-desktop.webp" />
           <img
-            src="/images/brownstone-mobile.jpg"
-            srcSet="/images/brownstone-mobile.jpg 800w, /images/brownstone-desktop.jpg 960w"
-            sizes="(min-width: 900px) 50vw, 100vw"
+            src="/images/brownstone-desktop.jpg"
             alt={HERO_PHOTO.alt}
-            width="800"
-            height="400"
+            width="960"
+            height="1079"
             loading="lazy"
             decoding="async"
             fetchPriority="low"
@@ -44,12 +58,13 @@ export function LandingHero({ onCheck }) {
         <PhoneMockup />
         <a className="photo-by" href={HERO_PHOTO.sourceUrl} target="_blank" rel="noreferrer">{HERO_PHOTO.credit}</a>
       </div>
+      )}
       <div className="hero-text">
         <p className="eyebrow">NYC housing search</p>
         <h1 id="hero-title">NYC apartments that take HASA, CityFHEPS, and Section{'\u00A0'}8.</h1>
         <p className="hero-value">See if a listing fits your voucher before you call the broker.</p>
         <button type="button" className="hero-cta" onClick={onCheck}>Check a listing</button>
-        <p className="hero-account"><a href="#/" onClick={(event) => { event.preventDefault(); openAccount() }}>Create a free account</a></p>
+        <p className="hero-account"><a className="hero-account-link" href="#/" onClick={(event) => { event.preventDefault(); openAccount() }}>Create a free account</a></p>
         <p className="hero-any-phone">Works on any phone, no download needed.</p>
         <p className="not-affiliated">{NOT_AFFILIATED}</p>
       </div>

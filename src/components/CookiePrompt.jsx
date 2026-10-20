@@ -25,7 +25,7 @@ export function CookiePrompt() {
     <aside className="cookie-prompt" aria-labelledby="cookie-title">
       <div>
         <h2 id="cookie-title">Cookies on this phone</h2>
-        <p>LeasePath uses cookies to keep you signed in, to protect Google sign-in, and to count free coach questions. They are not used to sell information. OK only hides this reminder.</p>
+        <p>LeasePath uses cookies to keep you signed in, to protect Google sign-in, and to count free questions to Ruby. They are not used to sell information. OK only hides this reminder.</p>
       </div>
       <div className="cookie-actions">
         <a href="/privacy">Privacy notice</a>

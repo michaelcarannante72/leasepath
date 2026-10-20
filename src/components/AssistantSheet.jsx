@@ -7,7 +7,7 @@ function finePrint(configured, access) {
   if (configured === false) return 'No API key on this server yet. Search and resources still work.'
   if (access?.signedIn) {
     return Number.isInteger(access.accountRemaining)
-      ? `${access.accountRemaining} coach questions left today on this account. Leave out case numbers and medical details.`
+      ? `${access.accountRemaining} questions for Ruby left today on this account. Leave out case numbers and medical details.`
       : 'Leave out case numbers and medical details.'
   }
   if (Number.isInteger(access?.anonymousRemaining)) {
@@ -17,6 +17,12 @@ function finePrint(configured, access) {
   }
   return `${FREE_COACH_QUESTIONS} questions are free on this browser, then a Google account. Leave out case numbers and medical details.`
 }
+
+/** Quick replies to Ruby's opening question, shown until the person sends something. */
+const LETTER_REPLIES = [
+  { label: 'Yes', text: 'Yes, my caseworker gave me a shopping letter.' },
+  { label: 'Not yet', text: 'Not yet. My caseworker has not given me a shopping letter.' },
+]
 
 const SUGGESTIONS = [
   'How do I qualify for a voucher?',
@@ -62,13 +68,14 @@ export function AssistantSheet({
 
   return (
     <div className="sheet-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose() }}>
-      <section className="sheet" role="dialog" aria-modal="true" aria-labelledby="assistant-title">
+      <section className="sheet ruby-theme" role="dialog" aria-modal="true" aria-labelledby="assistant-title">
         <header className="sheet-head">
           <div>
-            <p className="eyebrow">Coach</p>
-            <h2 id="assistant-title">Short answers on vouchers</h2>
+            <p className="eyebrow">Resource Navigator</p>
+            <h2 id="assistant-title">Ask Ruby</h2>
+            <p className="sheet-sub">Short, straight answers on vouchers. Ruby is an AI assistant. Not affiliated with HRA, NYCHA, or any government agency.</p>
           </div>
-          <button ref={closeButton} type="button" className="icon-button" aria-label="Close assistant" onClick={onClose}>
+          <button ref={closeButton} type="button" className="icon-button" aria-label="Close Ruby" onClick={onClose}>
             <Icon name="close" size={18} />
           </button>
         </header>
@@ -80,7 +87,7 @@ export function AssistantSheet({
         </div>
         {paused ? (
           <div className="gate">
-            <h3>The coach is paused</h3>
+            <h3>Ruby is paused</h3>
             <p>Questions stay off until accounts are set up. Search and resources stay open.</p>
             <button type="button" className="button button-quiet" onClick={onOpenResources}>See resources</button>
           </div>
@@ -95,6 +102,11 @@ export function AssistantSheet({
         ) : (
           <>
             <div className="suggestions">
+              {messages.length === 1 && LETTER_REPLIES.map((reply) => (
+                <button key={reply.label} type="button" className="letter-reply" onClick={() => onSend(reply.text)} disabled={pending}>
+                  {reply.label}
+                </button>
+              ))}
               {SUGGESTIONS.map((suggestion) => (
                 <button key={suggestion} type="button" onClick={() => onSend(suggestion)} disabled={pending}>
                   {suggestion}
@@ -122,9 +134,9 @@ export function AssistantSheet({
                 <textarea
                   value={input}
                   onChange={(event) => onInput(event.target.value)}
-                  placeholder="Ask about a voucher"
+                  placeholder="Ask Ruby about a voucher"
                   rows={3}
-                  aria-label="Question for the LeasePath assistant"
+                  aria-label="Question for Ruby"
                   onKeyDown={(event) => {
                     if (event.key === 'Enter' && !event.shiftKey) {
                       event.preventDefault()
@@ -132,7 +144,7 @@ export function AssistantSheet({
                     }
                   }}
                 />
-                <button type="submit" className="button" disabled={pending || !input.trim()}>Send</button>
+                <button type="submit" className="button ruby-send" disabled={pending || !input.trim()}>Send</button>
               </div>
               <p className="fine">{finePrint(configured, access)}</p>
             </form>

@@ -2,11 +2,11 @@ import { CITYFHEPS_2026_ROWS } from './data/cityfheps.js'
 
 export const NOT_AFFILIATED = 'Not affiliated with HRA, NYCHA, or any government agency.'
 
-/** Hero photo: CC0, credited anyway. */
+/** Hero photo: CC BY 2.0, so the credit and source link must stay visible. */
 export const HERO_PHOTO = {
-  alt: 'A row of brownstone houses with front steps on a sunny block in Harlem, Manhattan.',
-  credit: 'Photo: Jim.henderson, Wikimedia Commons, CC0',
-  sourceUrl: 'https://commons.wikimedia.org/wiki/File:Lenox_123_rowhouses_jeh.jpg',
+  alt: 'A row of brownstone townhouses on East 126th Street in Harlem, each with its own front steps, door and cornice, the facades changing shade from house to house.',
+  credit: 'Photo: edwardhblake, Wikimedia Commons, CC BY 2.0',
+  sourceUrl: 'https://commons.wikimedia.org/wiki/File:17_E._126th_St,_Harlem.jpg',
 }
 
 function formatDate(iso) {
@@ -35,7 +35,7 @@ export function landingSample() {
 export const LANDING_STEPS = [
   { title: 'Check your voucher', detail: 'Put the amount from your letter in My voucher.', href: '#/plan' },
   { title: 'Find apartments', detail: 'Compare your limit to the asking rent.', href: '#search-results' },
-  { title: 'Ask the housing coach', detail: 'Get plain answers. Your worker still decides.', action: 'assistant' },
+  { title: 'Consult Ruby, our Resource Navigator', detail: 'Straight answers and your next step. Your worker still decides.', action: 'assistant' },
 ]
 
 export const OPEN_ACCOUNT_EVENT = 'leasepath:open-account'

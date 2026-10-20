@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { AccountDialog } from './AccountDialog.jsx'
+import { NAV_TABS } from '../navTabs.js'
 import { Icon } from './Icon.jsx'
 
-export function Header({ canInstall, onInstall, planCurrent, session, signingIn, signInError, onGoogleCredential, onEmailAuth, onSignOut, onDeleteAccount }) {
+export function Header({ canInstall, onInstall, planCurrent, session, signingIn, signInError, onGoogleCredential, onEmailAuth, onSignOut, onDeleteAccount, navActive, onNav }) {
   const [accountOpen, setAccountOpen] = useState(false)
   const closeAccount = () => setAccountOpen(false)
   if (session?.signedIn && accountOpen) setAccountOpen(false)
@@ -19,6 +20,21 @@ export function Header({ canInstall, onInstall, planCurrent, session, signingIn,
         <span className="brand-name">Lease<span>Path</span></span>
       </a>
       <p className="topbar-note">HASA · CityFHEPS · Section 8</p>
+      {onNav && (
+        <nav className="topnav" aria-label="Main">
+          {NAV_TABS.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={navActive === tab.id ? 'is-active' : ''}
+              aria-current={navActive === tab.id ? 'page' : undefined}
+              onClick={() => onNav(tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </nav>
+      )}
       <div className="topbar-actions">
         {canInstall && (
           <button type="button" className="install-button" onClick={onInstall}>

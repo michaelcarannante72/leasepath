@@ -37,6 +37,7 @@ const NEIGHBORHOOD_KEY = 'leasepath.neighborhood'
 // utility amounts, household income).
 // Never sent to /api/account or /api/guide.
 const CHECKS_KEY = 'leasepath.checks'
+const SHARE_KEY = 'leasepath.shareWithRuby'
 
 const WELCOME = {
   role: 'assistant',
@@ -136,7 +137,12 @@ export default function App() {
   const [messages, setMessages] = useState([WELCOME])
   const [input, setInput] = useState('')
   const [pending, setPending] = useState(false)
-  const [includePlan, setIncludePlan] = useState(true)
+  // Off by default. The choice is saved on this device for this person, and cleared by Delete my data.
+  const [includePlan, setIncludePlanState] = useState(() => readItem(SHARE_KEY) === 'on')
+  const setIncludePlan = useCallback((on) => {
+    setIncludePlanState(Boolean(on))
+    writeItem(SHARE_KEY, on ? 'on' : 'off')
+  }, [])
   const [configured, setConfigured] = useState(null)
   const [canInstall, setCanInstall] = useState(false)
   const [accountLive, setAccountLive] = useState(false)
@@ -542,12 +548,15 @@ export default function App() {
         body: JSON.stringify({
           messages: nextMessages.filter((message) => !message.local).slice(-8),
           includePlan,
-          plan: {
-            program: plan.program,
-            household: plan.household,
-            letterRent: plan.letterRent,
-            utilities: plan.utilities,
-          },
+          // Voucher details leave the phone only when the person has turned sharing on.
+          plan: includePlan
+            ? {
+                program: plan.program,
+                household: plan.household,
+                letterRent: plan.letterRent,
+                utilities: plan.utilities,
+              }
+            : undefined,
           listing,
         }),
       })

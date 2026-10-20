@@ -1375,6 +1375,7 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 .ruby-theme .suggestions button { border-color: rgba(155, 27, 48, 0.35); color: var(--ruby-deep); }
 .ruby-theme .composer textarea:focus { border-color: var(--ruby); outline: 2px solid var(--ruby-gold); outline-offset: 1px; }
 .ruby-theme .check-line input { accent-color: var(--ruby); }
+.ruby-theme .share-detail { display: block; margin-top: 2px; color: var(--muted); font-size: 0.875rem; font-weight: 500; }
 .ruby-theme .ruby-send { background: var(--ruby); color: white; box-shadow: inset 0 0 0 2px var(--ruby-gold); }
 .ruby-theme .ruby-send:hover:not(:disabled) { background: var(--ruby-deep); }
 .ruby-theme .ruby-send:disabled { background: #a85866; color: white; box-shadow: none; opacity: 1; }

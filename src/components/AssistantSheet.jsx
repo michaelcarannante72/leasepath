@@ -127,8 +127,11 @@ export function AssistantSheet({
                 </p>
               )}
               <label className="check-line">
-                <input type="checkbox" checked={includePlan} onChange={(event) => onIncludePlan(event.target.checked)} />
-                Include my voucher details (program, household size, letter amount, utilities)
+                <input type="checkbox" role="switch" aria-checked={includePlan} checked={includePlan} onChange={(event) => onIncludePlan(event.target.checked)} />
+                <span>
+                  Share my voucher details with Ruby
+                  <small className="share-detail">{includePlan ? 'On: program, household size, letter amount and utilities are sent with your questions.' : 'Off: nothing about your voucher leaves this phone.'}</small>
+                </span>
               </label>
               <div className="composer-row">
                 <textarea

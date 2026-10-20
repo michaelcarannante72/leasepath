@@ -86,3 +86,15 @@ test('the dialog needs DELETE typed, and the flow is wired from My voucher and t
   assert.match(flow, /if \(!response\.ok\) return \{ ok: false/)
   assert.match(flow, /setPlan\(emptyPlan\(\)\)[^]*setChecks\(emptyChecks\(\)\)/)
 })
+
+test('voucher sharing with Ruby is off by default, one tap to turn on, saved per device, and sends no plan when off', () => {
+  const app = readFileSync(new URL('../src/App.jsx', import.meta.url), 'utf8')
+  const sheet = readFileSync(new URL('../src/components/AssistantSheet.jsx', import.meta.url), 'utf8')
+  assert.match(app, /const SHARE_KEY = 'leasepath\.shareWithRuby'/)
+  assert.match(app, /useState\(\(\) => readItem\(SHARE_KEY\) === 'on'\)/)
+  assert.doesNotMatch(app, /useState\(true\)\n?.*includePlan|\[includePlan, setIncludePlan\] = useState\(true\)/)
+  assert.match(app, /plan: includePlan\s*\?\s*\{[^]*?\}\s*: undefined,/)
+  assert.match(sheet, /Share my voucher details with Ruby/)
+  assert.match(sheet, /role="switch"/)
+  assert.match(sheet, /Off: nothing about your voucher leaves this phone\./)
+})

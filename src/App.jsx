@@ -7,6 +7,8 @@ import { Dock } from './components/Dock.jsx'
 import { Footer, InfoPage } from './components/Footer.jsx'
 import { Header } from './components/Header.jsx'
 import { CookiePrompt } from './components/CookiePrompt.jsx'
+import { AnalyticsConsent } from './components/AnalyticsConsent.jsx'
+import { readConsent, trackView } from './analytics.js'
 import { Onboarding } from './components/Onboarding.jsx'
 import { Paywall } from './components/Paywall.jsx'
 import { PlanPage } from './components/PlanPage.jsx'
@@ -135,6 +137,12 @@ export default function App() {
   })
   const [paywall, setPaywall] = useState(null)
   const [assistantOpen, setAssistantOpen] = useState(false)
+  const [analyticsConsent, setAnalyticsConsent] = useState(readConsent)
+
+  // Analytics: nothing loads or is pushed without consent, and HASA views and Ruby's chat send nothing.
+  useEffect(() => {
+    trackView(window, document, { hashPath: window.location.hash.replace(/^#/, '') || '/', assistantOpen, consent: analyticsConsent })
+  }, [route, assistantOpen, analyticsConsent])
   const [assistantListingId, setAssistantListingId] = useState(null)
   const [messages, setMessages] = useState([WELCOME])
   const [input, setInput] = useState('')
@@ -707,6 +715,7 @@ export default function App() {
         <Footer compact={route.name === 'search'} />
       </main>
       <CookiePrompt />
+      <AnalyticsConsent onChange={setAnalyticsConsent} />
       <DeleteAccountDialog
         open={deleteOpen}
         signedIn={session.signedIn}

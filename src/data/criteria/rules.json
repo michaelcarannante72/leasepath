@@ -403,7 +403,7 @@
     "id": "section8-agencies",
     "program": "Section 8",
     "category": "other",
-    "rule": "Section 8 (Housing Choice Voucher) is a federal HUD program, not HRA/DSS. NYCHA administers the largest NYC program; HPD and NY State HCR also run Section 8 in NYC.",
+    "rule": "Section 8 (Housing Choice Voucher) is a federal HUD program, not HRA/DSS. In NYC it is administered by NYCHA (largest Section 8 program in the country; approx. 107,979 vouchers and over 26,933 owners), and also by HPD and NY State HCR.",
     "applies_to": null,
     "figure": null,
     "unit": null,
@@ -412,8 +412,8 @@
     "source_doc_number": null,
     "source_url": "https://www.nyc.gov/site/nycha/section-8/about-section-8.page",
     "confidence": "official",
-    "app_check": "Section 8 path selector: NYCHA / HPD.",
-    "notes": "Page shows no date."
+    "app_check": "Section 8 path selector and voucher-table note: NYCHA / HPD / HCR.",
+    "notes": "Page shows no date; voucher/owner counts are 'currently' per page, re-check periodically. Verified HTTP 200 on 2026-10-20."
   },
   {
     "id": "section8-not-hra-rules",

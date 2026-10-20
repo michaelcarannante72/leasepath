@@ -1540,3 +1540,6 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 @media (min-width: 800px) {
   .after-page { max-width: 800px; margin-inline: auto; }
 }
+
+/* HASA card second link. */
+.resource-more { display: inline-flex; gap: 4px; align-items: center; margin: 6px 0 0 12px; color: var(--navy); font-weight: 700; font-size: 0.9rem; }

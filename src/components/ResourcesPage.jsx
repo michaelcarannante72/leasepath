@@ -22,6 +22,9 @@ export function ResourcesPage() {
                   <span>{item.detail}</span>
                   <em>{item.action} <Icon name="external" size={14} /></em>
                 </a>
+                {item.more && (
+                  <a className="resource-more" href={item.more.href} target="_blank" rel="noreferrer">{item.more.label} <Icon name="external" size={14} /></a>
+                )}
               </li>
             ))}
           </ul>

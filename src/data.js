@@ -261,9 +261,11 @@ export const RESOURCES = [
   {
     group: 'HASA voucher',
     title: 'HASA services',
-    detail: 'Case management, rental assistance, SNAP, Medicaid, transportation, and home care. HASA has its own rent schedule, shown on My voucher. Your caseworker sets the rent that applies to you. It is not the CityFHEPS chart.',
+    // Exact copy from the housing specialist. Do not edit without her.
+    detail: "HASA (part of NYC HRA) helps NYC residents living with HIV or AIDS with case management, housing help, and benefits. You don't need an AIDS diagnosis or symptoms to qualify. In most HASA rental help, you pay about 30% of your income and HASA pays the rest. HASA will ask for medical proof; LeasePath never asks for or stores it.",
     href: 'https://www.nyc.gov/site/hra/help/hiv-aids-services.page',
     action: 'Open HASA services',
+    more: { label: 'HASA FAQs', href: 'https://www.nyc.gov/site/hra/help/hasa-faqs.page' },
   },
   {
     group: 'HASA voucher',

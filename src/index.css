@@ -1540,3 +1540,11 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 @media (min-width: 800px) {
   .after-page { max-width: 800px; margin-inline: auto; }
 }
+
+/* Section 8 and EHV notices. */
+.notice-card { border-left: 4px solid var(--gold); }
+.moving-notice { margin: 10px 0; padding: 12px; border-radius: 12px; background: var(--bg); }
+.moving-notice h3 { margin: 4px 0; font-size: 1rem; }
+.notice-card p, .table-note { line-height: 1.5; }
+.table-note { margin: 10px 0 4px; font-size: 0.9rem; }
+.notice-card .fine, .notice-card .fine a, .after-page .table-note + .fine, .after-page .table-note + .fine a { font-size: 0.875rem; }

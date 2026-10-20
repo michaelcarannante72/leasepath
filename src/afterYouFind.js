@@ -7,6 +7,8 @@ export const LAST_REVIEWED = 'October 19, 2026'
 
 export const SOURCES = {
   nychaS8: { label: 'NYCHA: About Section 8', href: 'https://www.nyc.gov/site/nycha/section-8/about-section-8.page' },
+  nychaUpdates: { label: 'Read NYCHA\'s update', href: 'https://www.nyc.gov/site/nycha/section-8/section-8-program-updates.page' },
+  nychaTenantsFaq: { label: 'NYCHA Section 8 Tenants FAQ', href: 'https://www.nyc.gov/site/nycha/section-8/tenants-faq.page' },
   nychaOwners: { label: 'NYCHA: Section 8 owners', href: 'https://www.nyc.gov/site/nycha/section-8/owners.page' },
   hpdOwners: { label: 'HPD: Section 8 property owners', href: 'https://www.nyc.gov/site/hpd/services-and-information/section-8-owners.page' },
   cityfheps: { label: 'HRA: CityFHEPS', href: 'https://www.nyc.gov/site/hra/help/cityfheps.page' },
@@ -23,6 +25,7 @@ export const SOURCES = {
 export const PROGRAMS = [
   { program: 'Section 8 (NYCHA)', agency: 'NYCHA', serves: 'Federal Housing Choice Voucher issued by NYCHA.', source: 'nychaS8' },
   { program: 'Section 8 (HPD)', agency: 'HPD', serves: 'Federal Housing Choice Voucher issued by HPD.', source: 'hpdOwners' },
+  { program: 'Section 8 (NYS HCR)', agency: 'NYS Homes and Community Renewal (HCR)', serves: 'Federal Housing Choice Voucher issued by HCR.' },
   { program: 'CityFHEPS', agency: 'HRA / DSS', serves: 'City rental assistance, mostly for people in shelter or at risk of losing their home.', source: 'cityfheps' },
   { program: 'FHEPS', agency: 'HRA / DSS (state-authorized)', serves: 'Rental assistance for families with children who face eviction or are in shelter.', source: 'fheps' },
   { program: 'HASA', agency: 'HRA (HIV/AIDS Services Administration)', serves: 'Housing and benefits help for New Yorkers living with HIV or AIDS who qualify.', source: 'hasa' },
@@ -104,3 +107,33 @@ export const CHAP = {
 }
 
 export const CAVEAT = 'Policy changes often. Confirm every step with your agency, worker, or housing specialist. LeasePath is not affiliated with HRA, NYCHA, HPD, or any government agency.'
+
+// Section 8 and EHV notices: the specialist's verified wording, copied exactly (criteria/after-you-find-an-apartment-tips.md, 2026-10-20).
+export const EHV_NOTICE = {
+  title: 'Emergency Housing Voucher update',
+  body: 'HUD has announced that EHV funding will end in late 2026. Check how this affects you and what to do next on NYCHA\'s Section 8 Program Updates page.',
+  source: 'nychaUpdates',
+}
+
+// A NYCHA rule only. It is never shown for an HPD or HCR voucher.
+export const MOVING_NOTICE = {
+  title: 'Moving with Section 8?',
+  body: 'Since May 1, 2026, NYCHA only approves voluntary (non-emergency) moves if the new apartment\'s rent plus utility allowance is the same as or lower than your current one. That limit can be lower than the payment standard we show. Emergency transfers don\'t have this limit.',
+  source: 'nychaTenantsFaq',
+  agency: 'NYCHA',
+}
+
+export const TABLE_NOTE = {
+  body: 'Section 8 in NYC is run by three agencies: NYCHA (the largest), HPD, and NYS Homes and Community Renewal (HCR). Each has its own rules and rent limits. You usually pay about 30% of your adjusted monthly income toward rent.',
+  sourceLabel: 'About Section 8 (NYCHA)',
+  source: 'nychaS8',
+}
+
+// "Where you are staying" answers that mean the person is not renting a unit now, so they are not moving.
+const NOT_RENTING = ['Shelter or transitional housing', 'Doubled up with someone else', 'HASA SRO or supportive housing']
+
+/** The moving warning shows only for a NYCHA Section 8 voucher, and is skipped when My voucher says the person is not renting now. */
+export function showMovingNotice(plan, checks) {
+  if (plan?.program !== 'Section 8' || checks?.section8Agency !== MOVING_NOTICE.agency) return false
+  return !NOT_RENTING.includes(plan?.situation)
+}

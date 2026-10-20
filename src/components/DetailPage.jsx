@@ -4,8 +4,10 @@ import { Icon } from './Icon.jsx'
 import { money, sizeLabel, starterMessage, utilityLabel } from '../fit.js'
 import { brokerFeeNotices, cashDepositNotice, fareNotices, securityVoucherNotices } from '../fees.js'
 import { FlagList } from './SourceLine.jsx'
+import { MovingNotice } from './AfterYouFindPage.jsx'
+import { showMovingNotice } from '../afterYouFind.js'
 
-export function DetailPage({ listing, flags, plan, saved, onToggleSave, onBack, onAsk, onDraft }) {
+export function DetailPage({ listing, flags, plan, checks, saved, onToggleSave, onBack, onAsk, onDraft }) {
   const [copied, setCopied] = useState(false)
   const [copyError, setCopyError] = useState('')
   const draft = starterMessage(listing, plan)
@@ -62,6 +64,7 @@ export function DetailPage({ listing, flags, plan, saved, onToggleSave, onBack, 
         ) : (
           <FlagList flags={flags} />
         )}
+        {showMovingNotice(plan, checks) && <MovingNotice />}
         <p className="fine fit-note">A fit here may work on paper. It is not an approval. <a href="#/after-you-find">What happens after you find an apartment</a></p>
         <div className="button-row">
           <button type="button" className="button" onClick={() => onAsk(`Does the asking rent on this sample look workable with my voucher? Tell me what I should confirm before I contact anyone.`)}>

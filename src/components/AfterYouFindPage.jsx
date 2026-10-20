@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { CAVEAT, CHAP, HAVP, LAST_REVIEWED, PROGRAMS, RIGHTS, SOURCES, STEPS } from '../afterYouFind.js'
+import { CAVEAT, CHAP, HAVP, SV, LAST_REVIEWED, PROGRAMS, RIGHTS, SOURCES, STEPS } from '../afterYouFind.js'
 import { Icon } from './Icon.jsx'
 
 function SourceLink({ id }) {
@@ -66,6 +66,13 @@ export function AfterYouFindPage() {
         <p className="after-chap-label">{HAVP.label}</p>
         <ul>{HAVP.points.map((point) => <li key={point}>{point}</li>)}</ul>
         <p className="fine">Source: {HAVP.sources.map((id, i) => <span key={id}>{i > 0 && ' · '}<SourceLink id={id} /></span>)}</p>
+      </section>
+
+      <section id="sv" className="panel after-chap" aria-labelledby="sv-title">
+        <h2 id="sv-title">{SV.title}</h2>
+        <p className="after-chap-label">{SV.label}</p>
+        <ul>{SV.points.map((point) => <li key={point}>{point}</li>)}</ul>
+        <p className="fine">Source: {SV.sources.map((id, i) => <span key={id}>{i > 0 && ' · '}<SourceLink id={id} /></span>)}</p>
       </section>
 
       <section id="chap" className="panel after-chap" aria-labelledby="chap-title">

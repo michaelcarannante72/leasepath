@@ -506,17 +506,57 @@ export default function App() {
     window.location.reload()
   }, [])
 
+  // Signed-in sign-out: save the latest details to the account, then clear this phone. They come back on the next sign-in.
   const signOut = useCallback(async () => {
+    if (!window.confirm("Sign out of LeasePath?\n\nSigning out clears your voucher details from this phone. Income you typed won't be saved.")) return
     clearIncome()
     setSignInError('')
+    let savedToAccount = true
+    if (accountLive) {
+      try {
+        const response = await fetch('/api/account', {
+          method: 'PUT',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            place: {
+              program: plan.program,
+              neighborhood: filters.q,
+              letterRent: plan.letterRent,
+              utilities: plan.utilities,
+              household: plan.household,
+              receiving: plan.receiving,
+              situation: plan.situation,
+              savedIds: saved,
+              steps: checked,
+            },
+          }),
+        })
+        savedToAccount = response.ok
+      } catch {
+        savedToAccount = false
+      }
+    }
     try {
       const response = await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' })
       const data = await response.json().catch(() => ({}))
       applyAccess(data)
     } catch {
       setSignInError('LeasePath could not sign you out. Try again.')
+      return
     }
-  }, [applyAccess, clearIncome])
+    setAccountLive(false)
+    await clearDeviceData()
+    setPlan(emptyPlan())
+    setChecks(emptyChecks())
+    setSaved([])
+    setChecked([])
+    setFilters((current) => ({ ...current, q: '', program: 'All' }))
+    setMessages([WELCOME])
+    if (!savedToAccount) {
+      window.alert('You are signed out and this phone is cleared, but your latest voucher details could not be saved to your account. When you sign in again, check them in My voucher.')
+    }
+  }, [accountLive, applyAccess, checked, clearIncome, filters.q, plan, saved])
 
   const openResources = useCallback(() => {
     setAssistantOpen(false)

@@ -170,3 +170,49 @@ test('Google sign-in keeps only the account id and email, never the name', () =>
   assert.doesNotMatch(auth, /payload\.name|session\.name|profile\.name/)
   assert.doesNotMatch(api, /name: ''/)
 })
+
+test('signing in again restores the account details onto an empty phone (claim does not overwrite with blanks)', async () => {
+  const accounts = createMemoryAccounts()
+  const usage = createMemoryUsage()
+  const google = () => call(accounts, usage, {
+    method: 'POST', pathname: '/api/auth/google', body: { credential: 'x' }, cookieHeader: `lp_nonce=${NONCE}`,
+    verifyToken: async () => ({ sub: 'sub7', email: 'ada@example.com' }), loadCerts: async () => [],
+  })
+  const first = jar(await google())
+  const place = { program: 'HASA', letterRent: '$2,100', household: '2', utilities: 'All included', neighborhood: 'Harlem', situation: 'HASA SRO or supportive housing', savedIds: ['crown-heights-1br'], steps: [0, 2] }
+  await call(accounts, usage, { method: 'POST', pathname: '/api/account', body: { place }, cookieHeader: first })
+  await call(accounts, usage, { method: 'PUT', pathname: '/api/account', body: { place: { ...place, letterRent: '$2,200' } }, cookieHeader: first })
+  const out = await call(accounts, usage, { method: 'POST', pathname: '/api/auth/logout', cookieHeader: first })
+  assert.equal(out.json.signedIn, false)
+
+  // The phone is now empty. The next sign-in claims with blanks and gets the saved account back instead.
+  const again = jar(await google())
+  const empty = { program: '', letterRent: '', household: '', utilities: '', neighborhood: '', situation: '', savedIds: [], steps: [] }
+  const restored = await call(accounts, usage, { method: 'POST', pathname: '/api/account', body: { place: empty }, cookieHeader: again })
+  assert.equal(restored.status, 200)
+  assert.equal(restored.json.adopted, false)
+  assert.equal(restored.json.place.program, 'HASA')
+  assert.equal(restored.json.place.letterRent, '2200')
+  assert.equal(restored.json.place.household, '2')
+  assert.deepEqual(restored.json.place.savedIds, ['crown-heights-1br'])
+  // And the app writes it back onto the phone when the account was not adopted.
+  const app = readFileSync(new URL('../src/App.jsx', import.meta.url), 'utf8')
+  assert.match(app, /if \(data\.adopted === false\) writeAccountPlace\(data\.place\)/)
+})
+
+test('signed-in sign-out saves first, then clears every leasepath key on the phone, and warns if the save failed', () => {
+  const app = readFileSync(new URL('../src/App.jsx', import.meta.url), 'utf8')
+  const flow = app.slice(app.indexOf('const signOut = useCallback'), app.indexOf('const openResources'))
+  assert.match(flow, /Signing out clears your voucher details from this phone\. Income you typed won't be saved\./)
+  const put = flow.indexOf("method: 'PUT'")
+  const logout = flow.indexOf("'/api/auth/logout'")
+  const clear = flow.indexOf('await clearDeviceData()')
+  assert.ok(put > 0 && put < logout && logout < clear, 'save, then sign out, then clear')
+  assert.match(flow, /savedToAccount = response\.ok/)
+  assert.match(flow, /if \(!savedToAccount\) \{\s*window\.alert\(/)
+  // If the sign-out call itself fails, nothing is cleared.
+  assert.match(flow, /could not sign you out\. Try again\.'\)\s*return/)
+  // Guests have no sign-out, so their phone data is never cleared by it.
+  const header = readFileSync(new URL('../src/components/Header.jsx', import.meta.url), 'utf8')
+  assert.match(header, /session\?\.signedIn \? \([^]*onClick=\{onSignOut\}/)
+})

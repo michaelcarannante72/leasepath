@@ -19,6 +19,7 @@ export const SOURCES = {
   havpFaq: { label: 'HPD: HAVP tenant FAQ (PDF)', href: 'https://www.nyc.gov/assets/hpd/downloads/pdfs/services/havp-tenant-faq.pdf' },
   cchr: { label: 'NYC Commission on Human Rights: Source of income', href: 'https://www.nyc.gov/site/cchr/media/source-of-income.page' },
   fare: { label: 'DCWP: Broker fees (FARE Act) FAQ', href: 'https://www.nyc.gov/site/dca/about/FAQ-Broker-Fees.page' },
+  nyccoc: { label: 'NYC Continuum of Care', href: 'https://www.nyc.gov/site/nycccoc/index.page' },
   cityLimits: { label: 'City Limits, Aug 21, 2026: Meet CHAP, NYC’s new rental voucher', href: 'https://citylimits.org/meet-chap-nycs-new-rental-voucher-and-what-else-happened-this-week-in-housing/' },
 }
 
@@ -30,6 +31,7 @@ export const PROGRAMS = [
   { program: 'FHEPS', agency: 'HRA / DSS (state-authorized)', serves: 'Rental assistance for families with children who face eviction or are in shelter.', source: 'fheps' },
   { program: 'HASA', agency: 'HRA (HIV/AIDS Services Administration)', serves: 'Housing and benefits help for New Yorkers living with HIV or AIDS who qualify.', source: 'hasa' },
   { program: 'HAVP', agency: 'HPD', serves: 'State Housing Access Voucher Program pilot. Referral only, for people who are homeless or at risk.', source: 'havp' },
+  { program: 'Stability Vouchers (SV)', agency: 'NYCHA', serves: 'Referral only, through the NYC Continuum of Care or one of its providers.', source: 'nyccoc' },
   { program: 'CHAP', agency: 'HPD', serves: 'New city voucher. Applications open by January 2027 (reported). Not open yet.', source: 'cityLimits' },
 ]
 
@@ -136,4 +138,16 @@ const NOT_RENTING = ['Shelter or transitional housing', 'Doubled up with someone
 export function showMovingNotice(plan, checks) {
   if (plan?.program !== 'Section 8' || checks?.section8Agency !== MOVING_NOTICE.agency) return false
   return !NOT_RENTING.includes(plan?.situation)
+}
+
+// Stability Vouchers: info card only. Never in the rent check, the voucher picker, or any calculator.
+export const SV = {
+  title: 'Stability Vouchers (SV)',
+  label: 'Run by NYCHA. Referral only.',
+  points: [
+    'Who qualifies: people who are homeless or at risk of homelessness; people fleeing domestic violence, dating violence, stalking, or sexual assault; and veterans or families with a veteran who meet one of those.',
+    'You can’t apply to NYCHA directly. You need a referral from the NYC Continuum of Care or one of its providers.',
+    'LeasePath has no Stability Voucher rent check.',
+  ],
+  sources: ['nyccoc'],
 }

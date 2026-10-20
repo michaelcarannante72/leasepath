@@ -19,7 +19,7 @@ test('the page has five tenant-side steps, tagged by program, each with an offic
 })
 
 test('voucher table, rights box, CHAP card, caveat, and no landlord-site citations', () => {
-  assert.deepEqual(PROGRAMS.map((p) => p.program), ['Section 8 (NYCHA)', 'Section 8 (HPD)', 'Section 8 (NYS HCR)', 'CityFHEPS', 'FHEPS', 'HASA', 'HAVP', 'CHAP'])
+  assert.deepEqual(PROGRAMS.map((p) => p.program), ['Section 8 (NYCHA)', 'Section 8 (HPD)', 'Section 8 (NYS HCR)', 'CityFHEPS', 'FHEPS', 'HASA', 'HAVP', 'Stability Vouchers (SV)', 'CHAP'])
   const agency = Object.fromEntries(PROGRAMS.map((p) => [p.program, p.agency]))
   assert.match(agency.HASA, /^HRA/)
   assert.equal(agency.HAVP, 'HPD')
@@ -51,7 +51,7 @@ test('the page is routed, linked from Steps, Resources, and the rent check, and 
 
 test('CHAP and HAVP stay out of the rent check, voucher picker, and calculators', () => {
   for (const file of ['src/rentCheck.js', 'src/fit.js', 'src/components/PlanPage.jsx', 'src/components/IncomePrescreen.jsx', 'src/components/SearchPage.jsx']) {
-    assert.doesNotMatch(read(file), /CHAP|HAVP/, file)
+    assert.doesNotMatch(read(file), /CHAP|HAVP|Stability Voucher/, file)
   }
 })
 

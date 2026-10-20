@@ -94,3 +94,16 @@ test('the choice is stored on the device and can be changed from the footer', ()
   assert.match(read('src/components/AnalyticsConsent.jsx'), />No thanks<\/button>[\s\S]*>Allow<\/button>/)
   assert.match(read('src/components/Footer.jsx'), /Analytics choice/)
 })
+
+test('the Privacy Notice carries the approved analytics line, and cookie copy names the _ga cookies', async () => {
+  const { SITE_PAGES } = await import('../src/sitePages.js')
+  const { PRIVACY_DRAFT } = await import('../src/analytics.js')
+  const privacy = SITE_PAGES.find((p) => p.slug === 'privacy').body
+  const cookies = SITE_PAGES.find((p) => p.slug === 'cookies').body
+  assert.ok(privacy.includes(PRIVACY_DRAFT))
+  for (const text of [privacy, cookies, read('src/components/CookiePrompt.jsx')]) {
+    assert.match(text, /Google Analytics sets its own cookies \(_ga\) for analytics only/)
+    assert.match(text, /no advertising cookies and no sale of information/)
+  }
+  assert.doesNotMatch(cookies, /uses three cookies/)
+})

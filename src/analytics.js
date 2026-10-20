@@ -7,7 +7,7 @@ export const CONSENT_KEY = 'leasepath.analytics'
 export const PAGE_EVENT = 'lp_page_view'
 export const ALLOWED_KEYS = ['event', 'page_location', 'page_path', 'page_title']
 
-// DRAFT, needs Michael's approval before it goes into the Privacy Notice. Not shown anywhere yet.
+// Approved by Michael on 2026-10-20. Shown in the Privacy Notice (src/sitePages.js).
 export const PRIVACY_DRAFT =
   'LeasePath uses Google Analytics through Google Tag Manager only if you tap Allow. It records which LeasePath pages are opened, never on HASA pages or in Ruby’s chat, and never your voucher, income, answers, or questions. You can change this choice at any time from the Analytics choice link at the bottom of the app.'
 

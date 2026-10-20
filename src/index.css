@@ -1529,6 +1529,10 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 .free-food-card dt { font-weight: 700; color: var(--navy); }
 .free-food-card dd { margin: 0; overflow-wrap: anywhere; }
 .free-food-note, .free-food-caution { margin: 8px 0 0; font-size: 0.875rem; color: var(--muted); }
+.free-food-link { display: inline-flex; align-items: center; gap: 4px; margin-top: 8px; font-size: 0.875rem; font-weight: 700; }
+.resource-list .free-food-card a { display: inline-flex; width: auto; min-height: 0; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; }
+.free-food #other-help-title, .free-food #health-title { margin: 20px 0 6px; font-size: 1.125rem; }
+.free-food-source { margin: 12px 0 0; font-size: 0.875rem; color: var(--muted); overflow-wrap: anywhere; }
 
 /* Income pre-screen. Calm by design: every result uses the neutral note palette, and the over-the-line result is a plain note. */
 .prescreen-results { display: grid; gap: 12px; margin-top: 14px; }

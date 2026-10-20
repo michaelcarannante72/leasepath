@@ -1,111 +1,153 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import test from 'node:test'
-import { FREE_FOOD, FREE_FOOD_CAUTION, FREE_FOOD_LABEL, ADDED_ON, OTHER_HELP, OTHER_HELP_TITLE, SOURCE_CREDIT, HEALTH, HEALTH_TITLE } from '../src/freeFood.js'
+import {
+  FREE_FOOD, FREE_FOOD_CAUTION, FREE_FOOD_LABEL, ADDED_ON, OTHER_HELP, OTHER_HELP_TITLE, SOURCE_CREDIT,
+  HEALTH, HEALTH_TITLE, HOUSING, HOUSING_TITLE, OLDER, OLDER_TITLE, COMMUNITY_SECTIONS,
+} from '../src/freeFood.js'
 import { trackView } from '../src/analytics.js'
 
-test('ten volunteer entries with schedule, place, and offer, and the shared cautions', () => {
+const page = readFileSync(new URL('../src/components/ResourcesPage.jsx', import.meta.url), 'utf8')
+const all = COMMUNITY_SECTIONS.flatMap((section) => section.items)
+const byName = Object.fromEntries(all.map((item) => [item.name, item]))
+
+test('ten volunteer food entries with schedule, place, and offer, and the shared cautions', () => {
   assert.equal(FREE_FOOD.length, 10)
   for (const item of FREE_FOOD) {
     for (const key of ['name', 'group', 'when', 'where', 'offers']) assert.ok(item[key], `${item.name} ${key}`)
     const rest = { ...item }
     delete rest.link
-    assert.doesNotMatch(JSON.stringify(rest), /\.\.\.|…|https?:\/\//)
+    assert.doesNotMatch(JSON.stringify(rest), /https?:\/\//)
   }
   assert.equal(FREE_FOOD_CAUTION, 'Times can change, check with the group before you go.')
   assert.equal(FREE_FOOD_LABEL, 'Run by volunteers, not a government agency. Check their page before you go.')
   assert.equal(ADDED_ON, 'Oct 20, 2026')
-  const page = readFileSync(new URL('../src/components/ResourcesPage.jsx', import.meta.url), 'utf8')
   assert.match(page, /\{FREE_FOOD_CAUTION\} Added \{ADDED_ON\}\./)
   assert.doesNotMatch(page, /Last checked/)
-  assert.match(page, /\{FREE_FOOD_LABEL\}/)
 })
 
-test('specific facts: Adelphi is Clinton Hill/Fort Greene, Community Solidarity is Bed-Stuy only, Bushwick lists its Instagram', () => {
-  const by = Object.fromEntries(FREE_FOOD.map((item) => [item.name, item]))
-  assert.match(by['Adelphi Free Store'].where, /Clinton Hill\/Fort Greene/)
-  assert.doesNotMatch(by['Adelphi Free Store'].where, /Greenpoint/)
-  assert.match(by['Community Solidarity'].where, /Bed-Stuy/)
-  assert.doesNotMatch(JSON.stringify(by['Community Solidarity']), /Long Island|Farmingville|Wyandanch|Hempstead|Huntington/)
-  assert.match(by['Bushwick Free Store'].note, /@bushwickfreestore/)
-  assert.equal(by["Marsha's Closet"].group, 'Claim Our Space NOW')
+test('every card has no ellipsis, and every card shows Added Oct 20, 2026', () => {
+  for (const item of all) assert.doesNotMatch(JSON.stringify(item), /\.\.\.|…/, item.name)
+  assert.match(page, /<>Added \{ADDED_ON\}\.<\/>/)
 })
 
-test('Young Black Queens links to its Instagram, and only listed links appear', () => {
-  const by = Object.fromEntries(FREE_FOOD.map((item) => [item.name, item]))
-  assert.equal(by['Young Black Queens NYC'].link, 'https://www.instagram.com/ybq.nyc/')
-  assert.deepEqual(FREE_FOOD.filter((item) => item.link).map((item) => item.name).sort(),
-    ["Marsha's Closet", 'Mercadito Solidario Project', 'Young Black Queens NYC'])
-  assert.equal(by["Marsha's Closet"].link, 'https://www.instagram.com/claimourspacenow/')
-  assert.equal(by["Marsha's Closet"].email, 'admin@claimourspacenow.org')
-  const m = by['Mercadito Solidario Project']
-  assert.equal(m.group, 'Colectivo Intercultural TRANSgrediendo')
+test('sections in order with the jump list, volunteer label only on volunteer sections', () => {
+  assert.deepEqual(COMMUNITY_SECTIONS.map((s) => s.jump),
+    ['Food and clothing', 'Housing and drop-in help', 'Getting around', 'Health and support', 'Older New Yorkers'])
+  assert.deepEqual(COMMUNITY_SECTIONS.map((s) => s.title),
+    ['Free food and clothing', 'Housing and drop-in help', 'Getting around', 'Health and support', 'Older New Yorkers'])
+  assert.deepEqual(COMMUNITY_SECTIONS.filter((s) => s.label).map((s) => s.id), ['free-food-title', 'other-help-title'])
+  assert.equal(new Set(COMMUNITY_SECTIONS.map((s) => s.id)).size, 5)
+  assert.match(page, /className="community-jump"/)
+  assert.match(page, /\{section\.label && <p className="free-food-label">\{FREE_FOOD_LABEL\}<\/p>\}/)
+})
+
+test('food facts: Adelphi, Community Solidarity, Bushwick, Marsha, Mercadito, YBQ', () => {
+  assert.match(byName['Adelphi Free Store'].where, /Clinton Hill\/Fort Greene/)
+  assert.doesNotMatch(byName['Adelphi Free Store'].where, /Greenpoint/)
+  assert.equal(byName['Community Solidarity'].where, 'Bed-Stuy, Brooklyn')
+  assert.match(byName['Bushwick Free Store'].note, /@bushwickfreestore/)
+  assert.equal(byName["Marsha's Closet"].group, 'Claim Our Space NOW')
+  assert.equal(byName["Marsha's Closet"].link, 'https://www.instagram.com/claimourspacenow/')
+  assert.equal(byName["Marsha's Closet"].email, 'admin@claimourspacenow.org')
+  const m = byName['Mercadito Solidario Project']
   assert.equal(m.when, 'Wednesdays, 3 to 6pm')
   assert.match(m.where, /3763 83rd St, Suite 1B, Jackson Heights.*11372/)
   assert.equal(m.phone, '(347) 738-6989')
   assert.equal(m.link, 'https://www.ourvoicesarefree.org/calendar')
+  assert.equal(byName['Young Black Queens NYC'].link, 'https://www.instagram.com/ybq.nyc/')
 })
 
-test('Other community help has the Bike Plant card and no PartySafe Medics', () => {
-  assert.equal(OTHER_HELP_TITLE, 'Other community help')
+test('Getting around: Bike Plant without the old email and height steps', () => {
+  assert.equal(OTHER_HELP_TITLE, 'Getting around')
   assert.equal(OTHER_HELP.length, 1)
   const bike = OTHER_HELP[0]
-  assert.equal(bike.name, 'Bike Plant')
-  assert.match(bike.offers, /sliding scale/)
-  assert.match(bike.where, /Brooklyn/)
-  assert.match(bike.how, /bikeplantnyc@gmail\.com/)
-  assert.match(bike.how, /height/)
-  assert.match(bike.how, /phone number/)
-  assert.match(bike.how, /business hours/)
+  assert.match(bike.offers, /bikes and bike repairs on a sliding scale/i)
+  assert.equal(bike.where, 'Brooklyn')
+  assert.equal(bike.how, 'See their page for how to get on the bike list.')
+  assert.doesNotMatch(JSON.stringify(bike), /gmail|height|business hours/)
   assert.equal(bike.phone, '(347) 240-2466')
   assert.equal(bike.link, 'https://www.bikeplant.net/repair-fund')
-  assert.doesNotMatch(JSON.stringify(bike), /\.\.\.|…/)
-  const page = readFileSync(new URL('../src/components/ResourcesPage.jsx', import.meta.url), 'utf8')
-  const data = readFileSync(new URL('../src/freeFood.js', import.meta.url), 'utf8')
-  assert.doesNotMatch(page + data, /PartySafe/i)
-  assert.match(page, /\{OTHER_HELP_TITLE\}<\/h3>\s*<p className="free-food-label">\{FREE_FOOD_LABEL\}/)
-  assert.match(page, /Added \{ADDED_ON\}\./)
+})
+
+test('Housing and drop-in help: Ali Forney Center, no age range', () => {
+  assert.equal(HOUSING_TITLE, 'Housing and drop-in help')
+  const af = HOUSING[0]
+  assert.match(af.offers, /24-hour drop-in center for homeless LGBTQ\+ youth, with free medical and mental health care/)
+  assert.match(af.where, /307 West 38th Street, 3rd floor, New York, NY 10018/)
+  assert.equal(af.when, 'New intakes Monday to Friday 8am to 8pm, Saturday and Sunday 10am to 6pm. Closed Wednesday 2 to 4pm.')
+  assert.equal(af.phone, '212-206-0574 ext. 100')
+  assert.equal(af.who, 'See their site for who qualifies.')
+  assert.equal(af.link, 'https://www.aliforneycenter.org/')
+  assert.doesNotMatch(JSON.stringify(af), /\bages?\b|years old|\b\d{2}\s*(to|-)\s*\d{2}\b/i)
+})
+
+test('Health and support: COIN, Abortion Finder, PartySafe, Identity House, ANAD', () => {
+  assert.equal(HEALTH_TITLE, 'Health and support')
+  assert.equal(HEALTH.length, 5)
+  const coin = byName['COIN at Callen-Lorde']
+  for (const word of ['sex workers', 'primary care', 'sexual health', 'HIV treatment and prevention', 'transgender health', 'GYN care']) assert.match(coin.offers, new RegExp(word))
+  assert.match(coin.how, /212-271-8134/)
+  assert.equal(coin.link, 'https://callen-lorde.org/coin/')
+  assert.match(byName['Abortion Finder'].how, /does not make referrals or give care itself/)
+  assert.equal(byName['Abortion Finder'].link, 'https://www.abortionfinder.org/')
+  const ps = byName['PartySafe Medics']
+  assert.equal(ps.lead, 'Paid service, sliding-scale rates. You hire them to staff events; not a free clinic.')
+  for (const word of ['Harm-reduction medics for events', 'naloxone', 'drug testing strips', 'oxygen', 'first aid', 'overdose']) assert.match(ps.offers, new RegExp(word))
+  assert.match(ps.how, /Signal/)
+  assert.match(ps.how, /WhatsApp/)
+  assert.match(ps.how, /@partysafemedics/)
+  assert.equal(ps.email, 'partysafemedics@gmail.com')
+  assert.equal(ps.link, 'https://www.partysafemedics.nyc/')
+  assert.ok(page.indexOf('item.lead') < page.indexOf('<dl>', page.indexOf('function CommunityCard')))
+  const ih = byName['Identity House']
+  assert.match(ih.when, /Wednesdays 7 to 9pm and Saturdays 6 to 8pm/)
+  assert.match(ih.when, /Sunday evenings/)
+  assert.equal(ih.cost, 'Free, or a $25 donation per session if you can afford it.')
+  assert.equal(ih.email, 'info@identityhouse.org')
+  assert.deepEqual(ih.links.map((l) => l.href), ['https://identityhouse.org/walk-in-center/', 'https://identityhouse.org/groups/'])
+  const anad = byName['ANAD Communities of Healing']
+  assert.equal(anad.scope, 'National, online only.')
+  assert.match(anad.offers, /Free weekly virtual support groups for anyone with an eating disorder, led by people who have recovered/)
+  assert.equal(anad.email, 'coh@anad.org')
+  assert.equal(anad.link, 'https://anad.org/get-help/about-our-support-groups/')
+})
+
+test('Older New Yorkers: R.A.I.N. leads with who qualifies, Connect2Affect is national online', () => {
+  assert.equal(OLDER_TITLE, 'Older New Yorkers')
+  assert.equal(OLDER.length, 2)
+  const rain = byName['R.A.I.N. Case Management Program']
+  assert.equal(rain.lead, 'For homebound seniors 60+ living in Bronx Community Districts 7, 8, 11 or 12.')
+  assert.match(rain.offers, /transportation, housekeeping, home care, home-delivered meals, and help with entitlements and benefits/)
+  assert.equal(rain.phone, '718-892-5520')
+  assert.equal(rain.email, 'Info@RainInc.org')
+  assert.equal(rain.link, 'https://www.raininc.org/case-management/')
+  const aarp = byName['AARP Connect2Affect']
+  assert.equal(aarp.scope, 'National, online only.')
+  assert.match(aarp.offers, /three-minute online check/)
+  assert.equal(aarp.who, 'Adults 65+')
+  assert.equal(aarp.link, 'https://connect2affect.org/')
 })
 
 test('source credit links to Mutual Aid NYC resources', () => {
   assert.equal(SOURCE_CREDIT.before + SOURCE_CREDIT.text + ' (' + SOURCE_CREDIT.href + ')' + SOURCE_CREDIT.after,
     'Listings gathered from Mutual Aid NYC resources (https://resources.mutualaid.nyc), rewritten by LeasePath.')
-  const page = readFileSync(new URL('../src/components/ResourcesPage.jsx', import.meta.url), 'utf8')
   assert.match(page, /href=\{SOURCE_CREDIT\.href\}/)
 })
 
-test('Health subsection: COIN and Abortion Finder, facts only', () => {
-  assert.equal(HEALTH_TITLE, 'Health')
-  const by = Object.fromEntries(HEALTH.map((item) => [item.name, item]))
-  const coin = by['COIN at Callen-Lorde']
-  assert.match(coin.offers, /free health care program for sex workers/)
-  for (const word of ['primary care', 'sexual health', 'HIV treatment and prevention', 'transgender health', 'GYN care']) assert.match(coin.offers, new RegExp(word))
-  assert.match(coin.how, /212-271-8134/)
-  assert.equal(coin.link, 'https://callen-lorde.org/coin/')
-  const af = by['Abortion Finder']
-  assert.match(af.offers, /national directory/)
-  assert.match(af.how, /does not make referrals or give care itself/)
-  assert.equal(af.link, 'https://www.abortionfinder.org/')
-  for (const item of HEALTH) assert.doesNotMatch(JSON.stringify(item), /\.\.\.|…/)
-})
-
-test('every outside link on the section opens in a new tab with noopener noreferrer', () => {
-  const page = readFileSync(new URL('../src/components/ResourcesPage.jsx', import.meta.url), 'utf8')
-  const start = page.indexOf('<section className="resource-group free-food"')
-  const end = page.indexOf('</section>', start)
-  const section = page.slice(start, end)
-  const blank = section.match(/<a [^>]*target="_blank"[^>]*>/g)
-  assert.ok(blank.length >= 4)
+test('every outside link opens in a new tab with noopener noreferrer', () => {
+  const start = page.indexOf('function CommunityCard')
+  const community = page.slice(start, page.indexOf('</section>', page.indexOf('className="resource-group free-food"')))
+  const blank = community.match(/<a [^>]*target="_blank"[^>]*>/g)
+  assert.equal(blank.length, 2)
   for (const tag of blank) assert.match(tag, /rel="noopener noreferrer"/)
+  for (const item of all) for (const href of [item.link, ...(item.links || []).map((l) => l.href)].filter(Boolean)) assert.match(href, /^https:\/\//)
 })
 
-test('Health links send no dataLayer events: no click handlers, and Resources is never tracked', () => {
-  const page = readFileSync(new URL('../src/components/ResourcesPage.jsx', import.meta.url), 'utf8')
-  const start = page.indexOf('<h3 id="health-title">')
-  const health = page.slice(start, page.indexOf('</ul>', start))
-  assert.ok(start > 0)
-  assert.doesNotMatch(health, /onClick|onMouseDown|onAuxClick|dataLayer|safePush|trackView|gtag/)
-  assert.doesNotMatch(page, /analytics|dataLayer/)
+test('Health and support links send no dataLayer events: no tracking code, and Resources is never tracked', () => {
+  const card = page.slice(page.indexOf('function CommunityCard'), page.indexOf('export function ResourcesPage'))
+  assert.doesNotMatch(card, /onClick|onMouseDown|onAuxClick|dataLayer|safePush|trackView|gtag/)
+  assert.doesNotMatch(page, /analytics|dataLayer|gtag/)
   const win = { location: { origin: 'https://leasepath.app' } }
   const doc = { createElement: () => ({}), head: { appendChild: () => {} } }
   assert.equal(trackView(win, doc, { hashPath: '/resources', assistantOpen: false, consent: 'granted' }), null)

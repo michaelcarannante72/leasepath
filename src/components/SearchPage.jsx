@@ -1,5 +1,6 @@
 import { Building } from './Building.jsx'
 import { Icon } from './Icon.jsx'
+import { LandingHero, LandingSteps } from './LandingHero.jsx'
 import { ACCESS_HRA_URL, BOROUGHS, HOMEBASE_URL } from '../data.js'
 import { PROGRAMS, cardFlags, cardLabel, cardText, money, sizeLabel, utilityLabel } from '../fit.js'
 
@@ -39,19 +40,6 @@ function activeChips(filters) {
   return chips
 }
 
-function HowItWorks() {
-  return (
-    <section className="how-strip" aria-label="How LeasePath helps">
-      <h2>How LeasePath helps</h2>
-      <ol>
-        <li><span className="how-num">1</span><span>Put the amount from your letter in My voucher.</span></li>
-        <li><span className="how-num">2</span><span>Compare it to the asking rent on a listing.</span></li>
-        <li><span className="how-num">3</span><span>Call the broker. Your worker still decides.</span></li>
-      </ol>
-    </section>
-  )
-}
-
 function ApplyPanel() {
   return (
     <section className="apply-panel">
@@ -83,6 +71,7 @@ export function SearchPage({
   planFlags,
   intent,
   onIntent,
+  onAsk,
 }) {
   const chips = activeChips(filters)
   const savedCount = saved.length
@@ -96,12 +85,22 @@ export function SearchPage({
     stage.scrollTo({ top, behavior: 'smooth' })
   }
 
+  const scrollToSearch = () => {
+    const panel = document.querySelector('.landing-hero')
+    const stage = panel?.closest('.stage')
+    if (!panel || !stage) return
+    const top = panel.getBoundingClientRect().top - stage.getBoundingClientRect().top + stage.scrollTop - 8
+    stage.scrollTo({ top, behavior: 'smooth' })
+    panel.querySelector('input')?.focus({ preventScroll: true })
+  }
+
   return (
     <div className="landing">
-      <section className="landing-hero">
+      <LandingHero onCheck={scrollToSearch} />
+      <LandingSteps onFind={scrollToSearch} onAsk={onAsk} />
+      <section className="landing-hero" aria-labelledby="search-title">
         <div className="hero-copy">
-          <p className="eyebrow">NYC housing search</p>
-          <h1>NYC apartments that take HASA, CityFHEPS, and Section{'\u00A0'}8.</h1>
+          <h2 id="search-title" className="search-title">Search apartments</h2>
           <p className="pitch">Brokers who say “I’ll call you back” and then transfer you are the reason this exists.</p>
           <div className="program-chips" role="group" aria-label="Filter by voucher">
             {PROGRAMS.map((program) => (
@@ -234,8 +233,6 @@ export function SearchPage({
         </form>
         )}
       </section>
-
-      <HowItWorks />
 
       <div id="search-results">
         <div className="results-bar">

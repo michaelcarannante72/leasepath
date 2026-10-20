@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AccountDialog } from './AccountDialog.jsx'
 import { Icon } from './Icon.jsx'
 
@@ -6,6 +6,11 @@ export function Header({ canInstall, onInstall, planCurrent, session, signingIn,
   const [accountOpen, setAccountOpen] = useState(false)
   const closeAccount = () => setAccountOpen(false)
   if (session?.signedIn && accountOpen) setAccountOpen(false)
+  useEffect(() => {
+    const open = () => setAccountOpen(true)
+    window.addEventListener('leasepath:open-account', open)
+    return () => window.removeEventListener('leasepath:open-account', open)
+  }, [])
 
   return (
     <header className="topbar">

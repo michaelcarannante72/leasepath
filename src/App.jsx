@@ -588,6 +588,7 @@ export default function App() {
               planFlags={(item) => assessListing(item, plan, checks)}
               intent={intent}
               onIntent={chooseIntent}
+              onAsk={() => { setAssistantListingId(null); setAssistantOpen(true) }}
             />
         )}
         {route.name === 'detail' && listing && (

@@ -178,7 +178,9 @@ export async function verifyGoogleIdToken(token, { clientId, certs, nonce = null
     encoder.encode(`${parts[0]}.${parts[1]}`),
   )
   if (!valid) throw new Error('sig')
-  return { sub: String(payload.sub), email: String(payload.email), name: payload.name ? String(payload.name) : '' }
+  // Only the account id and email are kept. Google's button flow has no scope setting and may include a name or
+  // picture in the ID token; LeasePath never reads or stores them.
+  return { sub: String(payload.sub), email: String(payload.email) }
 }
 
 function publicView(auth) {
@@ -257,7 +259,7 @@ export async function openAuth({ cookieHeader, ip, secret, googleClientId = '', 
     async sessionCookie() {
       if (!signedIn || !secretReady) return null
       const token = await signToken(
-        { sub: session.sub, email: session.email, name: session.name || '', iat: issuedAt, exp: now.getTime() + SESSION_SECONDS * 1000 },
+        { sub: session.sub, email: session.email, iat: issuedAt, exp: now.getTime() + SESSION_SECONDS * 1000 },
         secret,
       )
       return serializeCookie('lp_session', token, { maxAge: SESSION_SECONDS, secure })
@@ -267,7 +269,7 @@ export async function openAuth({ cookieHeader, ip, secret, googleClientId = '', 
     },
     async signIn(profile) {
       const token = await signToken(
-        { sub: profile.sub, email: profile.email, name: profile.name || '', iat: Date.now(), exp: Date.now() + SESSION_SECONDS * 1000 },
+        { sub: profile.sub, email: profile.email, iat: Date.now(), exp: Date.now() + SESSION_SECONDS * 1000 },
         secret,
       )
       const accountUsed = usageReady ? await usage.read(`acct:${day}:${safeId(profile.sub)}`) : 0

@@ -162,3 +162,11 @@ test('legacy sessions without iat are judged by their expiry, and the Durable Ob
   const auth = readFileSync(new URL('../server/auth.js', import.meta.url), 'utf8')
   assert.match(auth, /Number\(session\.iat\) \|\| \(Number\(session\.exp\) \|\| 0\) - SESSION_SECONDS \* 1000/)
 })
+
+test('Google sign-in keeps only the account id and email, never the name', () => {
+  const auth = readFileSync(new URL('../server/auth.js', import.meta.url), 'utf8')
+  const api = readFileSync(new URL('../server/api.js', import.meta.url), 'utf8')
+  assert.match(auth, /return \{ sub: String\(payload\.sub\), email: String\(payload\.email\) \}/)
+  assert.doesNotMatch(auth, /payload\.name|session\.name|profile\.name/)
+  assert.doesNotMatch(api, /name: ''/)
+})

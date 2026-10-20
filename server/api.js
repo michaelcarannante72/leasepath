@@ -257,7 +257,7 @@ async function handleEmailAccount({ body, auth, accounts, usage, ip, now, secret
           message: 'That email already has an account. Sign in instead.',
         }, auth)
       }
-      const signed = await auth.signIn({ sub: key, email, name: '' })
+      const signed = await auth.signIn({ sub: key, email })
       return { status: 200, cookies: signed.cookies, json: { ok: true, created: true, ...signed.view } }
     }
     const current = await accounts.read(key)
@@ -268,7 +268,7 @@ async function handleEmailAccount({ body, auth, accounts, usage, ip, now, secret
         message: 'That email and password did not match.',
       }, auth)
     }
-    const signed = await auth.signIn({ sub: key, email: current.email || email, name: '' })
+    const signed = await auth.signIn({ sub: key, email: current.email || email })
     return { status: 200, cookies: signed.cookies, json: { ok: true, created: false, ...signed.view } }
   } catch {
     return withAccess(503, {

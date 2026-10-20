@@ -19,7 +19,7 @@ test('the page has five tenant-side steps, tagged by program, each with an offic
 })
 
 test('voucher table, rights box, CHAP card, caveat, and no landlord-site citations', () => {
-  assert.deepEqual(PROGRAMS.map((p) => p.program), ['Section 8 (NYCHA)', 'Section 8 (HPD)', 'CityFHEPS', 'FHEPS', 'HASA', 'HAVP', 'CHAP'])
+  assert.deepEqual(PROGRAMS.map((p) => p.program), ['Section 8 (NYCHA)', 'Section 8 (HPD)', 'Section 8 (NYS HCR)', 'CityFHEPS', 'FHEPS', 'HASA', 'HAVP', 'CHAP'])
   const agency = Object.fromEntries(PROGRAMS.map((p) => [p.program, p.agency]))
   assert.match(agency.HASA, /^HRA/)
   assert.equal(agency.HAVP, 'HPD')

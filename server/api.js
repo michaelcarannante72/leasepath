@@ -1,4 +1,4 @@
-import { accountKey, emailAccountKey, emptyPlace, normalizeEmail } from './accounts.js'
+import { accountKey, emailAccountKey, emptyPlace, normalizeEmail, sessionRevoked } from './accounts.js'
 import { checkPassword, hashPassword, passwordAccepted } from './passwords.js'
 import { openAuth, readCookie, validNonce, verifyGoogleIdToken, googleCerts } from './auth.js'
 import { MODEL, prepareGuide, completeGuide } from './guide.js'
@@ -82,7 +82,23 @@ export async function handleApi({
     }
   }
 
-  const auth = await openAuth({ cookieHeader, ip, secret, googleClientId, usage, secure, now })
+  let auth = await openAuth({ cookieHeader, ip, secret, googleClientId, usage, secure, now })
+
+  // Every signed-in request: if the account was deleted after this session was issued, the session is dead on every
+  // device. It is treated as signed out and its cookie is cleared, so it can neither read nor recreate the account.
+  if (auth.signedIn && accounts?.status) {
+    let status
+    try {
+      status = await accounts.status(accountKey(auth.sub))
+    } catch {
+      status = null
+    }
+    if (sessionRevoked(status, auth.issuedAt)) {
+      const withoutSession = String(cookieHeader || '').split(';').filter((part) => part.trim().split('=')[0] !== 'lp_session').join(';')
+      auth = await openAuth({ cookieHeader: withoutSession, ip, secret, googleClientId, usage, secure, now })
+      auth.cookies.push(auth.clearedSessionCookie())
+    }
+  }
 
   if (pathname === '/api/account') {
     return handleAccount({ method, body, auth, accounts, usage, now })

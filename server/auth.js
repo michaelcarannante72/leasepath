@@ -199,6 +199,8 @@ export async function openAuth({ cookieHeader, ip, secret, googleClientId = '', 
   const day = now.toISOString().slice(0, 10)
   const session = secretReady ? await readToken(readCookie(cookieHeader, 'lp_session'), secret) : null
   const signedIn = Boolean(session?.sub && session?.email)
+  // Sessions from before iat was added: assume the earliest issue time their expiry allows.
+  const issuedAt = signedIn ? Number(session.iat) || (Number(session.exp) || 0) - SESSION_SECONDS * 1000 : 0
   let guest = secretReady ? await readToken(readCookie(cookieHeader, 'lp_guest'), secret) : null
   if (!guest?.id) guest = { id: crypto.randomUUID() }
 
@@ -244,6 +246,7 @@ export async function openAuth({ cookieHeader, ip, secret, googleClientId = '', 
     nonce,
     signedIn,
     sub: signedIn ? session.sub : '',
+    issuedAt,
     email: signedIn ? session.email : '',
     anonymousRemaining: signedIn ? null : networkExhausted ? 0 : Math.max(0, ANON_FREE - anonymousUsed),
     accountRemaining,
@@ -254,7 +257,7 @@ export async function openAuth({ cookieHeader, ip, secret, googleClientId = '', 
     async sessionCookie() {
       if (!signedIn || !secretReady) return null
       const token = await signToken(
-        { sub: session.sub, email: session.email, name: session.name || '', exp: now.getTime() + SESSION_SECONDS * 1000 },
+        { sub: session.sub, email: session.email, name: session.name || '', iat: issuedAt, exp: now.getTime() + SESSION_SECONDS * 1000 },
         secret,
       )
       return serializeCookie('lp_session', token, { maxAge: SESSION_SECONDS, secure })
@@ -264,7 +267,7 @@ export async function openAuth({ cookieHeader, ip, secret, googleClientId = '', 
     },
     async signIn(profile) {
       const token = await signToken(
-        { sub: profile.sub, email: profile.email, name: profile.name || '', exp: Date.now() + SESSION_SECONDS * 1000 },
+        { sub: profile.sub, email: profile.email, name: profile.name || '', iat: Date.now(), exp: Date.now() + SESSION_SECONDS * 1000 },
         secret,
       )
       const accountUsed = usageReady ? await usage.read(`acct:${day}:${safeId(profile.sub)}`) : 0

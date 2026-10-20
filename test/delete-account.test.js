@@ -109,3 +109,56 @@ test('Inter is self-hosted, so no page load contacts Google Fonts', () => {
     assert.equal(readFileSync(new URL(`../public/fonts/${f}`, import.meta.url)).subarray(0, 4).toString(), 'wOF2')
   }
 })
+
+const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
+test('after deletion, every existing session on every device is refused and cannot recreate the account', async () => {
+  const accounts = createMemoryAccounts()
+  const usage = createMemoryUsage()
+  const google = (sub) => call(accounts, usage, {
+    method: 'POST', pathname: '/api/auth/google', body: { credential: 'x' }, cookieHeader: `lp_nonce=${NONCE}`,
+    verifyToken: async () => ({ sub, email: 'ada@example.com', name: 'Ada' }), loadCerts: async () => [],
+  })
+  const phone = jar(await google('sub9'))
+  await pause(2)
+  const laptop = jar(await google('sub9'))
+  const place = { program: 'HASA', situation: 'HASA SRO or supportive housing', letterRent: '$2,100', household: '2' }
+  assert.equal((await call(accounts, usage, { method: 'POST', pathname: '/api/account', body: { place }, cookieHeader: laptop })).status, 200)
+
+  await pause(2)
+  const gone = await call(accounts, usage, { method: 'DELETE', pathname: '/api/account', cookieHeader: phone })
+  assert.equal(gone.status, 200)
+  assert.equal(accounts.read('sub9'), null)
+  assert.ok(accounts.status('sub9').deletedAt > 0, 'tombstone left, with a time only')
+
+  // The laptop's older session: refused on read, on save, and on claim. Its cookie is cleared. Nothing is recreated.
+  for (const [method, body] of [['GET', {}], ['PUT', { place }], ['POST', { place }]]) {
+    const result = await call(accounts, usage, { method, pathname: '/api/account', body, cookieHeader: laptop })
+    assert.equal(result.status, 401, `${method} with a pre-deletion session`)
+    assert.ok(result.cookies.some((c) => /^lp_session=;.*Max-Age=0/.test(c)), 'revoked session cookie cleared')
+  }
+  assert.equal(accounts.read('sub9'), null, 'old sessions cannot write the account back')
+  const view = await call(accounts, usage, { method: 'GET', pathname: '/api/guide', cookieHeader: laptop })
+  assert.equal(view.json.signedIn, false)
+
+  // Only an explicit new sign-in creates a new, empty account.
+  await pause(2)
+  const fresh = jar(await google('sub9'))
+  const created = await call(accounts, usage, { method: 'POST', pathname: '/api/account', body: { place: { program: 'CityFHEPS' } }, cookieHeader: fresh })
+  assert.equal(created.status, 200)
+  assert.equal(created.json.place.program, 'CityFHEPS')
+  assert.notEqual(created.json.place.situation, 'HASA SRO or supportive housing')
+})
+
+test('legacy sessions without iat are judged by their expiry, and the Durable Object keeps a tombstone', async () => {
+  const { sessionRevoked } = await import('../server/accounts.js')
+  assert.equal(sessionRevoked({ deletedAt: 0 }, 5), false)
+  assert.equal(sessionRevoked({ deletedAt: 10 }, 10), true)
+  assert.equal(sessionRevoked({ deletedAt: 10 }, 11), false)
+  assert.equal(sessionRevoked(null, 1), false)
+  const book = readFileSync(new URL('../worker/accountBook.js', import.meta.url), 'utf8')
+  assert.match(book, /CREATE TABLE IF NOT EXISTS tombstone/)
+  assert.match(book, /DELETE FROM account WHERE id = 1[^]*INSERT INTO tombstone/)
+  const auth = readFileSync(new URL('../server/auth.js', import.meta.url), 'utf8')
+  assert.match(auth, /Number\(session\.iat\) \|\| \(Number\(session\.exp\) \|\| 0\) - SESSION_SECONDS \* 1000/)
+})

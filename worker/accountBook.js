@@ -13,6 +13,10 @@ export class AccountBook extends DurableObject {
         updated_at TEXT NOT NULL
       )`)
       const columns = this.ctx.storage.sql.exec('PRAGMA table_info(account)').toArray()
+      this.ctx.storage.sql.exec(`CREATE TABLE IF NOT EXISTS tombstone (
+        id INTEGER PRIMARY KEY CHECK (id = 1),
+        deleted_at INTEGER NOT NULL
+      )`)
       if (!columns.some((column) => column.name === 'secret')) {
         this.ctx.storage.sql.exec(`ALTER TABLE account ADD COLUMN secret TEXT NOT NULL DEFAULT ''`)
       }
@@ -55,9 +59,22 @@ export class AccountBook extends DurableObject {
     return { ok: true, record }
   }
 
-  remove() {
+  status() {
+    const exists = this.ctx.storage.sql.exec('SELECT 1 FROM account WHERE id = 1').toArray().length > 0
+    const row = this.ctx.storage.sql.exec('SELECT deleted_at FROM tombstone WHERE id = 1').toArray()[0]
+    return { exists, deletedAt: row ? Number(row.deleted_at) : 0 }
+  }
+
+  /** Erase the account row and leave a tombstone (a time only) so every older session is refused. */
+  remove(at = Date.now()) {
+    const previous = this.status().deletedAt
+    const deletedAt = Math.max(Number(at) || Date.now(), previous + 1)
     this.ctx.storage.sql.exec('DELETE FROM account WHERE id = 1')
-    return { ok: true }
+    this.ctx.storage.sql.exec(
+      'INSERT INTO tombstone (id, deleted_at) VALUES (1, ?) ON CONFLICT(id) DO UPDATE SET deleted_at = excluded.deleted_at',
+      deletedAt,
+    )
+    return { ok: true, deletedAt }
   }
 
   write(input, mode) {
@@ -100,10 +117,15 @@ export function durableAccounts(namespace) {
       if (!key) return null
       return namespace.getByName(key).register(input)
     },
-    remove(sub) {
+    status(sub) {
+      const key = accountKey(sub)
+      if (!key) return { exists: false, deletedAt: 0 }
+      return namespace.getByName(key).status()
+    },
+    remove(sub, at) {
       const key = accountKey(sub)
       if (!key) return null
-      return namespace.getByName(key).remove()
+      return namespace.getByName(key).remove(at)
     },
   }
 }

@@ -1,4 +1,9 @@
 import { FOOTER_GROUPS, SITE_PAGES } from '../sitePages.js'
+import { OPEN_ANALYTICS_CHOICE } from './AnalyticsConsent.jsx'
+
+function AnalyticsChoiceLink() {
+  return <button type="button" className="text-button footer-analytics" onClick={() => window.dispatchEvent(new Event(OPEN_ANALYTICS_CHOICE))}>Analytics choice</button>
+}
 
 const COMPACT_SLUGS = ['help', 'privacy', 'terms', 'submit-listings']
 
@@ -18,6 +23,7 @@ export function Footer({ compact = false }) {
               <a key={page.slug} href={pageHref(page.slug)}>{page.title}</a>
             ) : null
           })}
+          <AnalyticsChoiceLink />
         </nav>
       </footer>
     )
@@ -39,6 +45,7 @@ export function Footer({ compact = false }) {
           </section>
         ))}
       </div>
+      <p className="footer-analytics-row"><AnalyticsChoiceLink /></p>
     </footer>
   )
 }

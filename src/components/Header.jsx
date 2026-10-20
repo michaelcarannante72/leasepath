@@ -3,7 +3,7 @@ import { AccountDialog } from './AccountDialog.jsx'
 import { NAV_TABS } from '../navTabs.js'
 import { Icon } from './Icon.jsx'
 
-export function Header({ canInstall, onInstall, planCurrent, session, signingIn, signInError, onGoogleCredential, onEmailAuth, onSignOut, onDeleteAccount, navActive, onNav }) {
+export function Header({ canInstall, onInstall, planCurrent, session, signingIn, signInError, onGoogleCredential, onEmailAuth, onSignOut, navActive, onNav }) {
   const [accountOpen, setAccountOpen] = useState(false)
   const closeAccount = () => setAccountOpen(false)
   if (session?.signedIn && accountOpen) setAccountOpen(false)
@@ -53,10 +53,6 @@ export function Header({ canInstall, onInstall, planCurrent, session, signingIn,
             <button type="button" className="account-button" onClick={onSignOut}>
               <span className="account-long">Sign out</span>
               <span className="account-short">Sign out</span>
-            </button>
-            <button type="button" className="account-delete" onClick={onDeleteAccount}>
-              <span className="account-long">Delete account</span>
-              <span className="account-short">Delete</span>
             </button>
           </>
         ) : (

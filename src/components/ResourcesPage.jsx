@@ -9,6 +9,7 @@ export function ResourcesPage() {
       <p className="eyebrow">Resources</p>
       <h1>Open resources for a HASA voucher</h1>
       <p className="lede">No sign-in. This list is for a household that already has HASA rental assistance. It includes the food box, pantries, SNAP, and the other city programs next to that voucher. The agency site is where the rule lives.</p>
+      <p className="after-link"><a href="#/after-you-find#chap">Coming 2027: CHAP, a new city voucher (press reporting)</a> · <a href="#/after-you-find">After you find an apartment</a></p>
       <PantryFinder />
       {groups.map((group) => (
         <section key={group} className="resource-group">

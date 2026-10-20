@@ -15,6 +15,9 @@ export function createMemoryUsage() {
       const count = counts.get(key) || 0
       if (count > 0) counts.set(key, count - 1)
     },
+    forget(key) {
+      counts.delete(key)
+    },
     seed(key, count) {
       counts.set(key, count)
     },
@@ -77,6 +80,13 @@ export function createFileUsage(file, io) {
       return queue(async () => {
         await load()
         memory.release(key)
+        await persist()
+      })
+    },
+    forget(key) {
+      return queue(async () => {
+        await load()
+        memory.forget(key)
         await persist()
       })
     },

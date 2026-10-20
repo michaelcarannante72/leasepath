@@ -127,11 +127,31 @@ export function decideAccount(current, input, mode) {
   }
 }
 
+/**
+ * A session is honored only if it was issued after the account's last deletion.
+ * Deletion leaves a tombstone (time only, no personal data), so every older session on every device is refused
+ * and cannot write the account back. A fresh sign-in or sign-up after deletion issues a newer session.
+ */
+export function sessionRevoked(status, issuedAt) {
+  const deletedAt = Number(status?.deletedAt) || 0
+  return deletedAt > 0 && !(Number(issuedAt) > deletedAt)
+}
+
 export function createMemoryAccounts() {
   const records = new Map()
+  const tombstones = new Map()
   return {
     read(key) {
       return records.get(key) || null
+    },
+    status(key) {
+      return { exists: records.has(key), deletedAt: tombstones.get(key) || 0 }
+    },
+    tombstones() {
+      return tombstones.entries()
+    },
+    seedTombstone(key, at) {
+      tombstones.set(key, at)
     },
     entries() {
       return records.entries()
@@ -158,8 +178,10 @@ export function createMemoryAccounts() {
       records.set(key, record)
       return { ok: true, record }
     },
-    remove(key) {
-      return { ok: records.delete(key) }
+    remove(key, at = Date.now()) {
+      const ok = records.delete(key)
+      tombstones.set(key, Math.max(Number(at) || Date.now(), (tombstones.get(key) || 0) + 1))
+      return { ok, deletedAt: tombstones.get(key) }
     },
   }
 }
@@ -185,7 +207,11 @@ export function createFileAccounts(file, io) {
       const raw = await io.readFile(file, 'utf8')
       const parsed = JSON.parse(raw)
       if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return
+      for (const [key, at] of Object.entries(parsed.__deleted || {})) {
+        if (Number.isFinite(at)) memory.seedTombstone(key, at)
+      }
       for (const [key, record] of Object.entries(parsed)) {
+        if (key === '__deleted') continue
         if (!record || typeof record !== 'object' || !record.place) continue
         memory.save(key, {
           email: record.email,
@@ -203,6 +229,7 @@ export function createFileAccounts(file, io) {
     await io.mkdir(io.dirname(file), { recursive: true })
     const snapshot = {}
     for (const [key, record] of memory.entries()) snapshot[key] = record
+    snapshot.__deleted = Object.fromEntries(memory.tombstones())
     await io.writeFile(file, JSON.stringify(snapshot))
   }
 
@@ -237,10 +264,16 @@ export function createFileAccounts(file, io) {
         return result
       })
     },
-    remove(key) {
+    status(key) {
       return queue(async () => {
         await load()
-        const result = memory.remove(key)
+        return memory.status(key)
+      })
+    },
+    remove(key, at) {
+      return queue(async () => {
+        await load()
+        const result = memory.remove(key, at)
         await persist()
         return result
       })

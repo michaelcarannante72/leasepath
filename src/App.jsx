@@ -10,8 +10,11 @@ import { CookiePrompt } from './components/CookiePrompt.jsx'
 import { Onboarding } from './components/Onboarding.jsx'
 import { Paywall } from './components/Paywall.jsx'
 import { PlanPage } from './components/PlanPage.jsx'
+import { DeleteAccountDialog } from './components/DeleteAccountDialog.jsx'
+import { clearDeviceData } from './deviceData.js'
 import { ResourcesPage } from './components/ResourcesPage.jsx'
 import { SearchPage } from './components/SearchPage.jsx'
+import { AfterYouFindPage } from './components/AfterYouFindPage.jsx'
 import { StepsPage } from './components/StepsPage.jsx'
 import { FREE_COACH_QUESTIONS } from './coachLimit.js'
 import { POSTS } from './blog.js'
@@ -35,6 +38,7 @@ const NEIGHBORHOOD_KEY = 'leasepath.neighborhood'
 // utility amounts, household income).
 // Never sent to /api/account or /api/guide.
 const CHECKS_KEY = 'leasepath.checks'
+const SHARE_KEY = 'leasepath.shareWithRuby'
 
 const WELCOME = {
   role: 'assistant',
@@ -92,6 +96,7 @@ function parseHash() {
   if (post) return { name: 'post', id: post[1] }
   const info = hash.match(/^\/info\/([a-z0-9-]+)$/)
   if (info) return { name: 'info', id: info[1] }
+  if (hash === '/after-you-find' || hash === '/after-you-find#chap') return { name: 'after' }
   if (hash === '/steps' || hash === '/resources' || hash === '/plan' || hash === '/blog') {
     return { name: hash.slice(1) }
   }
@@ -134,7 +139,12 @@ export default function App() {
   const [messages, setMessages] = useState([WELCOME])
   const [input, setInput] = useState('')
   const [pending, setPending] = useState(false)
-  const [includePlan, setIncludePlan] = useState(true)
+  // Off by default. The choice is saved on this device for this person, and cleared by Delete my data.
+  const [includePlan, setIncludePlanState] = useState(() => readItem(SHARE_KEY) === 'on')
+  const setIncludePlan = useCallback((on) => {
+    setIncludePlanState(Boolean(on))
+    writeItem(SHARE_KEY, on ? 'on' : 'off')
+  }, [])
   const [configured, setConfigured] = useState(null)
   const [canInstall, setCanInstall] = useState(false)
   const [accountLive, setAccountLive] = useState(false)
@@ -463,31 +473,92 @@ export default function App() {
     })
   }, [])
 
-  const deleteAccount = useCallback(async () => {
-    if (!window.confirm('Delete the LeasePath account? The letter stays on this phone. Income you typed in the pre-screen is cleared.')) return
-    clearIncome()
-    setSignInError('')
-    try {
-      const response = await fetch('/api/account', { method: 'DELETE', credentials: 'same-origin' })
-      const data = await response.json().catch(() => ({}))
-      applyAccess(data)
-      if (!response.ok) setSignInError(data.message || 'The account could not be deleted. Try again.')
-    } catch {
-      setSignInError('LeasePath could not reach the account. Check your connection and try again.')
-    }
-  }, [applyAccess, clearIncome])
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  const openDelete = useCallback(() => setDeleteOpen(true), [])
 
-  const signOut = useCallback(async () => {
+  // Server first (account row + counters + session cookie), then this device. If the server call fails, nothing is cleared.
+  const deleteAccount = useCallback(async () => {
+    // Income never leaves the device, so it is cleared first, even if the server call fails.
     clearIncome()
     setSignInError('')
+    if (session.signedIn) {
+      try {
+        const response = await fetch('/api/account', { method: 'DELETE', credentials: 'same-origin' })
+        const data = await response.json().catch(() => ({}))
+        if (!response.ok) return { ok: false, message: data.message }
+        applyAccess(data)
+      } catch {
+        return { ok: false, message: 'LeasePath could not reach your account. Check your connection and try again. Nothing was deleted.' }
+      }
+    }
+    await clearDeviceData()
+    setPlan(emptyPlan())
+    setChecks(emptyChecks())
+    setSaved([])
+    setChecked([])
+    setMessages([WELCOME])
+    return { ok: true }
+  }, [applyAccess, clearIncome, session.signedIn])
+
+  const finishDelete = useCallback(async () => {
+    setDeleteOpen(false)
+    // State effects may have re-written empty values after the first clear; clear once more before reloading.
+    await clearDeviceData()
+    window.location.hash = '#/'
+    window.location.reload()
+  }, [])
+
+  // Signed-in sign-out: save the latest details to the account, then clear this phone. They come back on the next sign-in.
+  const signOut = useCallback(async () => {
+    if (!window.confirm("Sign out of LeasePath?\n\nSigning out clears your voucher details from this phone. Income you typed won't be saved.")) return
+    clearIncome()
+    setSignInError('')
+    let savedToAccount = true
+    if (accountLive) {
+      try {
+        const response = await fetch('/api/account', {
+          method: 'PUT',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            place: {
+              program: plan.program,
+              neighborhood: filters.q,
+              letterRent: plan.letterRent,
+              utilities: plan.utilities,
+              household: plan.household,
+              receiving: plan.receiving,
+              situation: plan.situation,
+              savedIds: saved,
+              steps: checked,
+            },
+          }),
+        })
+        savedToAccount = response.ok
+      } catch {
+        savedToAccount = false
+      }
+    }
     try {
       const response = await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' })
       const data = await response.json().catch(() => ({}))
       applyAccess(data)
     } catch {
       setSignInError('LeasePath could not sign you out. Try again.')
+      return
     }
-  }, [applyAccess, clearIncome])
+    setAccountLive(false)
+    await clearDeviceData()
+    setPlan(emptyPlan())
+    setChecks(emptyChecks())
+    setSaved([])
+    setChecked([])
+    setFilters((current) => ({ ...current, q: '', program: 'All' }))
+    setMessages([WELCOME])
+    if (!savedToAccount) {
+      window.alert('You are signed out and this phone is cleared, but your latest voucher details could not be saved to your account. When you sign in again, check them in My voucher.')
+    }
+  }, [accountLive, applyAccess, checked, clearIncome, filters.q, plan, saved])
 
   const openResources = useCallback(() => {
     setAssistantOpen(false)
@@ -519,12 +590,15 @@ export default function App() {
         body: JSON.stringify({
           messages: nextMessages.filter((message) => !message.local).slice(-8),
           includePlan,
-          plan: {
-            program: plan.program,
-            household: plan.household,
-            letterRent: plan.letterRent,
-            utilities: plan.utilities,
-          },
+          // Voucher details leave the phone only when the person has turned sharing on.
+          plan: includePlan
+            ? {
+                program: plan.program,
+                household: plan.household,
+                letterRent: plan.letterRent,
+                utilities: plan.utilities,
+              }
+            : undefined,
           listing,
         }),
       })
@@ -558,7 +632,9 @@ export default function App() {
       ? 'search'
       : route.name === 'post'
         ? 'blog'
-        : route.name
+        : route.name === 'after'
+          ? 'steps'
+          : route.name
   const navSelect = (id) => {
     if (id === 'assistant') {
       setAssistantListingId(route.name === 'detail' ? route.id : null)
@@ -583,7 +659,6 @@ export default function App() {
         onGoogleCredential={signIn}
         onEmailAuth={signUpWithEmail}
         onSignOut={signOut}
-        onDeleteAccount={deleteAccount}
       />
       <main className="stage" ref={stageRef}>
         <div className="view" key={route.id ? `${route.name}-${route.id}` : route.name}>
@@ -622,8 +697,9 @@ export default function App() {
           </div>
         )}
         {route.name === 'steps' && <StepsPage checked={checked} onToggle={toggleStep} />}
+        {route.name === 'after' && <AfterYouFindPage />}
         {route.name === 'resources' && <ResourcesPage />}
-        {route.name === 'plan' && <PlanPage plan={plan} onChange={updatePlan} checks={checks} onChecks={updateChecks} onClearIncome={clearIncome} />}
+        {route.name === 'plan' && <PlanPage plan={plan} onChange={updatePlan} checks={checks} onChecks={updateChecks} onClearIncome={clearIncome} signedIn={session.signedIn} onDeleteAccount={openDelete} />}
         {route.name === 'blog' && <BlogList />}
         {route.name === 'post' && <BlogPost post={post} />}
         {route.name === 'info' && <InfoPage page={infoPage} />}
@@ -631,6 +707,13 @@ export default function App() {
         <Footer compact={route.name === 'search'} />
       </main>
       <CookiePrompt />
+      <DeleteAccountDialog
+        open={deleteOpen}
+        signedIn={session.signedIn}
+        onCancel={() => setDeleteOpen(false)}
+        onConfirm={deleteAccount}
+        onDone={finishDelete}
+      />
       <Dock active={dockActive} onSelect={navSelect} />
       {assistantOpen && (
         <AssistantSheet
@@ -645,7 +728,6 @@ export default function App() {
           onSend={send}
           onClose={closeAssistant}
           onGoogleCredential={signIn}
-          onSignOut={signOut}
           onOpenResources={openResources}
         />
       )}

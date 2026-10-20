@@ -1,4 +1,4 @@
-import { accountKey, emailAccountKey, emptyPlace, normalizeEmail } from './accounts.js'
+import { accountKey, emailAccountKey, emptyPlace, normalizeEmail, sessionRevoked } from './accounts.js'
 import { checkPassword, hashPassword, passwordAccepted } from './passwords.js'
 import { openAuth, readCookie, validNonce, verifyGoogleIdToken, googleCerts } from './auth.js'
 import { MODEL, prepareGuide, completeGuide } from './guide.js'
@@ -82,10 +82,26 @@ export async function handleApi({
     }
   }
 
-  const auth = await openAuth({ cookieHeader, ip, secret, googleClientId, usage, secure, now })
+  let auth = await openAuth({ cookieHeader, ip, secret, googleClientId, usage, secure, now })
+
+  // Every signed-in request: if the account was deleted after this session was issued, the session is dead on every
+  // device. It is treated as signed out and its cookie is cleared, so it can neither read nor recreate the account.
+  if (auth.signedIn && accounts?.status) {
+    let status
+    try {
+      status = await accounts.status(accountKey(auth.sub))
+    } catch {
+      status = null
+    }
+    if (sessionRevoked(status, auth.issuedAt)) {
+      const withoutSession = String(cookieHeader || '').split(';').filter((part) => part.trim().split('=')[0] !== 'lp_session').join(';')
+      auth = await openAuth({ cookieHeader: withoutSession, ip, secret, googleClientId, usage, secure, now })
+      auth.cookies.push(auth.clearedSessionCookie())
+    }
+  }
 
   if (pathname === '/api/account') {
-    return handleAccount({ method, body, auth, accounts, now })
+    return handleAccount({ method, body, auth, accounts, usage, now })
   }
 
   if (pathname === '/api/auth/logout' && method === 'POST') {
@@ -241,7 +257,7 @@ async function handleEmailAccount({ body, auth, accounts, usage, ip, now, secret
           message: 'That email already has an account. Sign in instead.',
         }, auth)
       }
-      const signed = await auth.signIn({ sub: key, email, name: '' })
+      const signed = await auth.signIn({ sub: key, email })
       return { status: 200, cookies: signed.cookies, json: { ok: true, created: true, ...signed.view } }
     }
     const current = await accounts.read(key)
@@ -252,7 +268,7 @@ async function handleEmailAccount({ body, auth, accounts, usage, ip, now, secret
         message: 'That email and password did not match.',
       }, auth)
     }
-    const signed = await auth.signIn({ sub: key, email: current.email || email, name: '' })
+    const signed = await auth.signIn({ sub: key, email: current.email || email })
     return { status: 200, cookies: signed.cookies, json: { ok: true, created: false, ...signed.view } }
   } catch {
     return withAccess(503, {
@@ -262,7 +278,15 @@ async function handleEmailAccount({ body, auth, accounts, usage, ip, now, secret
   }
 }
 
-async function handleAccount({ method, body, auth, accounts, now }) {
+/** Daily question counters carry the account id in their name. Keep this window longer than any counter matters. */
+export const USAGE_FORGET_DAYS = 31
+
+export function accountUsageKeys(id, now) {
+  const base = (now instanceof Date ? now : new Date()).getTime()
+  return Array.from({ length: USAGE_FORGET_DAYS }, (_, i) => `acct:${new Date(base - i * 86_400_000).toISOString().slice(0, 10)}:${id}`)
+}
+
+async function handleAccount({ method, body, auth, accounts, usage, now }) {
   if (!auth.signedIn || !accountKey(auth.sub)) {
     return withAccess(401, {
       error: 'sign_in_required',
@@ -278,7 +302,12 @@ async function handleAccount({ method, body, auth, accounts, now }) {
   const when = (now instanceof Date ? now : new Date()).toISOString()
   try {
     if (method === 'DELETE') {
+      // Erase the whole account row: email, password hash, program (e.g. HASA), housing situation,
+      // letter amount, household size, utilities, saved ids, steps. Then the counters named after the account.
       await accounts.remove(accountKey(auth.sub))
+      if (usage?.forget) {
+        await Promise.all(accountUsageKeys(accountKey(auth.sub), now).map((key) => Promise.resolve(usage.forget(key)).catch(() => {})))
+      }
       return withAccess(200, { ok: true, signedIn: false, email: '', accountRemaining: null }, auth, [
         ...auth.cookies,
         auth.clearedSessionCookie(),

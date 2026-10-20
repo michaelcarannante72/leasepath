@@ -17,6 +17,10 @@ export class UsageMeter extends DurableObject {
     const count = (await this.ctx.storage.get('count')) || 0
     if (count > 0) await this.ctx.storage.put('count', count - 1)
   }
+
+  async forget() {
+    await this.ctx.storage.deleteAll()
+  }
 }
 
 export function durableUsage(namespace) {
@@ -29,6 +33,9 @@ export function durableUsage(namespace) {
     },
     release(key) {
       return namespace.getByName(key).release()
+    },
+    forget(key) {
+      return namespace.getByName(key).forget()
     },
   }
 }

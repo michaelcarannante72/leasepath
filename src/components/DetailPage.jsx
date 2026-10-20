@@ -62,6 +62,7 @@ export function DetailPage({ listing, flags, plan, saved, onToggleSave, onBack, 
         ) : (
           <FlagList flags={flags} />
         )}
+        <p className="fine fit-note">A fit here may work on paper. It is not an approval. <a href="#/after-you-find">What happens after you find an apartment</a></p>
         <div className="button-row">
           <button type="button" className="button" onClick={() => onAsk(`Does the asking rent on this sample look workable with my voucher? Tell me what I should confirm before I contact anyone.`)}>
             Ask LeasePath about this rent

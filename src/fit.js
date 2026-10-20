@@ -99,7 +99,7 @@ export function cardLabel(flag) {
   if (flag.kind === 'program' && flag.summary) {
     const program = flag.source?.program || 'program'
     if (flag.level === 'watch') return `Above ${program} limit`
-    if (flag.level === 'good') return `Within ${program} limit`
+    if (flag.level === 'good') return `May fit ${program} limit`
     return 'Check utilities'
   }
   if (flag.kind === 'program') return flag.source ? `${flag.source.program} note` : 'Ask'

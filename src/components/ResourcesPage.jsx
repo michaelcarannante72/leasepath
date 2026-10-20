@@ -1,7 +1,7 @@
 import { RESOURCES } from '../data.js'
 import { Icon } from './Icon.jsx'
 import { PantryFinder } from './PantryFinder.jsx'
-import { FREE_FOOD, FREE_FOOD_CAUTION, FREE_FOOD_LABEL, FREE_FOOD_TITLE, LAST_CHECKED } from '../freeFood.js'
+import { FREE_FOOD, FREE_FOOD_CAUTION, FREE_FOOD_LABEL, FREE_FOOD_TITLE, ADDED_ON } from '../freeFood.js'
 
 export function ResourcesPage() {
   const groups = [...new Set(RESOURCES.map((item) => item.group))]
@@ -27,7 +27,7 @@ export function ResourcesPage() {
                 {item.centers && <div><dt>Centers</dt><dd>{item.centers}</dd></div>}
               </dl>
               {item.note && <p className="free-food-note">{item.note}</p>}
-              <p className="free-food-caution">{FREE_FOOD_CAUTION} Last checked {LAST_CHECKED}.</p>
+              <p className="free-food-caution">{FREE_FOOD_CAUTION} Added {ADDED_ON}.</p>
             </li>
           ))}
         </ul>

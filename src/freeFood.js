@@ -1,10 +1,10 @@
 // Free food and clothing run by volunteer groups. Facts only, in LeasePath's own words. No links:
-// none of these groups had an official URL we verified. Update LAST_CHECKED whenever an entry is re-checked.
+// none of these groups had an official URL we verified. ADDED_ON is the date these entries were added.
 
 export const FREE_FOOD_TITLE = 'Free food and clothing'
 export const FREE_FOOD_LABEL = 'Run by volunteers, not a government agency. Check their page before you go.'
 export const FREE_FOOD_CAUTION = 'Times can change, check with the group before you go.'
-export const LAST_CHECKED = 'Oct 20, 2026'
+export const ADDED_ON = 'Oct 20, 2026'
 
 export const FREE_FOOD = [
   {

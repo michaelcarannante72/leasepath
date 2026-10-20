@@ -1487,6 +1487,15 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   .ruby-theme .fine { margin: 0; font-size: 0.68rem; line-height: 1.3; }
 }
 
+/* Keep the account sync message inside a phone screen. */
+.topbar { max-width: 100%; min-width: 0; }
+.account-sync-error { flex-basis: 100%; min-width: 0; max-width: 100%; word-break: break-word; overflow-wrap: anywhere; }
+@media (max-width: 720px) {
+  /* The phone top bar does not wrap, so let it wrap only while the message shows; the shrinkable basis is the fallback. */
+  .topbar:has(> .account-sync-error) { flex-wrap: wrap; row-gap: 4px; }
+  .account-sync-error { flex: 1 1 100%; }
+}
+
 /* Income pre-screen. Calm by design: every result uses the neutral note palette, and the over-the-line result is a plain note. */
 .prescreen-results { display: grid; gap: 12px; margin-top: 14px; }
 .prescreen-result { padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--note-bg); color: var(--note); }

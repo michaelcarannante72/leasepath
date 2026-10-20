@@ -39,8 +39,14 @@ function badRequest(status) {
   })
 }
 
+// Clean shareable paths for hash-routed app pages. Each one 301s to the app route.
+export const SHARE_PATHS = { '/after-you-find': '/#/after-you-find', '/after-you-find/': '/#/after-you-find' }
+
 async function route(request, env) {
   const url = new URL(request.url)
+  if (Object.hasOwn(SHARE_PATHS, url.pathname)) {
+    return withSecurity(new Response(null, { status: 301, headers: { location: new URL(SHARE_PATHS[url.pathname], url.origin).toString(), 'cache-control': 'public, max-age=3600' } }))
+  }
   const slug = policySlug(url.pathname)
   if (slug) {
     if (request.method !== 'GET' && request.method !== 'HEAD') {

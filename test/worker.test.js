@@ -86,3 +86,16 @@ test('an unexpected error becomes a JSON 500 instead of a Worker crash', async (
   assert.equal(response.headers.get('x-content-type-options'), 'nosniff')
   assert.equal((await response.json()).error, 'server')
 })
+
+test('/after-you-find and /after-you-find/ 301 to the hash route; other paths still 404', async () => {
+  for (const path of ['/after-you-find', '/after-you-find/']) {
+    const response = await worker.fetch(new Request(`${base}${path}`), env)
+    assert.equal(response.status, 301, path)
+    assert.equal(response.headers.get('location'), `${base}/#/after-you-find`)
+    assert.equal(response.headers.get('x-frame-options'), 'DENY')
+  }
+  assert.equal((await worker.fetch(new Request(`${base}/after-you-findx`), env)).status, 404)
+  const config = (await import('node:fs')).readFileSync(new URL('../wrangler.jsonc', import.meta.url), 'utf8')
+  assert.match(config, /"run_worker_first": \[[^\]]*"\/after-you-find", "\/after-you-find\/"/)
+  assert.match(config, /"not_found_handling": "404-page"/)
+})

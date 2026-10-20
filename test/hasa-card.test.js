@@ -5,12 +5,13 @@ import { RESOURCES } from '../src/data.js'
 
 const COPY = "HASA (part of NYC HRA) helps NYC residents living with HIV or AIDS with case management, housing help, and benefits. You don't need an AIDS diagnosis or symptoms to qualify. In most HASA rental help, you pay about 30% of your income and HASA pays the rest. HASA will ask for medical proof; LeasePath never asks for or stores it."
 
-test('the HASA card uses the exact copy with the HRA link and the FAQs as a second link', () => {
+test('the HASA card uses the exact copy with the HRA link; the FAQ stays its own card, with no extra link row', () => {
   const card = RESOURCES.find((item) => item.title === 'HASA services')
   assert.equal(card.detail, COPY)
   assert.equal(card.href, 'https://www.nyc.gov/site/hra/help/hiv-aids-services.page')
-  assert.deepEqual(card.more, { label: 'HASA FAQs', href: 'https://www.nyc.gov/site/hra/help/hasa-faqs.page' })
-  assert.match(readFileSync(new URL('../src/components/ResourcesPage.jsx', import.meta.url), 'utf8'), /item\.more &&/)
+  assert.equal(card.more, undefined)
+  assert.ok(RESOURCES.some((item) => item.title === 'HASA questions and answers'))
+  assert.doesNotMatch(readFileSync(new URL('../src/components/ResourcesPage.jsx', import.meta.url), 'utf8'), /resource-more|item\.more/)
 })
 
 test('Ruby has the same HASA facts plus the 30% scope and the five boroughs', async () => {

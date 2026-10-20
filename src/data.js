@@ -265,7 +265,6 @@ export const RESOURCES = [
     detail: "HASA (part of NYC HRA) helps NYC residents living with HIV or AIDS with case management, housing help, and benefits. You don't need an AIDS diagnosis or symptoms to qualify. In most HASA rental help, you pay about 30% of your income and HASA pays the rest. HASA will ask for medical proof; LeasePath never asks for or stores it.",
     href: 'https://www.nyc.gov/site/hra/help/hiv-aids-services.page',
     action: 'Open HASA services',
-    more: { label: 'HASA FAQs', href: 'https://www.nyc.gov/site/hra/help/hasa-faqs.page' },
   },
   {
     group: 'HASA voucher',

@@ -36,7 +36,7 @@ export const STEPS = [
     id: 'program',
     title: 'Know your program',
     applies: ['Section 8', 'CityFHEPS', 'FHEPS', 'HASA', 'HAVP'],
-    body: 'NYCHA Section 8, HPD Section 8, CityFHEPS/FHEPS, HASA (all HRA except Section 8), and HAVP (HPD) each use different forms and steps. Check your shopping letter for the agency, bedroom or household size, and expiration date.',
+    body: 'NYCHA Section 8, HPD Section 8, CityFHEPS/FHEPS, HASA, and HAVP (HPD) each use different forms and steps. Check your shopping letter for the agency, bedroom or household size, and expiration date.',
     sources: ['nychaS8', 'cityfhepsDocs', 'havp'],
   },
   {

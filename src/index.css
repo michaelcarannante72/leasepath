@@ -1534,3 +1534,9 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 .prescreen .fine, .prescreen .device-note, .prescreen .stack label, .prescreen .stack label span { font-size: 0.875rem; }
 .prescreen-tag [aria-hidden], .flag-tag [aria-hidden] { text-transform: none; }
 
+
+/* After you find an apartment: 14px source links, and a middle column on desktop. */
+.after-page .after-sources, .after-page .after-sources a, .after-page .fine, .after-page .fine a { font-size: 0.875rem; }
+@media (min-width: 800px) {
+  .after-page { max-width: 800px; margin-inline: auto; }
+}

@@ -1521,6 +1521,15 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   .voucher-table th, .voucher-table td { display: block; padding: 2px 0; border: 0; }
 }
 
+/* Free food and clothing. */
+.free-food-label { margin: 0 0 10px; font-weight: 700; color: var(--muted); }
+.free-food-card { padding: 14px; border-radius: 16px; background: white; border: 1px solid var(--line); }
+.free-food-card dl { margin: 8px 0 0; display: grid; gap: 4px; }
+.free-food-card dl div { display: grid; grid-template-columns: 70px 1fr; gap: 8px; }
+.free-food-card dt { font-weight: 700; color: var(--navy); }
+.free-food-card dd { margin: 0; overflow-wrap: anywhere; }
+.free-food-note, .free-food-caution { margin: 8px 0 0; font-size: 0.875rem; color: var(--muted); }
+
 /* Income pre-screen. Calm by design: every result uses the neutral note palette, and the over-the-line result is a plain note. */
 .prescreen-results { display: grid; gap: 12px; margin-top: 14px; }
 .prescreen-result { padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--note-bg); color: var(--note); }

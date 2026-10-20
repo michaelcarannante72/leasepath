@@ -151,3 +151,21 @@ export const SV = {
   ],
   sources: ['nyccoc'],
 }
+
+// NYCHA scam warning: exact copy, shown on this page, on the Section 8 card, and in Ruby's notes.
+export const NYCHA_SCAM_WARNING = 'NYCHA never charges a fee to apply for public housing or Section 8, or to process a Section 8 rental. If anyone asks you for money, report it to the NYCHA Inspector General at ig@nycha.nyc.gov or 212-306-3355, or to HUD\'s Inspector General at 1-800-347-3735.'
+export const NYCHA_ELIGIBILITY = { label: 'NYCHA: Eligibility', href: 'https://www.nyc.gov/site/nycha/eligibility/eligibility.page' }
+
+// Application help only. Never used by the rent check, the voucher picker, or any calculator.
+export const NYCHA_INCOME_LIMITS = {
+  title: 'Applying to NYCHA',
+  label: "NYCHA's posted limits, check before applying",
+  section8: [56700, 64800, 72900, 81000, 87500, 94000, 100450, 106950],
+  publicHousing: [95000, 108600, 122150, 135700, 146600, 157450, 168300, 179150, 190000, 200850, 211700, 222550, 233450, 244300, 255150],
+  notes: [
+    'Section 8 income is checked when the voucher is issued.',
+    'Public housing: the head of household must be 18 or older, or an emancipated minor.',
+    'NYCHA senior buildings require everyone in the household to be 62 or older.',
+    'Other eligibility questions: see NYCHA’s eligibility page.',
+  ],
+}

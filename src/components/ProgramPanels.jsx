@@ -6,6 +6,7 @@ import { askFor, money } from '../rentCheck.js'
 import { LETTER_DAYS, shoppingLetterDetail, shoppingLetterHeadline, shoppingLetterSource, shoppingLetterStatus } from '../shoppingLetter.js'
 import { RentTable } from './RentTable.jsx'
 import { SourceLine } from './SourceLine.jsx'
+import { NychaScamWarning } from './AfterYouFindPage.jsx'
 
 const FAMILY_COLUMNS = [
   { key: 'household', label: 'People', render: (row) => row.householdSize },
@@ -155,6 +156,7 @@ export function Section8Panel({ checks, onChecks }) {
         <h2>Section 8 payment standards</h2>
         <p>Section 8 is a federal program run by a housing authority, not by HRA or DSS. These are not CityFHEPS or HASA figures.</p>
         <Rule rule={SECTION8_RULES.agencies} program={SECTION8_PROGRAM}>NYCHA runs the largest NYC program. HPD and NYS Homes and Community Renewal also run Section 8 in NYC.</Rule>
+        <NychaScamWarning />
         <Rule rule={SECTION8_RULES.notHraRules} program={SECTION8_PROGRAM}>Do not use HRA or DSS charts for Section 8. The voucher size comes from the housing authority’s occupancy standards.</Rule>
         <div className="stack">
           <p className="device-note">{DEVICE_NOTE}</p>

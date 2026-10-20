@@ -655,7 +655,6 @@ export default function App() {
         onGoogleCredential={signIn}
         onEmailAuth={signUpWithEmail}
         onSignOut={signOut}
-        onDeleteAccount={openDelete}
       />
       <main className="stage" ref={stageRef}>
         <div className="view" key={route.id ? `${route.name}-${route.id}` : route.name}>
@@ -724,7 +723,6 @@ export default function App() {
           onSend={send}
           onClose={closeAssistant}
           onGoogleCredential={signIn}
-          onSignOut={signOut}
           onOpenResources={openResources}
         />
       )}

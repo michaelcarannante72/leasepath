@@ -1453,6 +1453,40 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 .delete-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 12px; }
 .delete-actions .button { min-height: 48px; }
 
+/* Ruby on phones: full-height sheet, the thread is the one scroll area, composer pinned above the keyboard. */
+.ruby-theme .session-line { display: block; margin: 0 0 4px; font-size: 0.75rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 767px) {
+  .sheet-backdrop:has(> .ruby-theme) { align-items: start; }
+  .sheet.ruby-theme {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: var(--ruby-top, 0px);
+    height: 100vh;
+    height: 100dvh;
+    height: var(--ruby-vh, 100dvh);
+    max-height: none;
+    border-radius: 0;
+    padding: calc(8px + env(safe-area-inset-top)) calc(12px + env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) calc(12px + env(safe-area-inset-left));
+  }
+  .ruby-theme .sheet-head { padding-bottom: 6px; align-items: center; }
+  .ruby-theme .sheet-head .eyebrow { margin: 0; font-size: 0.65rem; }
+  .ruby-theme .sheet-head h2 { font-size: 1.05rem; }
+  .ruby-theme .sheet-sub { margin-top: 2px; font-size: 0.72rem; line-height: 1.3; }
+  .ruby-theme .thread { flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; margin: 8px 0; }
+  .ruby-theme .bubble { font-size: 0.95rem; }
+  .ruby-theme .suggestions { flex-wrap: wrap; overflow: visible; gap: 6px; padding-bottom: 6px; }
+  .ruby-theme .suggestions button, .ruby-theme .suggestions .letter-reply { flex: 0 1 auto; min-width: 0; max-width: 100%; min-height: 30px; padding: 4px 10px; font-size: 0.75rem; line-height: 1.25; white-space: normal; }
+  .ruby-theme .composer { display: flex; flex-direction: column; gap: 4px; }
+  .ruby-theme .check-line { margin: 0; min-height: 32px; gap: 8px; align-items: center; font-size: 0.78rem; font-weight: 600; line-height: 1.25; }
+  .ruby-theme .check-line input { width: 16px; height: 16px; flex: none; }
+  .ruby-theme .share-detail { display: none; }
+  .ruby-theme .composer-row { grid-template-columns: 1fr; gap: 6px; }
+  .ruby-theme .composer textarea { width: 100%; height: 48px; min-height: 44px; max-height: 120px; font-size: 16px; resize: none; }
+  .ruby-theme .ruby-send { width: 100%; min-height: 40px; padding-block: 6px; }
+  .ruby-theme .fine { margin: 0; font-size: 0.68rem; line-height: 1.3; }
+}
+
 /* Income pre-screen. Calm by design: every result uses the neutral note palette, and the over-the-line result is a plain note. */
 .prescreen-results { display: grid; gap: 12px; margin-top: 14px; }
 .prescreen-result { padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--note-bg); color: var(--note); }
@@ -1465,3 +1499,4 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 .prescreen-result .source-line a { color: inherit; text-decoration: underline; }
 .prescreen .fine, .prescreen .device-note, .prescreen .stack label, .prescreen .stack label span { font-size: 0.875rem; }
 .prescreen-tag [aria-hidden], .flag-tag [aria-hidden] { text-transform: none; }
+

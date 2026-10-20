@@ -43,10 +43,10 @@ export function AssistantSheet({
   onSend,
   onClose,
   onGoogleCredential,
-  onSignOut,
   onOpenResources,
 }) {
   const closeButton = useRef(null)
+  const sheet = useRef(null)
   const thread = useRef(null)
 
   const locked = Boolean(access && !access.signedIn && access.anonymousRemaining <= 0)
@@ -61,6 +61,24 @@ export function AssistantSheet({
     return () => window.removeEventListener('keydown', onKey)
   }, [onClose])
 
+  // Keep the composer above the iOS keyboard: size the sheet to the visible viewport.
+  useEffect(() => {
+    const viewport = typeof window !== 'undefined' ? window.visualViewport : null
+    const node = sheet.current
+    if (!viewport || !node) return undefined
+    const fit = () => {
+      node.style.setProperty('--ruby-vh', `${Math.round(viewport.height)}px`)
+      node.style.setProperty('--ruby-top', `${Math.round(viewport.offsetTop)}px`)
+    }
+    fit()
+    viewport.addEventListener('resize', fit)
+    viewport.addEventListener('scroll', fit)
+    return () => {
+      viewport.removeEventListener('resize', fit)
+      viewport.removeEventListener('scroll', fit)
+    }
+  }, [])
+
   useEffect(() => {
     const node = thread.current
     if (node) node.scrollTop = node.scrollHeight
@@ -68,7 +86,7 @@ export function AssistantSheet({
 
   return (
     <div className="sheet-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose() }}>
-      <section className="sheet ruby-theme" role="dialog" aria-modal="true" aria-labelledby="assistant-title">
+      <section ref={sheet} className="sheet ruby-theme" role="dialog" aria-modal="true" aria-labelledby="assistant-title">
         <header className="sheet-head">
           <div>
             <p className="eyebrow">Resource Navigator</p>
@@ -121,10 +139,7 @@ export function AssistantSheet({
               }}
             >
               {access?.signedIn && (
-                <p className="session-line">
-                  <span>Signed in as {access.email}</span>
-                  <button type="button" className="text-button" onClick={onSignOut}>Sign out</button>
-                </p>
+                <p className="session-line">Signed in as {access.email}</p>
               )}
               <label className="check-line">
                 <input type="checkbox" role="switch" aria-checked={includePlan} checked={includePlan} onChange={(event) => onIncludePlan(event.target.checked)} />

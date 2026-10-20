@@ -98,3 +98,14 @@ test('voucher sharing with Ruby is off by default, one tap to turn on, saved per
   assert.match(sheet, /role="switch"/)
   assert.match(sheet, /Off: nothing about your voucher leaves this phone\./)
 })
+
+test('Inter is self-hosted, so no page load contacts Google Fonts', () => {
+  const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8')
+  const css = readFileSync(new URL('../src/index.css', import.meta.url), 'utf8')
+  assert.doesNotMatch(html + css, /fonts\.(googleapis|gstatic)\.com/)
+  assert.match(css, /src: url\('\/fonts\/inter-latin\.woff2'\) format\('woff2'\)/)
+  assert.match(html, /<link rel="preload" href="\/fonts\/inter-latin\.woff2" as="font" type="font\/woff2" crossorigin \/>/)
+  for (const f of ['inter-latin.woff2', 'inter-latin-ext.woff2']) {
+    assert.equal(readFileSync(new URL(`../public/fonts/${f}`, import.meta.url)).subarray(0, 4).toString(), 'wOF2')
+  }
+})

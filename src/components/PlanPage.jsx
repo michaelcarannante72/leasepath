@@ -12,7 +12,7 @@ const SITUATIONS = [
   'Unsure',
 ]
 
-export function PlanPage({ plan, onChange, checks, onChecks, onClearIncome }) {
+export function PlanPage({ plan, onChange, checks, onChecks, onClearIncome, signedIn, onDeleteAccount }) {
   return (
     <div className="page">
       <p className="eyebrow">My voucher</p>
@@ -119,6 +119,12 @@ export function PlanPage({ plan, onChange, checks, onChecks, onClearIncome }) {
       )}
 
       {plan.program === 'Section 8' && <Section8Panel checks={checks} onChecks={onChecks} />}
+
+      <section className="panel danger-zone" aria-labelledby="delete-heading">
+        <h2 id="delete-heading">Delete my data</h2>
+        <p>{signedIn ? 'Erase your LeasePath account and everything on this phone, including your voucher details and income.' : 'Erase everything LeasePath saved on this phone, including your voucher details and income.'}</p>
+        <button type="button" className="button delete-open" onClick={onDeleteAccount}>{signedIn ? 'Delete my account' : 'Delete my data'}</button>
+      </section>
     </div>
   )
 }

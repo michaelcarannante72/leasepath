@@ -472,7 +472,8 @@ test('income is cleared by a Clear income button, on sign-out, and on account de
   assert.match(del, /clearIncome\(\)/)
   // Cleared right after the person confirms, before the network call, so a failed call still clears it.
   assert.ok(del.indexOf('clearIncome()') < del.indexOf("fetch('/api/account'"))
-  assert.match(del, /Income you typed in the pre-screen is cleared\./)
+  // The typed-DELETE dialog lists income among what is erased.
+  assert.match(read('src/components/DeleteAccountDialog.jsx'), /<li>Income you typed in the pre-screen<\/li>/)
   const screen = read('src/components/IncomePrescreen.jsx')
   assert.match(screen, /onClick=\{onClear\}>Clear income</)
   assert.match(app, /onClearIncome=\{clearIncome\}/)

@@ -1419,6 +1419,21 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   .topnav button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 }
 
+/* Delete my data */
+.danger-zone { border: 1px solid #e7c9c0; background: #fffaf8; }
+.danger-zone h2 { color: #8a2f1c; }
+.delete-open, .delete-go { background: #8a2f1c; color: white; }
+.delete-open:hover, .delete-go:hover:not(:disabled) { background: #6f2416; }
+.delete-dialog { height: auto; max-height: min(92dvh, 820px); overflow: auto; gap: 10px; }
+.delete-dialog h2 { margin: 0 0 8px; font-size: 1.25rem; color: var(--navy); }
+.delete-dialog p, .delete-dialog li { font-size: 0.95rem; line-height: 1.45; }
+.delete-dialog ul { margin: 0 0 10px; padding-left: 20px; }
+.delete-confirm { display: grid; gap: 6px; margin: 14px 0 6px; font-weight: 600; }
+.delete-confirm input { min-height: 48px; font-size: 1.1rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.delete-error { color: #8a2f1c; font-weight: 600; }
+.delete-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 12px; }
+.delete-actions .button { min-height: 48px; }
+
 /* Income pre-screen. Calm by design: every result uses the neutral note palette, and the over-the-line result is a plain note. */
 .prescreen-results { display: grid; gap: 12px; margin-top: 14px; }
 .prescreen-result { padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--note-bg); color: var(--note); }

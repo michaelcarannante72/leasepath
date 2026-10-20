@@ -85,7 +85,7 @@ export async function handleApi({
   const auth = await openAuth({ cookieHeader, ip, secret, googleClientId, usage, secure, now })
 
   if (pathname === '/api/account') {
-    return handleAccount({ method, body, auth, accounts, now })
+    return handleAccount({ method, body, auth, accounts, usage, now })
   }
 
   if (pathname === '/api/auth/logout' && method === 'POST') {
@@ -262,7 +262,15 @@ async function handleEmailAccount({ body, auth, accounts, usage, ip, now, secret
   }
 }
 
-async function handleAccount({ method, body, auth, accounts, now }) {
+/** Daily question counters carry the account id in their name. Keep this window longer than any counter matters. */
+export const USAGE_FORGET_DAYS = 31
+
+export function accountUsageKeys(id, now) {
+  const base = (now instanceof Date ? now : new Date()).getTime()
+  return Array.from({ length: USAGE_FORGET_DAYS }, (_, i) => `acct:${new Date(base - i * 86_400_000).toISOString().slice(0, 10)}:${id}`)
+}
+
+async function handleAccount({ method, body, auth, accounts, usage, now }) {
   if (!auth.signedIn || !accountKey(auth.sub)) {
     return withAccess(401, {
       error: 'sign_in_required',
@@ -278,7 +286,12 @@ async function handleAccount({ method, body, auth, accounts, now }) {
   const when = (now instanceof Date ? now : new Date()).toISOString()
   try {
     if (method === 'DELETE') {
+      // Erase the whole account row: email, password hash, program (e.g. HASA), housing situation,
+      // letter amount, household size, utilities, saved ids, steps. Then the counters named after the account.
       await accounts.remove(accountKey(auth.sub))
+      if (usage?.forget) {
+        await Promise.all(accountUsageKeys(accountKey(auth.sub), now).map((key) => Promise.resolve(usage.forget(key)).catch(() => {})))
+      }
       return withAccess(200, { ok: true, signedIn: false, email: '', accountRemaining: null }, auth, [
         ...auth.cookies,
         auth.clearedSessionCookie(),

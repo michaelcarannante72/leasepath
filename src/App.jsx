@@ -10,6 +10,8 @@ import { CookiePrompt } from './components/CookiePrompt.jsx'
 import { Onboarding } from './components/Onboarding.jsx'
 import { Paywall } from './components/Paywall.jsx'
 import { PlanPage } from './components/PlanPage.jsx'
+import { DeleteAccountDialog } from './components/DeleteAccountDialog.jsx'
+import { clearDeviceData } from './deviceData.js'
 import { ResourcesPage } from './components/ResourcesPage.jsx'
 import { SearchPage } from './components/SearchPage.jsx'
 import { StepsPage } from './components/StepsPage.jsx'
@@ -463,19 +465,40 @@ export default function App() {
     })
   }, [])
 
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  const openDelete = useCallback(() => setDeleteOpen(true), [])
+
+  // Server first (account row + counters + session cookie), then this device. If the server call fails, nothing is cleared.
   const deleteAccount = useCallback(async () => {
-    if (!window.confirm('Delete the LeasePath account? The letter stays on this phone. Income you typed in the pre-screen is cleared.')) return
+    // Income never leaves the device, so it is cleared first, even if the server call fails.
     clearIncome()
     setSignInError('')
-    try {
-      const response = await fetch('/api/account', { method: 'DELETE', credentials: 'same-origin' })
-      const data = await response.json().catch(() => ({}))
-      applyAccess(data)
-      if (!response.ok) setSignInError(data.message || 'The account could not be deleted. Try again.')
-    } catch {
-      setSignInError('LeasePath could not reach the account. Check your connection and try again.')
+    if (session.signedIn) {
+      try {
+        const response = await fetch('/api/account', { method: 'DELETE', credentials: 'same-origin' })
+        const data = await response.json().catch(() => ({}))
+        if (!response.ok) return { ok: false, message: data.message }
+        applyAccess(data)
+      } catch {
+        return { ok: false, message: 'LeasePath could not reach your account. Check your connection and try again. Nothing was deleted.' }
+      }
     }
-  }, [applyAccess, clearIncome])
+    await clearDeviceData()
+    setPlan(emptyPlan())
+    setChecks(emptyChecks())
+    setSaved([])
+    setChecked([])
+    setMessages([WELCOME])
+    return { ok: true }
+  }, [applyAccess, clearIncome, session.signedIn])
+
+  const finishDelete = useCallback(async () => {
+    setDeleteOpen(false)
+    // State effects may have re-written empty values after the first clear; clear once more before reloading.
+    await clearDeviceData()
+    window.location.hash = '#/'
+    window.location.reload()
+  }, [])
 
   const signOut = useCallback(async () => {
     clearIncome()
@@ -583,7 +606,7 @@ export default function App() {
         onGoogleCredential={signIn}
         onEmailAuth={signUpWithEmail}
         onSignOut={signOut}
-        onDeleteAccount={deleteAccount}
+        onDeleteAccount={openDelete}
       />
       <main className="stage" ref={stageRef}>
         <div className="view" key={route.id ? `${route.name}-${route.id}` : route.name}>
@@ -623,7 +646,7 @@ export default function App() {
         )}
         {route.name === 'steps' && <StepsPage checked={checked} onToggle={toggleStep} />}
         {route.name === 'resources' && <ResourcesPage />}
-        {route.name === 'plan' && <PlanPage plan={plan} onChange={updatePlan} checks={checks} onChecks={updateChecks} onClearIncome={clearIncome} />}
+        {route.name === 'plan' && <PlanPage plan={plan} onChange={updatePlan} checks={checks} onChecks={updateChecks} onClearIncome={clearIncome} signedIn={session.signedIn} onDeleteAccount={openDelete} />}
         {route.name === 'blog' && <BlogList />}
         {route.name === 'post' && <BlogPost post={post} />}
         {route.name === 'info' && <InfoPage page={infoPage} />}
@@ -631,6 +654,13 @@ export default function App() {
         <Footer compact={route.name === 'search'} />
       </main>
       <CookiePrompt />
+      <DeleteAccountDialog
+        open={deleteOpen}
+        signedIn={session.signedIn}
+        onCancel={() => setDeleteOpen(false)}
+        onConfirm={deleteAccount}
+        onDone={finishDelete}
+      />
       <Dock active={dockActive} onSelect={navSelect} />
       {assistantOpen && (
         <AssistantSheet

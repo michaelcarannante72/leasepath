@@ -1,11 +1,22 @@
 import { useEffect } from 'react'
-import { CAVEAT, CHAP, HAVP, LAST_REVIEWED, PROGRAMS, RIGHTS, SOURCES, STEPS } from '../afterYouFind.js'
+import { CAVEAT, CHAP, HAVP, NYCHA_ELIGIBILITY, NYCHA_INCOME_LIMITS, NYCHA_SCAM_WARNING, LAST_REVIEWED, PROGRAMS, RIGHTS, SOURCES, STEPS } from '../afterYouFind.js'
 import { Icon } from './Icon.jsx'
 
 function SourceLink({ id }) {
   const source = SOURCES[id]
   return (
     <a href={source.href} target="_blank" rel="noreferrer">{source.label} <Icon name="external" size={12} /></a>
+  )
+}
+
+const dollars = (value) => `$${value.toLocaleString('en-US')}`
+
+/** Exact NYCHA scam copy with its eligibility link. Also used on the Section 8 card. */
+export function NychaScamWarning() {
+  return (
+    <p className="scam-warning">
+      {NYCHA_SCAM_WARNING} <a href={NYCHA_ELIGIBILITY.href} target="_blank" rel="noreferrer">{NYCHA_ELIGIBILITY.label} <Icon name="external" size={12} /></a>
+    </p>
   )
 }
 
@@ -59,6 +70,28 @@ export function AfterYouFindPage() {
         <h2 id="rights">{RIGHTS.title}</h2>
         <p>{RIGHTS.body}</p>
         <p className="fine"><SourceLink id={RIGHTS.source} /></p>
+      </section>
+
+      <section id="nycha-apply" className="panel" aria-labelledby="nycha-apply-title">
+        <h2 id="nycha-apply-title">{NYCHA_INCOME_LIMITS.title}</h2>
+        <NychaScamWarning />
+        <h3>{NYCHA_INCOME_LIMITS.label}</h3>
+        <div className="table-scroll">
+          <table className="limits-table">
+            <thead><tr><th scope="col">People</th><th scope="col">Section 8</th><th scope="col">Public housing</th></tr></thead>
+            <tbody>
+              {NYCHA_INCOME_LIMITS.publicHousing.map((ph, index) => (
+                <tr key={index}>
+                  <th scope="row">{index + 1}</th>
+                  <td>{NYCHA_INCOME_LIMITS.section8[index] ? dollars(NYCHA_INCOME_LIMITS.section8[index]) : '—'}</td>
+                  <td>{dollars(ph)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <ul>{NYCHA_INCOME_LIMITS.notes.map((note) => <li key={note}>{note}</li>)}</ul>
+        <p className="fine">Source: <a href={NYCHA_ELIGIBILITY.href} target="_blank" rel="noreferrer">{NYCHA_ELIGIBILITY.label} <Icon name="external" size={12} /></a></p>
       </section>
 
       <section id="havp" className="panel after-chap" aria-labelledby="havp-title">

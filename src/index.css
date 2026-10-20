@@ -1540,3 +1540,10 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 @media (min-width: 800px) {
   .after-page { max-width: 800px; margin-inline: auto; }
 }
+
+/* NYCHA application help. */
+.scam-warning { margin: 8px 0 12px; padding: 10px 12px; border-left: 4px solid var(--gold); background: var(--bg); border-radius: 10px; line-height: 1.5; }
+.scam-warning a { color: var(--navy); font-weight: 700; overflow-wrap: anywhere; }
+.limits-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.limits-table th, .limits-table td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: left; }
+#nycha-apply h3 { margin: 12px 0 6px; font-size: 1rem; }

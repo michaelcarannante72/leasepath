@@ -10,6 +10,7 @@ export const ADDED_ON = 'Oct 20, 2026'
 export const FREE_FOOD = [
   {
     name: 'Bushwick Free Store',
+    area: 'Brooklyn',
     group: 'Bushwick Mutual Aid',
     when: 'Tuesdays, 3 to 5pm',
     where: 'Maria Hernandez Park, Suydam St and Knickerbocker Ave, Brooklyn 11237',
@@ -18,6 +19,7 @@ export const FREE_FOOD = [
   },
   {
     name: 'Community Care Collective',
+    area: 'Manhattan',
     group: 'Community Care Collective',
     when: 'Tuesdays, 12:30 to 2:30pm',
     where: 'Washington Square Park, across from the Holley statue, Manhattan 10012',
@@ -26,6 +28,7 @@ export const FREE_FOOD = [
   },
   {
     name: 'Collective Focus Resource Hub',
+    area: 'Brooklyn',
     group: 'Collective Focus',
     when: 'Tuesdays, 12 to 2pm',
     where: '1046 Broadway, Brooklyn 11221',
@@ -34,6 +37,7 @@ export const FREE_FOOD = [
   },
   {
     name: 'Bronx Mutual Aid',
+    area: 'Bronx',
     group: 'Bronx Mutual Aid',
     when: 'Saturdays, 1 to 2pm',
     where: "St. Mary's Park, 601 E 149th St, Bronx 10454",
@@ -41,6 +45,7 @@ export const FREE_FOOD = [
   },
   {
     name: 'Washington Square Park Mutual Aid',
+    area: 'Manhattan',
     group: 'Washington Square Park Mutual Aid',
     when: 'Fridays, from 5pm',
     where: 'Washington Square Park, Manhattan 10012',
@@ -49,6 +54,7 @@ export const FREE_FOOD = [
   },
   {
     name: "Marsha's Closet",
+    area: 'Manhattan',
     group: 'Claim Our Space NOW',
     when: 'Third Monday of each month',
     where: '135th St and St Nicholas Ave, Harlem 10030',
@@ -59,6 +65,7 @@ export const FREE_FOOD = [
   },
   {
     name: 'Adelphi Free Store',
+    area: 'Brooklyn',
     group: 'Adelphi Free Store',
     when: 'Open 24/7',
     where: 'Adelphi St and Greene Ave (380 Adelphi St), Clinton Hill/Fort Greene, Brooklyn 11238',
@@ -66,6 +73,7 @@ export const FREE_FOOD = [
   },
   {
     name: 'Community Solidarity',
+    area: 'Brooklyn',
     group: 'Community Solidarity',
     when: 'Weekly. Check their website for times.',
     where: 'Bed-Stuy, Brooklyn',
@@ -73,6 +81,7 @@ export const FREE_FOOD = [
   },
   {
     name: 'Mercadito Solidario Project',
+    area: 'Queens',
     group: 'Colectivo Intercultural TRANSgrediendo',
     when: 'Wednesdays, 3 to 6pm',
     where: '3763 83rd St, Suite 1B, Jackson Heights, Queens 11372',
@@ -83,6 +92,7 @@ export const FREE_FOOD = [
   },
   {
     name: 'Young Black Queens NYC',
+    area: 'Brooklyn and Queens',
     group: 'Young Black Queens NYC',
     when: 'Check with the group for dates.',
     where: 'Brooklyn and Queens',
@@ -97,6 +107,7 @@ export const OTHER_HELP_TITLE = 'Getting around'
 export const OTHER_HELP = [
   {
     name: 'Bike Plant',
+    area: 'Brooklyn',
     group: 'Bike Plant',
     where: 'Brooklyn',
     offers: 'Bikes and bike repairs on a sliding scale.',
@@ -126,6 +137,7 @@ export const HEALTH = [
   },
   {
     name: 'Abortion Finder',
+    area: 'Online',
     group: 'Abortion Finder',
     offers: 'A national directory you can search for abortion care providers, funding, and support.',
     how: 'It does not make referrals or give care itself. Use it to find a provider, then contact them.',
@@ -156,6 +168,7 @@ export const HEALTH = [
   },
   {
     name: 'ANAD Communities of Healing',
+    area: 'Online',
     group: 'ANAD',
     scope: 'National, online only.',
     offers: 'Free weekly virtual support groups for anyone with an eating disorder, led by people who have recovered.',
@@ -170,6 +183,7 @@ export const HOUSING_TITLE = 'Housing and drop-in help'
 export const HOUSING = [
   {
     name: 'Ali Forney Center',
+    area: 'Manhattan',
     group: 'Ali Forney Center',
     offers: 'A 24-hour drop-in center for homeless LGBTQ+ youth, with free medical and mental health care and other services.',
     where: 'Drop-in center: 307 West 38th Street, 3rd floor, New York, NY 10018',
@@ -185,6 +199,7 @@ export const OLDER_TITLE = 'Older New Yorkers'
 export const OLDER = [
   {
     name: 'R.A.I.N. Case Management Program',
+    area: 'Bronx',
     group: 'R.A.I.N.',
     lead: 'For homebound seniors 60+ living in Bronx Community Districts 7, 8, 11 or 12.',
     offers: 'Case managers connect you to transportation, housekeeping, home care, home-delivered meals, and help with entitlements and benefits.',
@@ -194,6 +209,7 @@ export const OLDER = [
   },
   {
     name: 'AARP Connect2Affect',
+    area: 'Online',
     group: 'AARP',
     scope: 'National, online only.',
     offers: 'A three-minute online check of your risk for social isolation, with local suggestions based on your answers.',
@@ -202,11 +218,12 @@ export const OLDER = [
   },
 ]
 
+// `area` is the borough (or Online) shown on the compact card and used by the borough filter.
 // Order on the page and in the jump links. `label: true` shows the volunteer label under the heading.
 export const COMMUNITY_SECTIONS = [
-  { id: 'free-food-title', title: FREE_FOOD_TITLE, jump: 'Food and clothing', items: FREE_FOOD, label: true, caution: true },
-  { id: 'housing-title', title: HOUSING_TITLE, jump: HOUSING_TITLE, items: HOUSING },
-  { id: 'other-help-title', title: OTHER_HELP_TITLE, jump: OTHER_HELP_TITLE, items: OTHER_HELP, label: true },
-  { id: 'health-title', title: HEALTH_TITLE, jump: HEALTH_TITLE, items: HEALTH },
-  { id: 'older-title', title: OLDER_TITLE, jump: OLDER_TITLE, items: OLDER },
+  { id: 'free-food-title', title: FREE_FOOD_TITLE, jump: 'Food and clothing', type: 'food clothing groceries', items: FREE_FOOD, label: true, caution: true },
+  { id: 'housing-title', title: HOUSING_TITLE, jump: 'Housing and drop-in', type: 'housing shelter drop-in', items: HOUSING },
+  { id: 'other-help-title', title: OTHER_HELP_TITLE, jump: OTHER_HELP_TITLE, type: 'bikes transportation', items: OTHER_HELP, label: true },
+  { id: 'health-title', title: HEALTH_TITLE, jump: HEALTH_TITLE, type: 'health medical counseling support groups', items: HEALTH },
+  { id: 'older-title', title: OLDER_TITLE, jump: OLDER_TITLE, type: 'seniors older adults', items: OLDER },
 ]

@@ -1533,10 +1533,40 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 .free-food-scope { margin: 6px 0 0; font-size: 0.875rem; font-weight: 700; color: var(--muted); }
 .community-heading { scroll-margin-top: 80px; }
 .community-jump { margin: 0 0 14px; padding: 12px 14px; border-radius: 16px; background: white; border: 1px solid var(--line); }
-.community-jump p { margin: 0 0 6px; font-weight: 700; color: var(--navy); }
 .community-jump ul { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
-.community-jump a { display: inline-block; padding: 6px 12px; border-radius: 999px; background: var(--paper, #f4f6fb); border: 1px solid var(--line); font-size: 0.875rem; font-weight: 700; }
-.free-food-card .free-food-link + .free-food-link { margin-left: 14px; }
+.help-now { margin: 14px 0; padding: 14px; border-radius: 16px; background: white; border: 2px solid var(--gold); }
+.help-now h2 { margin: 0 0 8px; font-size: 1.125rem; }
+.help-now ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.help-call { display: block; padding: 10px 12px; border-radius: 12px; background: var(--navy); color: white; font-weight: 700; text-decoration: none; }
+.help-jumps { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0; }
+.help-jumps button, .chip { min-height: 36px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: white; color: var(--navy); font: inherit; font-size: 0.875rem; font-weight: 700; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--navy); border-color: var(--navy); color: white; }
+.help-jumps button:focus-visible, .chip:focus-visible, .section-toggle:focus-visible, .card-more summary:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.resource-search { display: grid; gap: 8px; margin: 0 0 10px; }
+.resource-search label { font-weight: 700; color: var(--navy); }
+.resource-search input { width: 100%; box-sizing: border-box; min-height: 44px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: white; font: inherit; font-size: 1rem; }
+.borough-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.community-jump { position: sticky; top: 0; z-index: 5; margin: 0 -4px 10px; padding: 8px 4px; border: 0; border-radius: 0; background: var(--bg); }
+.community-jump ul { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.community-jump li { flex: 0 0 auto; }
+.resource-status { margin: 0 0 8px; font-size: 0.875rem; color: var(--muted); }
+.link-button { padding: 0; border: 0; background: none; color: var(--terracotta); font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; }
+.resource-empty { padding: 14px; border-radius: 16px; background: white; border: 1px dashed var(--line); }
+.community-heading { margin: 10px 0 6px; }
+.section-toggle { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 10px; min-height: 48px; padding: 10px 14px; border-radius: 14px; border: 1px solid var(--line); background: white; color: var(--navy); font: inherit; font-size: 1.0625rem; font-weight: 800; text-align: left; cursor: pointer; }
+.section-count { color: var(--muted); font-weight: 700; }
+.section-chevron { display: inline-flex; transform: rotate(90deg); transition: transform 0.15s; }
+.section-toggle[aria-expanded="true"] .section-chevron { transform: rotate(-90deg); }
+.city-title { margin: 22px 0 4px; font-size: 1.25rem; }
+.resources-page .resource-list { display: grid; gap: 10px; }
+.card-what { margin: 6px 0 0; }
+.card-area { display: flex; align-items: center; gap: 4px; margin: 4px 0 0; font-size: 0.875rem; color: var(--muted); }
+.card-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 8px; }
+.resource-list .free-food-card a.card-call { padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--bg); font-size: 0.875rem; font-weight: 700; color: var(--navy); }
+.resource-list .free-food-card .card-actions .free-food-link { margin: 0; }
+.card-more { margin-top: 8px; }
+.card-more summary { width: max-content; min-height: 32px; cursor: pointer; font-size: 0.875rem; font-weight: 700; color: var(--terracotta); }
+@media (min-width: 900px) { .community-jump { position: static; } .community-jump ul { flex-wrap: wrap; overflow: visible; } .help-now ul { grid-template-columns: 1fr 1fr; } }
 .free-food-link { display: inline-flex; align-items: center; gap: 4px; margin-top: 8px; font-size: 0.875rem; font-weight: 700; }
 .resource-list .free-food-card a { display: inline-flex; width: auto; min-height: 0; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; }
 .free-food h3.community-heading { margin: 20px 0 6px; font-size: 1.125rem; }

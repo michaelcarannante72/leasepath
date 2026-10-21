@@ -33,7 +33,7 @@ test('every card has no ellipsis, and every card shows Added Oct 20, 2026', () =
 
 test('sections in order with the jump list, volunteer label only on volunteer sections', () => {
   assert.deepEqual(COMMUNITY_SECTIONS.map((s) => s.jump),
-    ['Food and clothing', 'Housing and drop-in help', 'Getting around', 'Health and support', 'Older New Yorkers'])
+    ['Food and clothing', 'Housing and drop-in', 'Getting around', 'Health and support', 'Older New Yorkers'])
   assert.deepEqual(COMMUNITY_SECTIONS.map((s) => s.title),
     ['Free food and clothing', 'Housing and drop-in help', 'Getting around', 'Health and support', 'Older New Yorkers'])
   assert.deepEqual(COMMUNITY_SECTIONS.filter((s) => s.label).map((s) => s.id), ['free-food-title', 'other-help-title'])
@@ -145,7 +145,7 @@ test('every outside link opens in a new tab with noopener noreferrer', () => {
 })
 
 test('Health and support links send no dataLayer events: no tracking code, and Resources is never tracked', () => {
-  const card = page.slice(page.indexOf('function CommunityCard'), page.indexOf('export function ResourcesPage'))
+  const card = page.slice(page.indexOf('function CommunityCard'), page.indexOf('function CityCard'))
   assert.doesNotMatch(card, /onClick|onMouseDown|onAuxClick|dataLayer|safePush|trackView|gtag/)
   assert.doesNotMatch(page, /analytics|dataLayer|gtag/)
   const win = { location: { origin: 'https://leasepath.app' } }

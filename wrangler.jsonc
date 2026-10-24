@@ -25,6 +25,10 @@
       { "name": "ACCOUNT_BOOK", "class_name": "AccountBook" }
     ]
   },
+  // Per-IP limit for Ruby's chat (POST /api/guide), checked in worker/chatGuard.js before Turnstile and the model.
+  "ratelimits": [
+    { "name": "CHAT_LIMITER", "namespace_id": "1001", "simple": { "limit": 10, "period": 60 } }
+  ],
   "migrations": [
     { "tag": "v1-usage-meter", "new_sqlite_classes": ["UsageMeter"] },
     { "tag": "v2-account-book", "new_sqlite_classes": ["AccountBook"] }

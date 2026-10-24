@@ -22,6 +22,17 @@ export const LEASE_UP_KNOWLEDGE = `LEASE-UP NOTES (after someone finds an apartm
 
 export const MODEL = 'grok-4.7'
 const MODEL_TIMEOUT_MS = 45_000
+/** Longest question a person can send. The composer enforces the same limit. */
+export const MAX_MESSAGE_CHARS = 2000
+/** Rough budget for the conversation sent to xAI after the fixed system prompt (about 4 characters per token).
+ * Older turns are dropped first. */
+export const MAX_CONVERSATION_TOKENS = 3000
+/** Cap on Ruby's reply length. */
+export const MAX_OUTPUT_TOKENS = 1000
+
+export function estimateTokens(text) {
+  return Math.ceil(String(text || '').length / 4)
+}
 
 export const SYSTEM = `You are Ruby, LeasePath's Resource Navigator and voucher specialist. You help a New Yorker use a housing voucher they already have, or take the next step to qualify for one. The vouchers in your policy pack are HASA, CityFHEPS, FHEPS, and Section 8.
 
@@ -156,6 +167,7 @@ async function callXai(key, input) {
       model: MODEL,
       input,
       store: false,
+      max_output_tokens: MAX_OUTPUT_TOKENS,
     }),
     signal: AbortSignal.timeout(MODEL_TIMEOUT_MS),
   })
@@ -181,11 +193,18 @@ export function prepareGuide(body) {
     input.push({ role, content })
   }
 
+  const latest = history[history.length - 1]
+  if (typeof latest?.content === 'string' && latest.content.trim().length > MAX_MESSAGE_CHARS) {
+    return { error: json(413, { error: 'too_long', message: `That question is too long for Ruby. Keep it under ${MAX_MESSAGE_CHARS} characters and try again.` }) }
+  }
   const last = input[input.length - 1]
   if (!last || last.role !== 'user') {
     return { error: json(400, { error: 'empty', message: 'Type a question first.' }) }
   }
   if (context) last.content = `${context}\n\nQUESTION\n${last.content}`
+  // Keep the system prompt and the current question; drop the oldest turns until the estimate fits.
+  const total = () => input.slice(1).reduce((sum, item) => sum + estimateTokens(item.content), 0)
+  while (input.length > 2 && total() > MAX_CONVERSATION_TOKENS) input.splice(1, 1)
   return { input }
 }
 
@@ -207,7 +226,7 @@ export async function completeGuide({ key, input, callModel = callXai }) {
     return json(200, { reply })
   } catch (error) {
     const status = error?.status
-    console.error(JSON.stringify({ message: 'leasepath guide failed', status: status || error?.message || String(error) }))
+    console.error(JSON.stringify({ message: 'leasepath guide failed', status: status || error?.name || 'Error' }))
     if (status === 401 || status === 403) {
       return json(401, {
         error: 'bad_key',

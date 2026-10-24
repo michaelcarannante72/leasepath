@@ -154,6 +154,7 @@ export function AssistantSheet({
                   onChange={(event) => onInput(event.target.value)}
                   placeholder="Ask Ruby about a voucher"
                   rows={3}
+                  maxLength={2000}
                   aria-label="Question for Ruby"
                   onKeyDown={(event) => {
                     if (event.key === 'Enter' && !event.shiftKey) {

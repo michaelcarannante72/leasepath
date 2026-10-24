@@ -2,6 +2,8 @@ import { handleApi } from '../server/api.js'
 import { policyHtml, policySlug } from '../server/policyPages.js'
 import { AccountBook, durableAccounts } from './accountBook.js'
 import { UsageMeter, durableUsage } from './usageMeter.js'
+import { SECURITY_HEADERS } from './security.js'
+import { guardChat } from './chatGuard.js'
 
 export { UsageMeter, AccountBook }
 
@@ -11,13 +13,9 @@ function requestOrigin(url) {
 
 const MAX_BODY = 100_000
 
-// Static files get the same headers from public/_headers. The Worker answers /api and the policy pages itself.
-export const SECURITY_HEADERS = {
-  'x-content-type-options': 'nosniff',
-  'referrer-policy': 'strict-origin-when-cross-origin',
-  'x-frame-options': 'DENY',
-  'permissions-policy': 'geolocation=(self), camera=(), microphone=(), payment=()',
-}
+// Static files get the same headers from public/_headers (generated from worker/security.js).
+// The Worker answers /api and the policy pages itself.
+export { SECURITY_HEADERS }
 
 function withSecurity(response) {
   for (const [name, value] of Object.entries(SECURITY_HEADERS)) response.headers.set(name, value)
@@ -84,6 +82,21 @@ async function route(request, env) {
     }
   }
 
+  let guardCookie = null
+  if (url.pathname === '/api/guide' && request.method === 'POST') {
+    const token = typeof body?.turnstileToken === 'string' ? body.turnstileToken : ''
+    if (body && typeof body === 'object') delete body.turnstileToken
+    const guard = await guardChat({
+      env,
+      ip: request.headers.get('cf-connecting-ip') || '',
+      cookieHeader: request.headers.get('cookie') || '',
+      token,
+      secure: url.protocol === 'https:',
+    })
+    if (!guard.ok) return jsonResponse({ status: guard.status, json: guard.json, cookies: [] })
+    guardCookie = guard.cookie || null
+  }
+
   const result = await handleApi({
     method: request.method,
     pathname: url.pathname,
@@ -99,6 +112,7 @@ async function route(request, env) {
     accounts: env.ACCOUNT_BOOK ? durableAccounts(env.ACCOUNT_BOOK) : null,
     secure: url.protocol === 'https:',
   })
+  if (guardCookie) result.cookies = [...(result.cookies || []), guardCookie]
   return jsonResponse(result)
 }
 
@@ -107,7 +121,7 @@ export default {
     try {
       return await route(request, env)
     } catch (error) {
-      console.error(JSON.stringify({ message: 'leasepath worker failed', detail: error?.message || String(error) }))
+      console.error(JSON.stringify({ message: 'leasepath worker failed', detail: error?.name || 'Error' }))
       return jsonResponse({
         status: 500,
         json: { error: 'server', message: 'LeasePath hit a problem. Try again in a moment. Search and resources still work.' },

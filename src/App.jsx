@@ -1,3 +1,4 @@
+import { getTurnstileToken } from './turnstile.js'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './index.css'
 import { AssistantSheet } from './components/AssistantSheet.jsx'
@@ -591,11 +592,12 @@ export default function App() {
     setAssistantOpen(true)
     const listing = LISTINGS.find((item) => item.id === listingId) || null
     try {
-      const response = await fetch('/api/guide', {
+      const post = (extra = {}) => fetch('/api/guide', {
         method: 'POST',
         credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          ...extra,
           messages: nextMessages.filter((message) => !message.local).slice(-8),
           includePlan,
           // Voucher details leave the phone only when the person has turned sharing on.
@@ -610,7 +612,21 @@ export default function App() {
           listing,
         }),
       })
-      const data = await response.json().catch(() => ({}))
+      let response = await post()
+      let data = await response.json().catch(() => ({}))
+      if (response.status === 403 && data?.error === 'challenge_required') {
+        // One quick Cloudflare check, then the Worker remembers it for a while.
+        let turnstileToken = ''
+        try {
+          turnstileToken = await getTurnstileToken()
+        } catch {
+          turnstileToken = ''
+        }
+        if (turnstileToken) {
+          response = await post({ turnstileToken })
+          data = await response.json().catch(() => ({}))
+        }
+      }
       if (data && typeof data === 'object') applyAccess(data)
       if (response.status === 503 && data.error === 'missing_key') setConfigured(false)
       if (data.error === 'sign_in_required') return

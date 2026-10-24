@@ -1605,3 +1605,12 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 .limits-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
 .limits-table th, .limits-table td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: left; }
 #nycha-apply h3 { margin: 12px 0 6px; font-size: 1rem; }
+
+/* Turnstile check for Ruby's chat: invisible unless Cloudflare needs an interaction. */
+.turnstile-holder {
+  position: fixed;
+  left: 50%;
+  bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  z-index: 1000;
+}

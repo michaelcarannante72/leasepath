@@ -15,11 +15,22 @@ export const CHALLENGE_REQUIRED = {
   message: 'LeasePath needs a quick check that you are a person before Ruby answers. Try sending again.',
 }
 
+/** IPv6 clients can rotate through a whole /64, so they are limited per /64. IPv4 is limited per address. */
+export function networkKey(ip) {
+  const value = String(ip || '').trim().toLowerCase()
+  if (!value.includes(':')) return value || 'unknown'
+  const [head, tail = ''] = value.split('::')
+  const left = head ? head.split(':') : []
+  const right = tail ? tail.split(':') : []
+  const groups = value.includes('::') ? [...left, ...Array(Math.max(0, 8 - left.length - right.length)).fill('0'), ...right] : left
+  return `${groups.slice(0, 4).map((g) => (g || '0').replace(/^0+(?=.)/, '')).join(':')}::/64`
+}
+
 /** Workers Rate Limiting binding. Fails open if the binding errors, so an outage never blocks people. */
 export async function checkRateLimit(limiter, ip) {
   if (!limiter?.limit) return true
   try {
-    const { success } = await limiter.limit({ key: `guide:${ip || 'unknown'}` })
+    const { success } = await limiter.limit({ key: `guide:${networkKey(ip)}` })
     return Boolean(success)
   } catch {
     return true

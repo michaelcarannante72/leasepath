@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs'
 import { register } from 'node:module'
 import test from 'node:test'
 import { prepareGuide, MAX_MESSAGE_CHARS, MAX_CONVERSATION_TOKENS, estimateTokens } from '../server/guide.js'
-import { checkRateLimit, guardChat, issueHumanPass, verifyHumanPass, HUMAN_COOKIE } from '../worker/chatGuard.js'
+import { networkKey, checkRateLimit, guardChat, issueHumanPass, verifyHumanPass, HUMAN_COOKIE } from '../worker/chatGuard.js'
 import { CSP, SECURITY_HEADERS, headersFile } from '../worker/security.js'
 
 const stub = 'export class DurableObject { constructor(ctx, env) { this.ctx = ctx; this.env = env } }'
@@ -148,4 +148,12 @@ test('the client strips no PII into analytics: only allowed keys and no query st
   const pushed = safePush(win, { event: 'x', email: 'a@b.c', page_path: '/#/a' })
   assert.deepEqual(Object.keys(pushed).sort(), ['event', 'page_path'])
   assert.equal(sanitizedPage('/search?income=50000&email=a@b.c').page_path, '/#/search')
+})
+
+test('IPv6 addresses are limited per /64, IPv4 per address', () => {
+  assert.equal(networkKey('2a09:bac1:76a0:518::160:11c'), '2a09:bac1:76a0:518::/64')
+  assert.equal(networkKey('2a09:bac1:76a0:518::23d:61'), '2a09:bac1:76a0:518::/64')
+  assert.equal(networkKey('2001:db8::1'), '2001:db8:0:0::/64')
+  assert.equal(networkKey('203.0.113.7'), '203.0.113.7')
+  assert.equal(networkKey(''), 'unknown')
 })

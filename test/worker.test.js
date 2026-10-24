@@ -99,3 +99,16 @@ test('/after-you-find and /after-you-find/ 301 to the hash route; other paths st
   assert.match(config, /"run_worker_first": \[[^\]]*"\/after-you-find", "\/after-you-find\/"/)
   assert.match(config, /"not_found_handling": "404-page"/)
 })
+
+test('/steps, /resources, /plan, /blog (with or without slash) 301 to their hash routes', async () => {
+  const config = (await import('node:fs')).readFileSync(new URL('../wrangler.jsonc', import.meta.url), 'utf8')
+  for (const page of ['steps', 'resources', 'plan', 'blog']) {
+    for (const path of [`/${page}`, `/${page}/`]) {
+      const response = await worker.fetch(new Request(`${base}${path}`), env)
+      assert.equal(response.status, 301)
+      assert.equal(response.headers.get('location'), `${base}/#/${page}`)
+    }
+    assert.match(config, new RegExp(`"run_worker_first": \\[[^\\]]*"/${page}", "/${page}/"`))
+  }
+  assert.equal((await worker.fetch(new Request(`${base}/resourcesx`), env)).status, 404)
+})

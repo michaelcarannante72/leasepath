@@ -1614,3 +1614,37 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   transform: translateX(-50%);
   z-index: 1000;
 }
+
+.rights-page .rights-actions { margin: 0 0 14px; }
+.rights-list, .rights-say { margin: 8px 0 12px; padding-left: 20px; line-height: 1.5; }
+.rights-say { list-style: none; padding-left: 0; display: grid; gap: 10px; }
+.rights-say blockquote {
+  margin: 0;
+  padding: 12px 14px;
+  border-left: 4px solid var(--gold, #F2A900);
+  background: #fff;
+  border-radius: 0 12px 12px 0;
+  font-style: normal;
+  color: var(--navy, #1C2D42);
+}
+.rights-card-face {
+  margin-top: 8px;
+  padding: 18px 20px;
+  border: 2px solid var(--navy, #1C2D42);
+  border-radius: 14px;
+  background: #fffef8;
+  max-width: 360px;
+}
+.rights-card-brand {
+  margin: 0 0 8px;
+  font-weight: 800;
+  color: var(--brick, #A04A2C);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+}
+.rights-card-face p { margin: 0 0 6px; line-height: 1.35; color: var(--navy, #1C2D42); font-weight: 600; }
+@media print {
+  .dock, .site-header, .rights-actions, .cookie-prompt, .analytics-consent, .no-print { display: none !important; }
+  .rights-card-face { border-width: 2px; max-width: 100%; }
+}

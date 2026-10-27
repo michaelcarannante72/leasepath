@@ -27,6 +27,7 @@ import { InspectionPrepPage } from './components/InspectionPrepPage.jsx'
 import { ScamAlertsPage } from './components/ScamAlertsPage.jsx'
 import { MovingHelpPage } from './components/MovingHelpPage.jsx'
 import { KnowYourRightsPage } from './components/KnowYourRightsPage.jsx'
+import { LandlordWelcomePage } from './components/LandlordWelcomePage.jsx'
 import { StepsPage } from './components/StepsPage.jsx'
 import { FREE_COACH_QUESTIONS } from './coachLimit.js'
 import { POSTS } from './blog.js'
@@ -115,6 +116,7 @@ function parseHash() {
   if (hash === '/scam-alerts') return { name: 'scam' }
   if (hash === '/moving-help') return { name: 'moving' }
   if (hash === '/know-your-rights') return { name: 'rights' }
+  if (hash === '/landlord-welcome') return { name: 'landlord' }
   if (hash === '/list-unit') return { name: 'list-unit' }
   if (hash === '/listings-admin') return { name: 'listings-admin' }
   if (hash === '/voucher-ready') return { name: 'voucher-ready' }
@@ -696,7 +698,7 @@ export default function App() {
           ? 'steps'
           : route.name === 'pack' || route.name === 'prep'
             ? 'steps'
-            : route.name === 'scam' || route.name === 'moving' || route.name === 'rights'
+            : route.name === 'scam' || route.name === 'moving' || route.name === 'rights' || route.name === 'landlord'
               ? 'resources'
               : route.name === 'list-unit' || route.name === 'voucher-ready' || route.name === 'listings-admin'
                 ? 'search'
@@ -777,6 +779,7 @@ export default function App() {
         {route.name === 'scam' && <ScamAlertsPage />}
         {route.name === 'moving' && <MovingHelpPage />}
         {route.name === 'rights' && <KnowYourRightsPage />}
+        {route.name === 'landlord' && <LandlordWelcomePage />}
         {route.name === 'plan' && <PlanPage plan={plan} onChange={updatePlan} checks={checks} onChecks={updateChecks} onClearIncome={clearIncome} signedIn={session.signedIn} onDeleteAccount={openDelete} />}
         {route.name === 'blog' && <BlogList />}
         {route.name === 'post' && <BlogPost post={post} />}

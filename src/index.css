@@ -2001,6 +2001,8 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 .voucher-ready-cards h3 { margin: 4px 0; font-size: 1.05rem; }
 .ok-msg { color: var(--ok); font-weight: 700; }
 .listings-admin-page .panel { display: grid; gap: 12px; margin: 16px 0; }
+.landlord-page .landlord-actions { margin: 0 0 14px; }
+.landlord-page code { font-size: 0.9em; background: #f0ebe3; padding: 1px 6px; border-radius: 6px; }
 @media print {
   .dock, .site-header, .pack-actions, .prep-actions, .rights-actions, .cookie-prompt, .analytics-consent, .no-print { display: none !important; }
   .pack-pre { max-height: none; border: none; }

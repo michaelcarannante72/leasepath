@@ -1817,6 +1817,29 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 }
 
 
+
+/* Listing checker (on-device paste). Keep above income pre-screen so calm-palette tests stay scoped. */
+.lc-page .lede { max-width: 40rem; }
+.lc-privacy { display: flex; gap: 8px; align-items: flex-start; margin: 0 0 14px; padding: 10px 12px; border-radius: 12px; background: var(--note-bg); color: var(--note); font-size: 0.9rem; line-height: 1.4; }
+.lc-privacy svg { flex: none; margin-top: 2px; }
+.lc-paste { width: 100%; min-height: 10rem; font-family: inherit; font-size: 1rem; line-height: 1.45; padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); color: var(--ink); resize: vertical; }
+.lc-actions { margin: 6px 0 0; }
+.lc-results { display: grid; gap: 18px; margin-top: 18px; }
+.lc-parsed { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.lc-parsed li { display: grid; gap: 2px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+.lc-parsed-label { font-size: 0.75rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.lc-block h3 { margin: 0 0 8px; font-size: 1.05rem; }
+.lc-note { margin: 0 0 10px; font-size: 0.9rem; color: var(--muted); line-height: 1.4; }
+.lc-checklist { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.lc-checklist li { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; border-radius: 10px; background: var(--card); border: 1px solid var(--line); font-size: 0.95rem; }
+.lc-checklist li > span:first-child { font-weight: 800; width: 1.1rem; text-align: center; }
+.lc-check-pass { border-color: var(--ok); }
+.lc-check-miss { border-color: var(--watch); }
+.lc-questions { margin: 0; padding-left: 1.2rem; display: grid; gap: 8px; }
+.lc-questions li { line-height: 1.4; }
+.lc-law { margin-top: 18px; font-size: 0.9rem; color: var(--muted); line-height: 1.45; }
+.lc-flag p { margin: 4px 0 0; }
+
 /* Income pre-screen. Calm by design: every result uses the neutral note palette, and the over-the-line result is a plain note. */
 .prescreen-results { display: grid; gap: 12px; margin-top: 14px; }
 .prescreen-result { padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--note-bg); color: var(--note); }

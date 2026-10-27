@@ -184,7 +184,7 @@ export function ResourcesPage() {
 
   return (
     <div className="page resources-page">
-      <p className="eyebrow">{t("resources.eyebrow")} · <a href="#/after-movein">Tenant rights after move-in</a> · <a href="#/utility-help">Utility help (HEAP)</a></p>
+      <p className="eyebrow">{t("resources.eyebrow")} · <a href="#/after-movein">Tenant rights after move-in</a> · <a href="#/utility-help">Utility help (HEAP)</a> · <a href="#/viewing-checklist">Apartment viewing checklist</a></p>
       <h1>{t("resources.title")}</h1>
       <p className="lede">{t("resources.lede")}</p>
       <p className="after-link"><a href="#/housing-connect">Housing Connect lotteries</a> · <a href="#/listing-check">Check a listing</a> · <a href="#/after-you-find#chap">{t("resources.chap")}</a> · <a href="#/after-you-find">{t("resources.afterFind")}</a> · <a href="#/inspection-prep">HQS inspection prep</a> · <a href="#/scam-alerts">Voucher scam alerts</a> · <a href="#/moving-help">Moving help</a> · <a href="#/know-your-rights">Know your rights</a> · <a href="#/landlord-welcome">Landlords: why take vouchers</a> · <a href="#/docs-tracker">Documents and deadlines</a> · <a href="#/roadmap">Shelter to housing roadmap</a></p>

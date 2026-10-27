@@ -31,6 +31,7 @@ import { RentCalculatorPage } from './components/RentCalculatorPage.jsx'
 import { ShelterRoadmapPage } from './components/ShelterRoadmapPage.jsx'
 import { TenantRightsAfterMoveinPage } from './components/TenantRightsAfterMoveinPage.jsx'
 import { UtilityHelpPage } from './components/UtilityHelpPage.jsx'
+import { ViewingChecklistPage } from './components/ViewingChecklistPage.jsx'
 import { RubyIntro } from './components/RubyIntro.jsx'
 import { SearchPage } from './components/SearchPage.jsx'
 import { ListUnitPage } from './components/ListUnitPage.jsx'
@@ -150,6 +151,7 @@ function parseHash() {
   if (hash === '/roadmap' || hash === '/shelter-roadmap') return { name: 'roadmap' }
   if (hash === '/after-movein' || hash === '/tenant-rights') return { name: 'rights-movein' }
   if (hash === '/utility-help' || hash === '/heap') return { name: 'utility' }
+  if (hash === '/viewing-checklist' || hash === '/viewing') return { name: 'viewing' }
   if (hash === '/steps' || hash === '/resources' || hash === '/plan' || hash === '/blog') {
     return { name: hash.slice(1) }
   }
@@ -757,7 +759,7 @@ export default function App() {
               ? 'resources'
               : route.name === 'rent'
                 ? 'plan'
-              : route.name === 'list-unit' || route.name === 'voucher-ready' || route.name === 'listings-admin' || route.name === 'quiz'
+              : route.name === 'list-unit' || route.name === 'voucher-ready' || route.name === 'listings-admin' || route.name === 'quiz' || route.name === 'viewing'
                 ? 'search'
             : route.name
   const navSelect = (id) => {
@@ -844,6 +846,7 @@ export default function App() {
         {route.name === 'resources' && <ResourcesPage />}
         {route.name === 'roadmap' && <ShelterRoadmapPage />}
         {route.name === 'utility' && <UtilityHelpPage />}
+        {route.name === 'viewing' && <ViewingChecklistPage />}
         {route.name === 'scam' && <ScamAlertsPage />}
         {route.name === 'moving' && <MovingHelpPage />}
         {route.name === 'rights' && <KnowYourRightsPage />}

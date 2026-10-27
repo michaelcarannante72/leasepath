@@ -2390,3 +2390,16 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 }
 .utility-callout h2, .utility-card h2 { margin: 0 0 6px; font-size: 1.05rem; color: var(--navy); }
 .utility-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.viewing-section {
+  margin: 14px 0; padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: white;
+  box-shadow: 0 6px 18px rgba(28, 45, 66, 0.05);
+}
+.viewing-section h2 { margin: 0 0 10px; font-size: 1.05rem; color: var(--navy); }
+.viewing-section ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.viewing-item { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
+.viewing-item input { margin-top: 4px; width: 18px; height: 18px; flex: 0 0 auto; }
+.print-actions { margin-bottom: 8px; }
+@media print {
+  .header, .dock, .print-actions, .cookie-prompt, .ruby-intro { display: none !important; }
+  .viewing-checklist { box-shadow: none; }
+}

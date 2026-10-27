@@ -2618,3 +2618,14 @@ body { overflow: visible; overflow-x: clip; }
   .topbar, .site-footer, .dock, .consent-bar, .cookie-prompt, .offline-banner, .skip-link { display: none !important; }
   .app { padding-bottom: 0 !important; min-height: 0 !important; }
 }
+
+/* ---- HRA apartment list cards (data in src/data/sheetListings.js) ---- */
+.sheet-card .card-body { display: grid; gap: 6px; }
+.sheet-card .sheet-unit { font-weight: 600; color: var(--muted); }
+.sheet-label { margin: 0; font-size: 0.875rem; font-weight: 600; color: var(--navy); }
+.sheet-fit { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 0.9rem; }
+.sheet-fit li { padding-left: 1.1em; position: relative; overflow-wrap: anywhere; }
+.sheet-fit li::before { content: '✓'; position: absolute; left: 0; color: var(--navy); }
+.sheet-fit li.sheet-fit-over::before { content: '!'; font-weight: 800; color: var(--muted); }
+.sheet-phone-flag { margin: 0; font-size: 0.9rem; color: var(--muted); overflow-wrap: anywhere; }
+.sheet-card .card-call { overflow-wrap: anywhere; }

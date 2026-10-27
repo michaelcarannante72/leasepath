@@ -13,3 +13,14 @@ test('every fixed hash page in App.jsx has a clean /path that 301s to it', () =>
   const missing = [...new Set(pages)].filter((page) => page !== 'search' && !shared.has(page))
   assert.deepEqual(missing, [])
 })
+
+test('every SHARE_PAGES path (and its trailing-slash form) is in wrangler.jsonc run_worker_first', () => {
+  const worker = readFileSync(new URL('../worker/index.js', import.meta.url), 'utf8')
+  const list = worker.match(/const SHARE_PAGES = \[([^\]]*)\]/)[1]
+  const pages = [...list.matchAll(/'([a-z0-9-]+)'/g)].map((m) => m[1])
+  assert.ok(pages.length > 10)
+  const wrangler = readFileSync(new URL('../wrangler.jsonc', import.meta.url), 'utf8')
+  const first = JSON.parse(wrangler.match(/"run_worker_first":\s*(\[[^\]]*\])/)[1])
+  const missing = pages.flatMap((page) => [`/${page}`, `/${page}/`]).filter((path) => !first.includes(path))
+  assert.deepEqual(missing, [])
+})

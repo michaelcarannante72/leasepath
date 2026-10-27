@@ -3,6 +3,7 @@ import {
   parseSearchPath,
   HOUSING_CONNECT_URL,
 } from '../src/data/voucherSearches.js'
+import { SHEET_LABEL, sheetListingsFor } from '../src/data/sheetListings.js'
 
 function escapeHtml(value) {
   return String(value)
@@ -43,6 +44,9 @@ const PAGE_STYLE = `
       border-radius: 999px; border: 1px solid #e3e8f0; background: #fff;
       font-size: 0.82rem; font-weight: 700; text-decoration: none; color: #1c2d42;
     }
+    .sheet { list-style: none; padding: 0; display: grid; gap: 0.6rem; }
+    .sheet li { background: #fff; border: 1px solid #e3e8f0; border-radius: 12px; padding: 0.75rem 0.9rem; }
+    .sheet .over { color: #8a3b2e; }
     .chip.is-current { background: #1c2d42; color: #fff; border-color: #1c2d42; }
     .index-groups { display: grid; gap: 1.5rem; }
     .cta { margin-top: 1.5rem; }
@@ -119,6 +123,33 @@ ${groups}
   })
 }
 
+function sheetSection(page) {
+  const units = sheetListingsFor(page.boroughSlug, page.sizeSlug)
+  if (!units.length) return ''
+  const items = units.map((unit) => {
+    const fit = unit.fit.find((row) => row.slug === page.voucherSlug)
+    const fitLine = !fit ? '' : fit.over
+      ? `<p class="over">Over the ${escapeHtml(page.voucher.name)} limit (${escapeHtml(money(fit.limit))}) by ${escapeHtml(money(fit.overBy))}. Ask your worker before you apply.</p>`
+      : `<p>You may qualify with ${escapeHtml(page.voucher.name)}: the limit is ${escapeHtml(money(fit.limit))}.</p>`
+    const contact = unit.tel
+      ? `<a href="${escapeHtml(unit.tel)}">Call ${escapeHtml(unit.contact)}</a>`
+      : `Contact as printed: ${escapeHtml(unit.contact)} (fewer than 10 digits on the printed list; shown as written)`
+    const where = unit.neighborhood ? `${unit.neighborhood}, ${unit.borough}` : unit.borough
+    return `<li><strong>${escapeHtml(unit.address)}</strong> · ${escapeHtml(where)} · ${escapeHtml(money(unit.rent))}/month
+        ${fitLine}
+        <p>${contact}</p></li>`
+  }).join('\n')
+  return `
+    <section aria-labelledby="sheet-heading">
+      <h2 id="sheet-heading">Apartments from an HRA list</h2>
+      <p class="source">${escapeHtml(SHEET_LABEL)} LeasePath has not checked these units, and the list does not say whether vouchers are accepted.</p>
+      <ul class="sheet">
+${items}
+      </ul>
+    </section>
+`
+}
+
 export function searchPageHtml(page) {
   const tips = page.tips.map((tip) => `<li>${escapeHtml(tip)}</li>`).join('\n')
   const body = `  <header>
@@ -143,6 +174,7 @@ export function searchPageHtml(page) {
       </div>
     </section>
 
+${sheetSection(page)}
     <section aria-labelledby="lottery-heading">
       <h2 id="lottery-heading">Housing Connect lotteries</h2>
       <p>NYC Housing Connect posts affordable lotteries across the five boroughs. You may qualify for openings in ${escapeHtml(page.borough.the)}. Applying is always free. Anyone who asks for a fee is a scam.</p>

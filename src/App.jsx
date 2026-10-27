@@ -1,10 +1,8 @@
 import { tx } from './i18nAuto.js'
 import { getTurnstileToken } from './turnstile.js'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './index.css'
 import { AssistantSheet } from './components/AssistantSheet.jsx'
-import { DetailPage } from './components/DetailPage.jsx'
-import { BlogList, BlogPost } from './components/BlogPage.jsx'
 import { Dock } from './components/Dock.jsx'
 import { useLanguage } from './components/languageContext.js'
 import { looksLikeSpanish, readLang, t as i18nT } from './i18n.js'
@@ -16,41 +14,13 @@ import { consentSettled } from './consent.js'
 import { readConsent, trackView } from './analytics.js'
 import { Onboarding } from './components/Onboarding.jsx'
 import { Paywall } from './components/Paywall.jsx'
-import { IncomeCheckPage, MatchAlertsPage } from './components/PlanToolPages.jsx'
-import { PlanPage } from './components/PlanPage.jsx'
 import { MatchAlertBanner } from './components/MatchAlertsCard.jsx'
 import { loadMatchPrefs, runMatchCheck } from './matchAlerts.js'
 import { DeleteAccountDialog } from './components/DeleteAccountDialog.jsx'
 import { clearDeviceData } from './deviceData.js'
-import { ResourcesPage } from './components/ResourcesPage.jsx'
-import { HousingConnectPage } from './components/HousingConnectPage.jsx'
-import { SponsorPage } from './components/SponsorPage.jsx'
-import { ListingCheckerPage } from './components/ListingCheckerPage.jsx'
-import { BoroughGuidesIndex, BoroughGuidePage } from './components/BoroughGuidesPage.jsx'
-import { PartnerDirectoryPage } from './components/PartnerDirectoryPage.jsx'
-import { QuickStartQuizPage } from './components/QuickStartQuizPage.jsx'
-import { RentCalculatorPage } from './components/RentCalculatorPage.jsx'
-import { ShelterRoadmapPage } from './components/ShelterRoadmapPage.jsx'
-import { TenantRightsAfterMoveinPage } from './components/TenantRightsAfterMoveinPage.jsx'
-import { UtilityHelpPage } from './components/UtilityHelpPage.jsx'
-import { ViewingChecklistPage } from './components/ViewingChecklistPage.jsx'
-import { WaitlistTrackerPage } from './components/WaitlistTrackerPage.jsx'
-import { YouthLgbtqResourcesPage } from './components/YouthLgbtqResourcesPage.jsx'
-import { InstallAndSharePage } from './components/InstallAndSharePage.jsx'
 import { RubyIntro } from './components/RubyIntro.jsx'
 import { SearchPage } from './components/SearchPage.jsx'
-import { ListUnitPage } from './components/ListUnitPage.jsx'
-import { ListingsAdminPage } from './components/ListingsAdminPage.jsx'
 import { VoucherReadyUnits } from './components/VoucherReadyUnits.jsx'
-import { AfterYouFindPage } from './components/AfterYouFindPage.jsx'
-import { CaseworkerPackPage } from './components/CaseworkerPackPage.jsx'
-import { InspectionPrepPage } from './components/InspectionPrepPage.jsx'
-import { ScamAlertsPage } from './components/ScamAlertsPage.jsx'
-import { MovingHelpPage } from './components/MovingHelpPage.jsx'
-import { KnowYourRightsPage } from './components/KnowYourRightsPage.jsx'
-import { LandlordWelcomePage } from './components/LandlordWelcomePage.jsx'
-import { StepsPage } from './components/StepsPage.jsx'
-import { DocsDeadlinePage } from './components/DocsDeadlinePage.jsx'
 import { FREE_COACH_QUESTIONS } from './coachLimit.js'
 import { POSTS } from './blog.js'
 import { LISTINGS } from './data.js'
@@ -62,6 +32,45 @@ import { dayNumber } from './dates.js'
 import { SECTION8_AGENCIES } from './data/section8.js'
 import { cityfhepsAllowance, normalizeHousehold } from './rentCheck.js'
 import { incomePeriod, storedIncome } from './incomePrescreen.js'
+
+// Route pages load on demand (code-split). The service worker caches each chunk the first time it is fetched
+// and precaches them all after install, so these routes still open offline.
+function lazyNamed(loader, name) {
+  return lazy(() => loader().then((module) => ({ default: module[name] })))
+}
+const DetailPage = lazyNamed(() => import('./components/DetailPage.jsx'), 'DetailPage')
+const BlogList = lazyNamed(() => import('./components/BlogPage.jsx'), 'BlogList')
+const BlogPost = lazyNamed(() => import('./components/BlogPage.jsx'), 'BlogPost')
+const IncomeCheckPage = lazyNamed(() => import('./components/PlanToolPages.jsx'), 'IncomeCheckPage')
+const MatchAlertsPage = lazyNamed(() => import('./components/PlanToolPages.jsx'), 'MatchAlertsPage')
+const PlanPage = lazyNamed(() => import('./components/PlanPage.jsx'), 'PlanPage')
+const ResourcesPage = lazyNamed(() => import('./components/ResourcesPage.jsx'), 'ResourcesPage')
+const HousingConnectPage = lazyNamed(() => import('./components/HousingConnectPage.jsx'), 'HousingConnectPage')
+const SponsorPage = lazyNamed(() => import('./components/SponsorPage.jsx'), 'SponsorPage')
+const ListingCheckerPage = lazyNamed(() => import('./components/ListingCheckerPage.jsx'), 'ListingCheckerPage')
+const BoroughGuidesIndex = lazyNamed(() => import('./components/BoroughGuidesPage.jsx'), 'BoroughGuidesIndex')
+const BoroughGuidePage = lazyNamed(() => import('./components/BoroughGuidesPage.jsx'), 'BoroughGuidePage')
+const PartnerDirectoryPage = lazyNamed(() => import('./components/PartnerDirectoryPage.jsx'), 'PartnerDirectoryPage')
+const QuickStartQuizPage = lazyNamed(() => import('./components/QuickStartQuizPage.jsx'), 'QuickStartQuizPage')
+const RentCalculatorPage = lazyNamed(() => import('./components/RentCalculatorPage.jsx'), 'RentCalculatorPage')
+const ShelterRoadmapPage = lazyNamed(() => import('./components/ShelterRoadmapPage.jsx'), 'ShelterRoadmapPage')
+const TenantRightsAfterMoveinPage = lazyNamed(() => import('./components/TenantRightsAfterMoveinPage.jsx'), 'TenantRightsAfterMoveinPage')
+const UtilityHelpPage = lazyNamed(() => import('./components/UtilityHelpPage.jsx'), 'UtilityHelpPage')
+const ViewingChecklistPage = lazyNamed(() => import('./components/ViewingChecklistPage.jsx'), 'ViewingChecklistPage')
+const WaitlistTrackerPage = lazyNamed(() => import('./components/WaitlistTrackerPage.jsx'), 'WaitlistTrackerPage')
+const YouthLgbtqResourcesPage = lazyNamed(() => import('./components/YouthLgbtqResourcesPage.jsx'), 'YouthLgbtqResourcesPage')
+const InstallAndSharePage = lazyNamed(() => import('./components/InstallAndSharePage.jsx'), 'InstallAndSharePage')
+const ListUnitPage = lazyNamed(() => import('./components/ListUnitPage.jsx'), 'ListUnitPage')
+const ListingsAdminPage = lazyNamed(() => import('./components/ListingsAdminPage.jsx'), 'ListingsAdminPage')
+const AfterYouFindPage = lazyNamed(() => import('./components/AfterYouFindPage.jsx'), 'AfterYouFindPage')
+const CaseworkerPackPage = lazyNamed(() => import('./components/CaseworkerPackPage.jsx'), 'CaseworkerPackPage')
+const InspectionPrepPage = lazyNamed(() => import('./components/InspectionPrepPage.jsx'), 'InspectionPrepPage')
+const ScamAlertsPage = lazyNamed(() => import('./components/ScamAlertsPage.jsx'), 'ScamAlertsPage')
+const MovingHelpPage = lazyNamed(() => import('./components/MovingHelpPage.jsx'), 'MovingHelpPage')
+const KnowYourRightsPage = lazyNamed(() => import('./components/KnowYourRightsPage.jsx'), 'KnowYourRightsPage')
+const LandlordWelcomePage = lazyNamed(() => import('./components/LandlordWelcomePage.jsx'), 'LandlordWelcomePage')
+const StepsPage = lazyNamed(() => import('./components/StepsPage.jsx'), 'StepsPage')
+const DocsDeadlinePage = lazyNamed(() => import('./components/DocsDeadlinePage.jsx'), 'DocsDeadlinePage')
 
 const PLAN_KEY = 'leasepath.plan'
 const SAVED_KEY = 'leasepath.saved'
@@ -812,6 +821,7 @@ export default function App() {
         onSignOut={signOut}
       />
       <main id="main-content" className="stage" ref={stageRef} tabIndex={-1}>
+        <Suspense fallback={<p className="route-loading" role="status">{tx("Loading…")}</p>}>
         <OfflineBanner />
         <div className="view" key={route.id ? `${route.name}-${route.id}` : route.name}>
         {route.name === 'search' && (
@@ -902,6 +912,7 @@ export default function App() {
         {route.name === 'info' && <InfoPage page={infoPage} />}
         </div>
         <Footer compact={route.name === 'search'} />
+        </Suspense>
       </main>
       <ConsentBar onChange={setAnalyticsConsent} onSettled={() => setConsentDone(true)} />
       <DeleteAccountDialog

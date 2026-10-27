@@ -4,6 +4,7 @@ import { Icon } from './Icon.jsx'
 import { LandingHero } from './LandingHero.jsx'
 import { ACCESS_HRA_URL, BOROUGHS, HOMEBASE_URL } from '../data.js'
 import { VoucherReadyUnits } from './VoucherReadyUnits.jsx'
+import { SheetListings } from './SheetListings.jsx'
 import { SponsoredSlot } from './SponsoredSlot.jsx'
 import { PROGRAMS, cardFlags, cardLabel, cardText, money, sizeLabel, utilityLabel } from '../fit.js'
 import { useLanguage } from './languageContext.js'
@@ -301,6 +302,7 @@ export function SearchPage({
         )}
       </div>
       {/* Landlord-submitted units and the sponsor slot sit after the practice listings. */}
+      <SheetListings filters={filters} />
       <VoucherReadyUnits compact />
       <SponsoredSlot placement="search" />
     </div>

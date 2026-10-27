@@ -1,7 +1,7 @@
 // Bump CACHE_VERSION when this file's caching rules change. Hashed files under /assets/
 // are refreshed on every install, and old ones are pruned on activate.
 const CACHE_PREFIX = 'leasepath-shell-'
-const CACHE_VERSION = 'v6' // navigations keyed by path: /search pages no longer overwrite the '/' shell
+const CACHE_VERSION = 'v7' // route pages are lazy chunks: precache every chunk listed in /asset-manifest.json
 const CACHE_NAME = `${CACHE_PREFIX}${CACHE_VERSION}`
 
 // App shell + icons. Hash routes (#/resources, #/steps, #/plan, …) load from '/' once cached,
@@ -22,6 +22,20 @@ function assetsIn(html) {
   return [...html.matchAll(/(?:src|href)="(\/assets\/[^"]+)"/g)].map((match) => match[1])
 }
 
+// Every built file, including the lazy route chunks the shell HTML does not name (written by vite.config.js).
+const ASSET_MANIFEST = '/asset-manifest.json'
+
+async function manifestAssets(cache) {
+  const cached = await cache.match(ASSET_MANIFEST)
+  if (!cached) return []
+  try {
+    const data = await cached.clone().json()
+    return Array.isArray(data.assets) ? data.assets.filter((path) => typeof path === 'string' && path.startsWith('/assets/')) : []
+  } catch {
+    return []
+  }
+}
+
 self.addEventListener('install', (event) => {
   event.waitUntil(
     (async () => {
@@ -29,7 +43,12 @@ self.addEventListener('install', (event) => {
       await cache.addAll(SHELL.map((path) => new Request(path, { cache: 'reload' })))
       const shell = await cache.match('/')
       const html = shell ? await shell.text() : ''
-      const assets = assetsIn(html)
+      try {
+        await cache.add(new Request(ASSET_MANIFEST, { cache: 'reload' }))
+      } catch {
+        // No manifest (dev server): lazy chunks are still cached the first time each route opens.
+      }
+      const assets = [...new Set([...assetsIn(html), ...(await manifestAssets(cache))])]
       if (assets.length) await cache.addAll(assets.map((path) => new Request(path, { cache: 'reload' })))
       await self.skipWaiting()
     })(),
@@ -47,7 +66,7 @@ self.addEventListener('activate', (event) => {
       const cache = await caches.open(CACHE_NAME)
       const shell = await cache.match('/')
       if (shell) {
-        const keep = new Set(assetsIn(await shell.text()))
+        const keep = new Set([...assetsIn(await shell.text()), ...(await manifestAssets(cache))])
         for (const request of await cache.keys()) {
           const path = new URL(request.url).pathname
           if (path.startsWith('/assets/') && !keep.has(path)) await cache.delete(request)

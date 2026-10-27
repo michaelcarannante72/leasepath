@@ -1,6 +1,7 @@
 import { tx } from '../i18nAuto.js'
 import { useMemo, useState } from 'react'
 import { checkListing } from '../listingChecker.js'
+import { SheetListingCard } from './SheetListings.jsx'
 import { Icon } from './Icon.jsx'
 
 function money(value) {
@@ -91,6 +92,16 @@ export function ListingCheckerPage() {
                     )}
                   </li>
                 ))}
+              </ul>
+            </div>
+          )}
+
+          {result.sheetMatches.length > 0 && (
+            <div className="lc-block lc-sheet">
+              <h3>{tx("Apartments from an HRA list")}</h3>
+              <p>{tx("This address or phone is on an HRA apartment list LeasePath posted (Oct 2026). The list does not say the unit accepts vouchers. Call to confirm it's still available.")}</p>
+              <ul className="cards voucher-ready-cards">
+                {result.sheetMatches.map((unit) => <SheetListingCard key={unit.id} unit={unit} />)}
               </ul>
             </div>
           )}

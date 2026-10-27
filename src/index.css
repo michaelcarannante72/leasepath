@@ -1614,3 +1614,13 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   transform: translateX(-50%);
   z-index: 1000;
 }
+
+.scam-page .scam-flags, .scam-page .scam-report { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.scam-flag, .scam-report-item {
+  padding: 12px 14px;
+  border: 1px solid var(--line, #d7d2c8);
+  border-radius: 12px;
+  background: #fff;
+}
+.scam-flag h3, .scam-report-item h3 { margin: 0 0 6px; color: var(--navy, #1C2D42); font-size: 1.05rem; }
+.scam-flag p, .scam-report-item p { margin: 0 0 8px; line-height: 1.45; }

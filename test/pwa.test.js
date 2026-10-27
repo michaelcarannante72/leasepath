@@ -73,7 +73,7 @@ test('the service worker precaches only files that exist, skips /api, and has no
 test('every internal link and route in the app resolves', () => {
   const slugs = new Set(SITE_PAGES.map((page) => page.slug))
   const posts = new Set(POSTS.map((post) => post.slug))
-  const routes = new Set(['', '/', '/steps', '/resources', '/plan', '/blog', '/after-you-find', '/after-you-find#chap', '/caseworker-pack', '/inspection-prep', '/scam-alerts', '/moving-help', '/know-your-rights'])
+  const routes = new Set(['', '/', '/steps', '/resources', '/plan', '/blog', '/after-you-find', '/after-you-find#chap', '/caseworker-pack', '/inspection-prep', '/scam-alerts', '/moving-help', '/know-your-rights', '/docs-tracker'])
   const files = walk('src').filter((path) => /\.(jsx?|css)$/.test(path))
   for (const file of files) {
     const text = read(file)

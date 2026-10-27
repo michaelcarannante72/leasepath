@@ -1858,6 +1858,64 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 }
 
 
+
+/* Documents and deadlines — on-device checklist (no network). */
+.docs-page .docs-privacy {
+  margin: 0 0 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--gold) 55%, var(--line));
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--gold) 12%, #fff);
+}
+.docs-page .docs-privacy p { margin: 0; font-size: 0.875rem; line-height: 1.45; color: var(--navy); font-weight: 600; }
+.docs-field { display: grid; gap: 0.35rem; margin: 0.65rem 0; font-weight: 600; color: var(--navy); }
+.docs-field span { font-size: 0.875rem; }
+.docs-field select,
+.docs-field input[type="date"],
+.docs-field textarea {
+  font: inherit;
+  font-weight: 500;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--navy);
+}
+.docs-deadline-grid {
+  display: grid;
+  gap: 0.5rem 1rem;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 720px) {
+  .docs-deadline-grid { grid-template-columns: 1fr 1fr; }
+}
+.docs-check-items { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+.docs-check {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 0.55rem;
+  align-items: start;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+}
+.docs-check input { position: absolute; opacity: 0; pointer-events: none; }
+.docs-check-mark {
+  width: 28px; height: 28px; border-radius: 8px; border: 2px solid var(--line);
+  display: grid; place-items: center; color: #fff; background: #fff;
+}
+.docs-check.is-on { border-color: color-mix(in srgb, var(--gold) 50%, var(--line)); background: color-mix(in srgb, var(--gold) 8%, #fff); }
+.docs-check.is-on .docs-check-mark { background: var(--navy); border-color: var(--navy); }
+.docs-actions, .docs-footer-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.85rem; }
+.docs-delete { color: var(--brick); border-color: color-mix(in srgb, var(--brick) 35%, var(--line)); }
+.docs-status { margin-top: 0.75rem; font-size: 0.875rem; color: var(--navy); font-weight: 600; }
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
 /* Income pre-screen. Calm by design: every result uses the neutral note palette, and the over-the-line result is a plain note. */
 .prescreen-results { display: grid; gap: 12px; margin-top: 14px; }
 .prescreen-result { padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--note-bg); color: var(--note); }

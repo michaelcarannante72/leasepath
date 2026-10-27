@@ -25,6 +25,7 @@ import { ScamAlertsPage } from './components/ScamAlertsPage.jsx'
 import { MovingHelpPage } from './components/MovingHelpPage.jsx'
 import { KnowYourRightsPage } from './components/KnowYourRightsPage.jsx'
 import { StepsPage } from './components/StepsPage.jsx'
+import { DocsDeadlinePage } from './components/DocsDeadlinePage.jsx'
 import { FREE_COACH_QUESTIONS } from './coachLimit.js'
 import { POSTS } from './blog.js'
 import { LISTINGS } from './data.js'
@@ -112,6 +113,7 @@ function parseHash() {
   if (hash === '/scam-alerts') return { name: 'scam' }
   if (hash === '/moving-help') return { name: 'moving' }
   if (hash === '/know-your-rights') return { name: 'rights' }
+  if (hash === '/docs-tracker') return { name: 'docs' }
   if (hash === '/steps' || hash === '/resources' || hash === '/plan' || hash === '/blog') {
     return { name: hash.slice(1) }
   }
@@ -688,7 +690,7 @@ export default function App() {
         ? 'blog'
         : route.name === 'after'
           ? 'steps'
-          : route.name === 'pack' || route.name === 'prep'
+          : route.name === 'pack' || route.name === 'prep' || route.name === 'docs'
             ? 'steps'
             : route.name === 'scam' || route.name === 'moving' || route.name === 'rights'
               ? 'resources'
@@ -769,6 +771,7 @@ export default function App() {
         {route.name === 'scam' && <ScamAlertsPage />}
         {route.name === 'moving' && <MovingHelpPage />}
         {route.name === 'rights' && <KnowYourRightsPage />}
+        {route.name === 'docs' && <DocsDeadlinePage />}
         {route.name === 'plan' && <PlanPage plan={plan} onChange={updatePlan} checks={checks} onChecks={updateChecks} onClearIncome={clearIncome} signedIn={session.signedIn} onDeleteAccount={openDelete} />}
         {route.name === 'blog' && <BlogList />}
         {route.name === 'post' && <BlogPost post={post} />}

@@ -2225,6 +2225,7 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   .rights-card-face { border-width: 2px; max-width: 100%; }
 }
 
+<<<<<<< HEAD
 
 
 /* Borough voucher-renter guides */
@@ -2361,3 +2362,21 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 .rent-share-amount { font-size: 1.25rem; font-weight: 700; color: var(--navy); }
 .rent-share-hint { color: var(--brick); font-weight: 600; }
 .source-list { margin: 8px 0 0; padding-left: 1.1rem; color: var(--muted); font-size: 0.9rem; }
+=======
+.roadmap-callout {
+  margin: 14px 0; padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: white;
+  box-shadow: 0 6px 18px rgba(28, 45, 66, 0.05);
+}
+.roadmap-callout h2 { margin: 0 0 6px; font-size: 1.05rem; color: var(--navy); }
+.roadmap-timeline { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 14px; }
+.roadmap-step { display: grid; grid-template-columns: 40px 1fr; gap: 12px; align-items: start; }
+.roadmap-marker {
+  width: 36px; height: 36px; border-radius: 50%; background: var(--navy); color: white;
+  display: grid; place-items: center; font-weight: 700; font-size: 0.95rem;
+}
+.roadmap-body {
+  padding: 12px 14px; border: 1px solid var(--line); border-radius: 14px; background: white;
+  box-shadow: 0 6px 18px rgba(28, 45, 66, 0.05);
+}
+.roadmap-body h2 { margin: 0 0 6px; font-size: 1.05rem; color: var(--navy); }
+>>>>>>> shelter-to-housing-roadmap

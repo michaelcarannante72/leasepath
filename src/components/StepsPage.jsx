@@ -8,6 +8,11 @@ export function StepsPage({ checked, onToggle }) {
       <p className="eyebrow">Steps</p>
       <h1>From the letter to the lease</h1>
       <p className="lede">{done} of {STEPS.length} checked. Your worker’s instructions come first if they differ.</p>
+      <aside className="roadmap-callout" aria-labelledby="roadmap-callout-title">
+        <h2 id="roadmap-callout-title">Shelter to housing roadmap</h2>
+        <p>See the full timeline — shopping letter, search, packet, inspection, lease — with links to each tool.</p>
+        <p><a className="button" href="#/roadmap">Open roadmap</a></p>
+      </aside>
       <div className="step-progress" role="progressbar" aria-label="Steps checked" aria-valuemin={0} aria-valuemax={STEPS.length} aria-valuenow={done}>
         <span style={{ width: `${STEPS.length ? Math.round((done / STEPS.length) * 100) : 0}%` }} />
       </div>

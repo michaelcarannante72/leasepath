@@ -21,6 +21,7 @@ import { loadMatchPrefs, runMatchCheck } from './matchAlerts.js'
 import { DeleteAccountDialog } from './components/DeleteAccountDialog.jsx'
 import { clearDeviceData } from './deviceData.js'
 import { ResourcesPage } from './components/ResourcesPage.jsx'
+<<<<<<< HEAD
 import { HousingConnectPage } from './components/HousingConnectPage.jsx'
 import { SponsorPage } from './components/SponsorPage.jsx'
 import { ListingCheckerPage } from './components/ListingCheckerPage.jsx'
@@ -28,6 +29,9 @@ import { BoroughGuidesIndex, BoroughGuidePage } from './components/BoroughGuides
 import { PartnerDirectoryPage } from './components/PartnerDirectoryPage.jsx'
 import { QuickStartQuizPage } from './components/QuickStartQuizPage.jsx'
 import { RentCalculatorPage } from './components/RentCalculatorPage.jsx'
+=======
+import { ShelterRoadmapPage } from './components/ShelterRoadmapPage.jsx'
+>>>>>>> shelter-to-housing-roadmap
 import { RubyIntro } from './components/RubyIntro.jsx'
 import { SearchPage } from './components/SearchPage.jsx'
 import { ListUnitPage } from './components/ListUnitPage.jsx'
@@ -134,6 +138,7 @@ function parseHash() {
   if (hash === '/scam-alerts') return { name: 'scam' }
   if (hash === '/moving-help') return { name: 'moving' }
   if (hash === '/know-your-rights') return { name: 'rights' }
+<<<<<<< HEAD
   if (hash === '/landlord-welcome') return { name: 'landlord' }
   if (hash === '/housing-connect') return { name: 'housing-connect' }
   if (hash === '/sponsor') return { name: 'sponsor' }
@@ -144,6 +149,9 @@ function parseHash() {
   if (hash === '/partners') return { name: 'partners' }
   if (hash === '/quiz' || hash === '/start') return { name: 'quiz' }
   if (hash === '/rent-share' || hash === '/rent-calculator') return { name: 'rent' }
+=======
+  if (hash === '/roadmap' || hash === '/shelter-roadmap') return { name: 'roadmap' }
+>>>>>>> shelter-to-housing-roadmap
   if (hash === '/steps' || hash === '/resources' || hash === '/plan' || hash === '/blog') {
     return { name: hash.slice(1) }
   }
@@ -745,7 +753,11 @@ export default function App() {
         ? 'blog'
         : route.name === 'after'
           ? 'steps'
+<<<<<<< HEAD
           : route.name === 'pack' || route.name === 'prep' || route.name === 'docs'
+=======
+          : route.name === 'pack' || route.name === 'prep' || route.name === 'roadmap'
+>>>>>>> shelter-to-housing-roadmap
             ? 'steps'
             : route.name === 'scam' || route.name === 'moving' || route.name === 'rights' || route.name === 'landlord' || route.name === 'housing-connect' || route.name === 'sponsor' || route.name === 'listing-check' || route.name === 'guides' || route.name === 'guide' || route.name === 'partners'
               ? 'resources'
@@ -836,6 +848,7 @@ export default function App() {
         {route.name === 'pack' && <CaseworkerPackPage />}
         {route.name === 'prep' && <InspectionPrepPage />}
         {route.name === 'resources' && <ResourcesPage />}
+        {route.name === 'roadmap' && <ShelterRoadmapPage />}
         {route.name === 'scam' && <ScamAlertsPage />}
         {route.name === 'moving' && <MovingHelpPage />}
         {route.name === 'rights' && <KnowYourRightsPage />}

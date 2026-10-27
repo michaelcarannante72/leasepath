@@ -186,6 +186,12 @@ export function ResourcesPage() {
       <p className="lede">No sign-in. For anyone in New York City who needs help — with or without a voucher. Community groups and official city programs, with the agency site as the source of record. HASA-specific help is labeled in its own section.</p>
       <p className="after-link"><a href="#/after-you-find#chap">Coming 2027: CHAP, a new city voucher (press reporting)</a> · <a href="#/after-you-find">After you find an apartment</a></p>
 
+      <aside className="partners-callout" aria-labelledby="partners-callout-title">
+        <h2 id="partners-callout-title">Legal aid and nonprofit partners</h2>
+        <p>Legal Aid Society, Housing Court Answers, the NYC Tenant Helpline, Office of Civil Justice, and more — filterable by borough.</p>
+        <p><a className="button" href="#/partners">Open partner directory</a></p>
+      </aside>
+
       <aside className="help-now" aria-labelledby="help-now-title">
         <h2 id="help-now-title">Need help now?</h2>
         <ul>

@@ -1859,3 +1859,19 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   transform: translateX(-50%);
   z-index: 1000;
 }
+
+.partners-callout, .partner-directory .partner-card {
+  margin: 14px 0 18px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: white;
+  box-shadow: 0 6px 18px rgba(28, 45, 66, 0.05);
+}
+.partners-callout h2 { margin: 0 0 6px; font-size: 1.05rem; color: var(--navy); }
+.partners-callout p { margin: 0 0 10px; color: var(--muted); }
+.partner-list { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 12px; }
+.partner-card { margin: 0; }
+.partner-card h2 { margin: 0 0 8px; font-size: 1.05rem; color: var(--navy); }
+.partner-boroughs { display: flex; gap: 6px; align-items: flex-start; color: var(--muted); font-size: 0.88rem; }
+.partner-directory-nav { margin-top: 18px; }

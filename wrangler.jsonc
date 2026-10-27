@@ -13,7 +13,7 @@
     // /search/* are rendered by the Worker. Any other path is a real 404 (public/404.html) instead of the app shell,
     // so /.well-known/*, /robots.txt, and missing images or scripts no longer return 200 HTML.
     "not_found_handling": "404-page",
-    "run_worker_first": ["/api/*", "/privacy", "/privacy/", "/terms", "/terms/", "/after-you-find", "/after-you-find/", "/steps", "/steps/", "/resources", "/resources/", "/plan", "/plan/", "/blog", "/blog/", "/search", "/search/*"]
+    "run_worker_first": ["/api/*", "/privacy", "/privacy/", "/terms", "/terms/", "/after-you-find", "/after-you-find/", "/steps", "/steps/", "/resources", "/resources/", "/plan", "/plan/", "/blog", "/blog/", "/guides", "/guides/", "/search", "/search/*"]
   },
   "routes": [
     { "pattern": "leasepath.app", "custom_domain": true },

@@ -61,7 +61,9 @@ test('service worker precaches the shell and falls back offline for app pages', 
 
 test('Resources and Steps content ship in the client bundle sources (no network fetch)', () => {
   const resources = read('src/components/ResourcesPage.jsx')
-  assert.match(resources, /NYC resources for housing/)
+  assert.match(resources, /t\(["']resources\.title["']\)/)
+  const i18n = read('src/i18n.js')
+  assert.match(i18n, /NYC resources for housing/)
   const steps = read('src/components/StepsPage.jsx')
   assert.match(steps, /From the letter to the lease/)
   const data = read('src/data.js')

@@ -1614,3 +1614,6 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   transform: translateX(-50%);
   z-index: 1000;
 }
+
+.landlord-page .landlord-actions { margin: 0 0 14px; }
+.landlord-page code { font-size: 0.9em; background: #f0ebe3; padding: 1px 6px; border-radius: 6px; }

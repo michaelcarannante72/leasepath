@@ -12,6 +12,7 @@ export function StepsPage({ checked, onToggle }) {
         <span style={{ width: `${STEPS.length ? Math.round((done / STEPS.length) * 100) : 0}%` }} />
       </div>
       <p className="after-link"><a href="#/after-you-find">After you find an apartment: rent review, inspection, and move-in →</a></p>
+      <p className="after-link"><a href="#/caseworker-pack">Share a caseworker pack (PDF on this phone) →</a></p>
       <ol className="steps">
         {STEPS.map((step, index) => {
           const on = checked.includes(index)

@@ -66,6 +66,7 @@ export function LandingHero({ onCheck }) {
         <button type="button" className="hero-cta" onClick={onCheck}>Check a listing</button>
         <p className="hero-account"><a className="hero-account-link" href="#/" onClick={(event) => { event.preventDefault(); openAccount() }}>Create a free account</a></p>
         <p className="hero-any-phone">Works on any phone, no download needed.</p>
+        <p className="hero-quiz"><a className="hero-quiz-link" href="#/quiz">Not sure where to start? Three questions →</a></p>
         <p className="not-affiliated">{NOT_AFFILIATED}</p>
       </div>
     </section>

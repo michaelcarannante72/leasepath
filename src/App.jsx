@@ -16,6 +16,7 @@ import { PlanPage } from './components/PlanPage.jsx'
 import { DeleteAccountDialog } from './components/DeleteAccountDialog.jsx'
 import { clearDeviceData } from './deviceData.js'
 import { ResourcesPage } from './components/ResourcesPage.jsx'
+import { QuickStartQuizPage } from './components/QuickStartQuizPage.jsx'
 import { RubyIntro } from './components/RubyIntro.jsx'
 import { SearchPage } from './components/SearchPage.jsx'
 import { AfterYouFindPage } from './components/AfterYouFindPage.jsx'
@@ -102,6 +103,7 @@ function parseHash() {
   const info = hash.match(/^\/info\/([a-z0-9-]+)$/)
   if (info) return { name: 'info', id: info[1] }
   if (hash === '/after-you-find' || hash === '/after-you-find#chap') return { name: 'after' }
+  if (hash === '/quiz' || hash === '/start') return { name: 'quiz' }
   if (hash === '/steps' || hash === '/resources' || hash === '/plan' || hash === '/blog') {
     return { name: hash.slice(1) }
   }
@@ -678,7 +680,9 @@ export default function App() {
         ? 'blog'
         : route.name === 'after'
           ? 'steps'
-          : route.name
+          : route.name === 'quiz'
+            ? 'search'
+            : route.name
   const navSelect = (id) => {
     if (id === 'assistant') {
       // Empty chat (welcome only): show or re-open Ruby's intro. After the person has sent a message, open chat.
@@ -750,6 +754,7 @@ export default function App() {
         {route.name === 'steps' && <StepsPage checked={checked} onToggle={toggleStep} />}
         {route.name === 'after' && <AfterYouFindPage />}
         {route.name === 'resources' && <ResourcesPage />}
+        {route.name === 'quiz' && <QuickStartQuizPage />}
         {route.name === 'plan' && <PlanPage plan={plan} onChange={updatePlan} checks={checks} onChecks={updateChecks} onClearIncome={clearIncome} signedIn={session.signedIn} onDeleteAccount={openDelete} />}
         {route.name === 'blog' && <BlogList />}
         {route.name === 'post' && <BlogPost post={post} />}

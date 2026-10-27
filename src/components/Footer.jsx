@@ -1,4 +1,5 @@
 import { FOOTER_GROUPS, SITE_PAGES } from '../sitePages.js'
+import { SEARCH_PAGES } from '../data/voucherSearches.js'
 import { OPEN_ANALYTICS_CHOICE } from './AnalyticsConsent.jsx'
 
 function AnalyticsChoiceLink() {
@@ -12,10 +13,36 @@ function pageHref(slug) {
   return `#/info/${slug}`
 }
 
+function PopularSearchChips() {
+  return (
+    <section className="popular-searches" aria-labelledby="popular-searches-heading">
+      <details className="popular-searches-mobile">
+        <summary id="popular-searches-heading">Popular voucher searches</summary>
+        <div className="popular-search-chips">
+          {SEARCH_PAGES.map((page) => (
+            <a key={page.path} className="popular-search-chip" href={page.path}>{page.chipLabel}</a>
+          ))}
+        </div>
+        <p className="popular-searches-more"><a href="/search">See all popular voucher searches</a></p>
+      </details>
+      <div className="popular-searches-desktop">
+        <h2>Popular voucher searches</h2>
+        <div className="popular-search-chips">
+          {SEARCH_PAGES.map((page) => (
+            <a key={page.path} className="popular-search-chip" href={page.path}>{page.chipLabel}</a>
+          ))}
+        </div>
+        <p className="popular-searches-more"><a href="/search">See all popular voucher searches</a></p>
+      </div>
+    </section>
+  )
+}
+
 export function Footer({ compact = false }) {
   if (compact) {
     return (
       <footer className="site-footer site-footer-compact">
+        <PopularSearchChips />
         <nav aria-label="Footer">
           {COMPACT_SLUGS.map((slug) => {
             const page = SITE_PAGES.find((item) => item.slug === slug)
@@ -31,6 +58,7 @@ export function Footer({ compact = false }) {
 
   return (
     <footer className="site-footer">
+      <PopularSearchChips />
       <div className="footer-grid">
         {FOOTER_GROUPS.map((group) => (
           <section key={group}>

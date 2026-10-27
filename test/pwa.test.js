@@ -86,7 +86,9 @@ test('every internal link and route in the app resolves', () => {
     }
     for (const match of text.matchAll(/href=\{?[`"]#\/blog\/\$\{[^}]+\}/g)) assert.ok(match[0])
     for (const match of text.matchAll(/href="(\/[a-z][^"#?]*)"/g)) {
-      assert.ok(['/privacy', '/terms'].includes(match[1]), `${file}: ${match[1]} is not a served page`)
+      const href = match[1]
+      const ok = href === '/privacy' || href === '/terms' || href === '/search' || href.startsWith('/search/')
+      assert.ok(ok, `${file}: ${href} is not a served page`)
     }
   }
   for (const slug of ['privacy', 'terms', 'cookies', 'help']) assert.ok(slugs.has(slug), slug)

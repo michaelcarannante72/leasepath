@@ -1,5 +1,6 @@
 import { handleApi } from '../server/api.js'
 import { policyHtml, policySlug } from '../server/policyPages.js'
+import { searchHtmlForPath, parseSearchPath } from '../server/searchPages.js'
 import { AccountBook, durableAccounts } from './accountBook.js'
 import { UsageMeter, durableUsage } from './usageMeter.js'
 import { SECURITY_HEADERS } from './security.js'
@@ -54,6 +55,19 @@ async function route(request, env) {
       return withSecurity(new Response(null, { status: 405, headers: { allow: 'GET, HEAD' } }))
     }
     return withSecurity(new Response(request.method === 'HEAD' ? null : policyHtml(slug), {
+      status: 200,
+      headers: {
+        'content-type': 'text/html; charset=utf-8',
+        'cache-control': 'public, max-age=300',
+      },
+    }))
+  }
+  const search = parseSearchPath(url.pathname)
+  if (search) {
+    if (request.method !== 'GET' && request.method !== 'HEAD') {
+      return withSecurity(new Response(null, { status: 405, headers: { allow: 'GET, HEAD' } }))
+    }
+    return withSecurity(new Response(request.method === 'HEAD' ? null : searchHtmlForPath(url.pathname), {
       status: 200,
       headers: {
         'content-type': 'text/html; charset=utf-8',

@@ -3,6 +3,7 @@ import { Icon } from './Icon.jsx'
 import { LandingHero, LandingSteps } from './LandingHero.jsx'
 import { ACCESS_HRA_URL, BOROUGHS, HOMEBASE_URL } from '../data.js'
 import { PROGRAMS, cardFlags, cardLabel, cardText, money, sizeLabel, utilityLabel } from '../fit.js'
+import { useLanguage } from './LanguageProvider.jsx'
 
 const SORT_LABELS = {
   'rent-asc': 'Rent, low to high',
@@ -28,30 +29,31 @@ const APPLY_DOORS = [
   },
 ]
 
-function activeChips(filters) {
+function activeChips(filters, t) {
   const chips = []
   if (filters.q.trim()) chips.push({ key: 'q', label: filters.q.trim(), patch: { q: '' } })
   if (filters.beds !== 'Any') chips.push({ key: 'beds', label: filters.beds === '1' || filters.beds === '2' || filters.beds === '3' ? `${filters.beds} bedroom` : filters.beds, patch: { beds: 'Any' } })
   if (filters.borough !== 'All') chips.push({ key: 'borough', label: filters.borough, patch: { borough: 'All' } })
   if (filters.maxRent) chips.push({ key: 'maxRent', label: `Up to ${money(filters.maxRent)}`, patch: { maxRent: '' } })
   if (filters.program !== 'All') chips.push({ key: 'program', label: filters.program, patch: { program: 'All' } })
-  if (filters.sort !== 'rent-asc') chips.push({ key: 'sort', label: SORT_LABELS[filters.sort] || 'Sort', patch: { sort: 'rent-asc' } })
-  if (filters.savedOnly) chips.push({ key: 'savedOnly', label: 'Saved only', patch: { savedOnly: false } })
+  if (filters.sort !== 'rent-asc') chips.push({ key: 'sort', label: filters.sort === 'rent-desc' ? t('search.sort.rentDesc') : filters.sort === 'neighborhood' ? t('search.sort.neighborhood') : t('search.sort.rentAsc'), patch: { sort: 'rent-asc' } })
+  if (filters.savedOnly) chips.push({ key: 'savedOnly', label: t('search.savedOnly'), patch: { savedOnly: false } })
   return chips
 }
 
 function ApplyPanel() {
+  const { t } = useLanguage()
   return (
     <section className="apply-panel">
-      <h2>Start the application in the right place</h2>
-      <p>LeasePath cannot tell you whether you qualify. These are the city doors for a new case.</p>
+      <h2>{t('search.applyTitle')}</h2>
+      <p>{t('search.applyLede')}</p>
       <ul className="apply-doors">
         {APPLY_DOORS.map((door) => (
           <li key={door.href}>
             <a className="apply-card" href={door.href} target={door.href.startsWith('tel:') ? undefined : '_blank'} rel={door.href.startsWith('tel:') ? undefined : 'noreferrer'}>
               <strong>{door.title}</strong>
               <span>{door.detail}</span>
-              <em>{door.href.startsWith('tel:') ? 'Call' : 'Open'} <Icon name="external" size={14} /></em>
+              <em>{door.href.startsWith('tel:') ? t('search.call') : t('search.open')} <Icon name="external" size={14} /></em>
             </a>
           </li>
         ))}
@@ -73,7 +75,8 @@ export function SearchPage({
   onIntent,
   onAsk,
 }) {
-  const chips = activeChips(filters)
+  const { t } = useLanguage()
+  const chips = activeChips(filters, t)
   const savedCount = saved.length
 
   const showApartments = (event) => {
@@ -100,7 +103,7 @@ export function SearchPage({
       <LandingSteps onFind={scrollToSearch} onAsk={onAsk} />
       <section className="landing-hero" aria-labelledby="search-title">
         <div className="hero-copy">
-          <h2 id="search-title" className="search-title">Search apartments</h2>
+          <h2 id="search-title" className="search-title">{t("nav.search")}</h2>
           <p className="pitch">Brokers who say “I’ll call you back” and then transfer you are the reason this exists.</p>
           <div className="program-chips" role="group" aria-label="Filter by voucher">
             {PROGRAMS.map((program) => (
@@ -143,7 +146,7 @@ export function SearchPage({
         <form className="search-panel hero-search" onSubmit={showApartments}>
           <div className="search-controls">
             <label className={`search-field neighborhood-field${filters.q.trim() ? ' is-set' : ''}`}>
-              <span>Neighborhood or ZIP</span>
+              <span>{t("search.query")}</span>
               <span className="input-with-icon">
                 <Icon name="pin" size={16} />
                 <input
@@ -155,18 +158,18 @@ export function SearchPage({
               </span>
             </label>
             <label className={`search-field${filters.beds !== 'Any' ? ' is-set' : ''}`}>
-              <span>Bedrooms</span>
-              <select value={filters.beds} onChange={(event) => onChange({ beds: event.target.value })} aria-label="Bedrooms">
+              <span>{t("search.beds")}</span>
+              <select value={filters.beds} onChange={(event) => onChange({ beds: event.target.value })} aria-label={t("search.beds")}>
                 {['Any', 'Room', 'SRO', 'Studio', '1', '2', '3', '4+'].map((size) => (
                   <option key={size} value={size}>
-                    {size === 'Any' ? 'Any size' : size === '1' || size === '2' || size === '3' ? `${size} bedroom` : size === '4+' ? '4+ bedrooms' : size}
+                    {size === 'Any' ? t('search.anyBeds') : size === '1' || size === '2' || size === '3' ? `${size} bedroom` : size === '4+' ? '4+ bedrooms' : size}
                   </option>
                 ))}
               </select>
             </label>
             <label className={`search-field${filters.program !== 'All' ? ' is-set' : ''}`}>
-              <span>Voucher</span>
-              <select value={filters.program} onChange={(event) => onChange({ program: event.target.value })} aria-label="Voucher">
+              <span>{t("search.program")}</span>
+              <select value={filters.program} onChange={(event) => onChange({ program: event.target.value })} aria-label={t("search.program")}>
                 <option value="All">All three</option>
                 {PROGRAMS.map((program) => (
                   <option key={program}>{program}</option>
@@ -191,7 +194,7 @@ export function SearchPage({
             <label className={`search-field${filters.borough !== 'All' ? ' is-set' : ''}`}>
               <span>Borough</span>
               <select value={filters.borough} onChange={(event) => onChange({ borough: event.target.value })} aria-label="Borough">
-                <option value="All">All boroughs</option>
+                <option value="All">{t("search.allBoroughs")}</option>
                 {BOROUGHS.map((borough) => (
                   <option key={borough}>{borough}</option>
                 ))}
@@ -199,10 +202,10 @@ export function SearchPage({
             </label>
             <label className={`search-field${filters.sort !== 'rent-asc' ? ' is-set' : ''}`}>
               <span>Sort</span>
-              <select value={filters.sort} onChange={(event) => onChange({ sort: event.target.value })} aria-label="Sort">
-                <option value="rent-asc">Rent, low to high</option>
-                <option value="rent-desc">Rent, high to low</option>
-                <option value="neighborhood">Neighborhood</option>
+              <select value={filters.sort} onChange={(event) => onChange({ sort: event.target.value })} aria-label={t("search.filters")}>
+                <option value="rent-asc">{t("search.sort.rentAsc")}</option>
+                <option value="rent-desc">{t("search.sort.rentDesc")}</option>
+                <option value="neighborhood">{t("search.sort.neighborhood")}</option>
               </select>
             </label>
             <label className={`check-line${filters.savedOnly ? ' is-set' : ''}`}>
@@ -211,7 +214,7 @@ export function SearchPage({
                 checked={filters.savedOnly}
                 onChange={(event) => onChange({ savedOnly: event.target.checked })}
               />
-              Saved only
+              {t("search.savedOnly")}
             </label>
           </div>
           {chips.length > 0 && (

@@ -2,8 +2,11 @@ import { useEffect, useState } from 'react'
 import { AccountDialog } from './AccountDialog.jsx'
 import { NAV_TABS } from '../navTabs.js'
 import { Icon } from './Icon.jsx'
+import { LanguageToggle } from './LanguageToggle.jsx'
+import { useLanguage } from './LanguageProvider.jsx'
 
 export function Header({ canInstall, onInstall, planCurrent, session, signingIn, signInError, onGoogleCredential, onEmailAuth, onSignOut, navActive, onNav }) {
+  const { t } = useLanguage()
   const [accountOpen, setAccountOpen] = useState(false)
   const closeAccount = () => setAccountOpen(false)
   if (session?.signedIn && accountOpen) setAccountOpen(false)
@@ -21,7 +24,7 @@ export function Header({ canInstall, onInstall, planCurrent, session, signingIn,
       </a>
       <p className="topbar-note">HASA · CityFHEPS · Section 8</p>
       {onNav && (
-        <nav className="topnav" aria-label="Main">
+        <nav className="topnav" aria-label={t("nav.main")}>
           {NAV_TABS.map((tab) => (
             <button
               key={tab.id}
@@ -30,21 +33,22 @@ export function Header({ canInstall, onInstall, planCurrent, session, signingIn,
               aria-current={navActive === tab.id ? 'page' : undefined}
               onClick={() => onNav(tab.id)}
             >
-              {tab.label}
+              {t(`nav.${tab.id === "assistant" ? "ruby" : tab.id === "plan" ? "plan" : tab.id}`)}
             </button>
           ))}
         </nav>
       )}
       <div className="topbar-actions">
+        <LanguageToggle />
         {canInstall && (
           <button type="button" className="install-button" onClick={onInstall}>
-            <span className="install-long">Install app</span>
-            <span className="install-short">Install</span>
+            <span className="install-long">{t("install.long")}</span>
+            <span className="install-short">{t("install.short")}</span>
           </button>
         )}
         <a className="plan-pill" href="#/plan" aria-current={planCurrent ? 'page' : undefined}>
           <span className="plan-mark" aria-hidden="true"><Icon name="heart" size={15} /></span>
-          <span className="plan-pill-label">My voucher</span>
+          <span className="plan-pill-label">{t("nav.plan")}</span>
           <Icon name="chevron" size={16} />
         </a>
         {session?.signedIn ? (
@@ -57,8 +61,8 @@ export function Header({ canInstall, onInstall, planCurrent, session, signingIn,
           </>
         ) : (
           <button type="button" className="account-button" onClick={() => setAccountOpen(true)}>
-            <span className="account-long">Sign up / Sign in</span>
-            <span className="account-short">Sign in</span>
+            <span className="account-long">{t("auth.signUp")}</span>
+            <span className="account-short">{t("auth.signIn")}</span>
           </button>
         )}
       </div>

@@ -5,6 +5,8 @@ import { AssistantSheet } from './components/AssistantSheet.jsx'
 import { DetailPage } from './components/DetailPage.jsx'
 import { BlogList, BlogPost } from './components/BlogPage.jsx'
 import { Dock } from './components/Dock.jsx'
+import { useLanguage } from './components/LanguageProvider.jsx'
+import { looksLikeSpanish, readLang, t as i18nT } from './i18n.js'
 import { Footer, InfoPage } from './components/Footer.jsx'
 import { Header } from './components/Header.jsx'
 import { CookiePrompt } from './components/CookiePrompt.jsx'
@@ -46,11 +48,12 @@ const CHECKS_KEY = 'leasepath.checks'
 const SHARE_KEY = 'leasepath.shareWithRuby'
 const RUBY_INTRO_KEY = 'leasepath.rubyIntroSeen'
 
-const WELCOME = {
-  role: 'assistant',
-  local: true,
-  content:
-    "Hi, I'm Ruby. I'm designed to assist you in your housing search and help you navigate the complex and fiercely competitive NYC rental market.\n\nI help you stay focused on finding that apartment with a housing voucher.\n\nI know it can be difficult, even exhausting, to search for an apartment with a voucher.\n\nFrom here on out, you don't have to do it alone. I will walk you through every step: from homeless to shelter, to SRO, to navigating the complexities of HRA's bureaucracy. I'll help you keep track of your documents and deadlines for your landlord, broker and caseworker.\n\nWelcome to LeasePath. Let's get you into an apartment.\n\nHave you been given a shopping letter yet by your caseworker?",
+function welcomeMessage(lang = 'en') {
+  return {
+    role: 'assistant',
+    local: true,
+    content: i18nT(lang, 'ruby.welcome'),
+  }
 }
 
 function loadJson(key, fallback) {
@@ -111,6 +114,7 @@ function parseHash() {
 }
 
 export default function App() {
+  const { lang } = useLanguage()
   const [route, setRoute] = useState(parseHash)
   const [plan, setPlan] = useState(loadPlan)
   const [checks, setChecks] = useState(loadChecks)
@@ -150,7 +154,14 @@ export default function App() {
     trackView(window, document, { hashPath: window.location.hash.replace(/^#/, '') || '/', assistantOpen, consent: analyticsConsent })
   }, [route, assistantOpen, analyticsConsent])
   const [assistantListingId, setAssistantListingId] = useState(null)
-  const [messages, setMessages] = useState([WELCOME])
+  const [messages, setMessages] = useState(() => [welcomeMessage(readLang())])
+  useEffect(() => {
+    // Refresh Ruby welcome when the language toggles and the person has not started chatting yet.
+    setMessages((current) => {
+      if (current.length === 1 && current[0]?.local) return [welcomeMessage(lang)]
+      return current
+    })
+  }, [lang])
   const [input, setInput] = useState('')
   const [pending, setPending] = useState(false)
   // Off by default. The choice is saved on this device for this person, and cleared by Delete my data.
@@ -527,7 +538,7 @@ export default function App() {
     setChecks(emptyChecks())
     setSaved([])
     setChecked([])
-    setMessages([WELCOME])
+    setMessages([welcomeMessage(lang)])
     return { ok: true }
   }, [applyAccess, clearIncome, session.signedIn])
 
@@ -585,7 +596,7 @@ export default function App() {
     setSaved([])
     setChecked([])
     setFilters((current) => ({ ...current, q: '', program: 'All' }))
-    setMessages([WELCOME])
+    setMessages([welcomeMessage(lang)])
     if (!savedToAccount) {
       window.alert('You are signed out and this phone is cleared, but your latest voucher details could not be saved to your account. When you sign in again, check them in My voucher.')
     }
@@ -621,6 +632,7 @@ export default function App() {
         body: JSON.stringify({
           ...extra,
           messages: nextMessages.filter((message) => !message.local).slice(-8),
+          replyLanguage: looksLikeSpanish(clean) || lang === 'es' ? 'es' : 'en',
           includePlan,
           // Voucher details leave the phone only when the person has turned sharing on.
           plan: includePlan
@@ -662,7 +674,7 @@ export default function App() {
     } finally {
       setPending(false)
     }
-  }, [assistantListingId, includePlan, messages, pending, plan, session, applyAccess])
+  }, [assistantListingId, includePlan, lang, messages, pending, plan, session, applyAccess])
 
   const askAboutListing = (listingId, prompt) => {
     setAssistantListingId(listingId)

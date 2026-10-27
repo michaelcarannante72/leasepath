@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useLanguage } from './LanguageProvider.jsx'
 import { RESOURCES } from '../data.js'
 import { Icon } from './Icon.jsx'
 import { PantryFinder } from './PantryFinder.jsx'
@@ -148,6 +149,7 @@ function Collapsible({ id, title, count, icon, badge, open, onToggle, children }
 }
 
 export function ResourcesPage() {
+  const { t } = useLanguage()
   const [query, setQuery] = useState('')
   const [borough, setBorough] = useState('')
   const [category, setCategory] = useState('')
@@ -181,35 +183,35 @@ export function ResourcesPage() {
 
   return (
     <div className="page resources-page">
-      <p className="eyebrow">Resource Navigator</p>
-      <h1>NYC resources for housing, food, health, and legal help</h1>
-      <p className="lede">No sign-in. For anyone in New York City who needs help — with or without a voucher. Community groups and official city programs, with the agency site as the source of record. HASA-specific help is labeled in its own section.</p>
-      <p className="after-link"><a href="#/after-you-find#chap">Coming 2027: CHAP, a new city voucher (press reporting)</a> · <a href="#/after-you-find">After you find an apartment</a></p>
+      <p className="eyebrow">{t("resources.eyebrow")}</p>
+      <h1>{t("resources.title")}</h1>
+      <p className="lede">{t("resources.lede")}</p>
+      <p className="after-link"><a href="#/after-you-find#chap">{t("resources.chap")}</a> · <a href="#/after-you-find">{t("resources.afterFind")}</a></p>
 
       <aside className="help-now" aria-labelledby="help-now-title">
-        <h2 id="help-now-title">Need help now?</h2>
+        <h2 id="help-now-title">{t("resources.helpNow")}</h2>
         <ul>
-          <li><a className="help-call" href="tel:311">Need shelter tonight? Call 311</a></li>
-          <li><a className="help-call" href="tel:988">Call or text 988 for a mental health crisis</a></li>
+          <li><a className="help-call" href="tel:311">{t("resources.shelter")}</a></li>
+          <li><a className="help-call" href="tel:988">{t("resources.crisis")}</a></li>
         </ul>
         <p className="help-jumps">
-          <button type="button" onClick={() => jumpTo('free-food-title')}>Food</button>
-          <button type="button" onClick={() => jumpTo('health-title')}>Health and support</button>
+          <button type="button" onClick={() => jumpTo('free-food-title')}>{t("resources.food")}</button>
+          <button type="button" onClick={() => jumpTo('health-title')}>{t("resources.health")}</button>
         </p>
       </aside>
 
       <section className="resource-group free-food" aria-label="Community resources">
         <div className="resource-search" role="search">
-          <label htmlFor="resource-q">Search resources</label>
-          <input id="resource-q" type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Name, neighborhood, borough, or type" autoComplete="off" spellCheck="false" />
-          <div className="borough-chips" role="group" aria-label="Borough">
+          <label htmlFor="resource-q">{t("resources.searchLabel")}</label>
+          <input id="resource-q" type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("resources.searchPlaceholder")} autoComplete="off" spellCheck="false" />
+          <div className="borough-chips" role="group" aria-label={t("resources.borough")}>
             {['', ...BOROUGHS].map((name) => (
-              <button key={name || 'all'} type="button" className="chip" aria-pressed={borough === name} onClick={() => setBorough(name)}>{name || 'All boroughs'}</button>
+              <button key={name || 'all'} type="button" className="chip" aria-pressed={borough === name} onClick={() => setBorough(name)}>{name || t("resources.allBoroughs")}</button>
             ))}
           </div>
         </div>
 
-        <nav className="community-jump" aria-label="Resource categories">
+        <nav className="community-jump" aria-label={t("resources.categories")}>
           <ul>
             {COMMUNITY_SECTIONS.map((section) => (
               <li key={section.id}>
@@ -223,7 +225,7 @@ export function ResourcesPage() {
             <li>
               <button type="button" className="chip chip-category" aria-pressed={category === CITY_ID} onClick={() => pickCategory(CITY_ID)}>
                 <Icon name="city" size={14} />
-                <span>City programs</span>
+                <span>{t("resources.cityPrograms")}</span>
                 <span className="chip-count">{cityCount}</span>
               </button>
             </li>
@@ -231,16 +233,16 @@ export function ResourcesPage() {
         </nav>
 
         <p id="resource-results" className="resource-status" role="status" aria-live="polite">
-          {filtering || category ? `Showing ${shownCount} of ${total} listings.` : `${total} listings across community groups and city programs.`}
-          {(filtering || category) && <> <button type="button" className="link-button" onClick={clearAll}>Clear filters</button></>}
+          {filtering || category ? t("resources.showing", { shown: shownCount, total }) : t("resources.total", { total })}
+          {(filtering || category) && <> <button type="button" className="link-button" onClick={clearAll}>{t("resources.clear")}</button></>}
         </p>
 
         {shownCount === 0 && (
           <div className="resource-empty" role="status">
             <span className="resource-empty-icon" aria-hidden="true"><Icon name="search" size={28} /></span>
-            <h2>No listings match</h2>
-            <p>Try another word, clear the borough chip, or browse a category above. Food pantries, SNAP, rent help, and legal aid are all here.</p>
-            <button type="button" className="button" onClick={clearAll}>Clear filters</button>
+            <h2>{t("resources.emptyTitle")}</h2>
+            <p>{t("resources.emptyBody")}</p>
+            <button type="button" className="button" onClick={clearAll}>{t("resources.clear")}</button>
           </div>
         )}
 
@@ -257,10 +259,10 @@ export function ResourcesPage() {
           <div className="city-block">
             <h2 id={CITY_ID} className="city-title">
               <span className="section-icon" aria-hidden="true"><Icon name="city" size={20} /></span>
-              City programs
+              {t("resources.cityPrograms")}
               <span className="section-count">{visibleCity.reduce((sum, s) => sum + s.shown.length, 0)}</span>
             </h2>
-            <p className="city-lede">Official HRA, NYCHA, HPD, and other agency pages. Applying is always free through the agency. A HASA section is labeled below for people in that program.</p>
+            <p className="city-lede">{t("resources.cityLede")}</p>
           </div>
         )}
         {visibleCity.map((section) => (

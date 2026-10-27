@@ -8,7 +8,9 @@ const css = readFileSync(new URL('../src/index.css', import.meta.url), 'utf8')
 
 test('the not-affiliated line is rendered in the hero text and never hidden on either layout', () => {
   assert.equal(NOT_AFFILIATED, 'Not affiliated with HRA, NYCHA, or any government agency.')
-  assert.match(hero, /<p className="not-affiliated">\{NOT_AFFILIATED\}<\/p>/)
+  const i18n = readFileSync(new URL('../src/i18n.js', import.meta.url), 'utf8')
+  assert.match(i18n, /'hero\.notAffiliated': 'Not affiliated with HRA, NYCHA, or any government agency\.'/)
+  assert.match(hero, /className="not-affiliated">\{t\(["']hero\.notAffiliated["']\)\}<\/p>/)
   // Lives in .hero-text, which shows on mobile and desktop.
   const text = hero.slice(hero.indexOf('className="hero-text"'), hero.indexOf('</section>'))
   assert.ok(text.includes('not-affiliated'), 'line sits inside .hero-text')
@@ -20,7 +22,10 @@ test('the not-affiliated line is rendered in the hero text and never hidden on e
 test('mobile has no sticky Get started bar, and the hero links to account creation', () => {
   const page = readFileSync(new URL('../src/components/SearchPage.jsx', import.meta.url), 'utf8')
   for (const src of [hero, page, css]) assert.doesNotMatch(src, /get-started|GetStartedBar|Get started/)
-  assert.match(hero, /onClick=\{onCheck\}>Check a listing<\/button>\s*<p className="hero-account"><a className="hero-account-link" href="#\/" onClick=\{\(event\) => \{ event\.preventDefault\(\); openAccount\(\) \}\}>Create a free account<\/a>/)
+  assert.match(hero, /onClick=\{onCheck\}>\{t\(["']hero\.cta["']\)\}<\/button>\s*<p className="hero-account"><a className="hero-account-link" href="#\/" onClick=\{\(event\) => \{ event\.preventDefault\(\); openAccount\(\) \}\}>\{t\(["']hero\.account["']\)\}<\/a>/)
+  const i18nEn = readFileSync(new URL('../src/i18n.js', import.meta.url), 'utf8')
+  assert.match(i18nEn, /'hero\.cta': 'Check a listing'/)
+  assert.match(i18nEn, /'hero\.account': 'Create a free account'/)
   const header = readFileSync(new URL('../src/components/Header.jsx', import.meta.url), 'utf8')
   assert.match(header, /addEventListener\('leasepath:open-account'/)
 })
@@ -32,12 +37,13 @@ test('phones get no photo; desktop moves the nav into the header and drops the d
   assert.match(css, /@media \(max-width: 899px\) \{[^]*?\.hero-photo \{ display: none; \}/)
   // Mobile keeps the two big buttons, the any-phone line, and the not-affiliated line.
   assert.match(css, /@media \(max-width: 899px\) \{[^]*?\.hero-account-link \{[^}]*min-height: 52px/)
-  assert.match(hero, /Works on any phone, no download needed\./)
+  assert.match(hero, /t\(["']hero\.anyPhone["']\)/)
+  assert.match(readFileSync(new URL('../src/i18n.js', import.meta.url), 'utf8'), /'hero\.anyPhone': 'Works on any phone, no download needed\.'/)
   // Desktop: dock hidden, header nav shown, both from the same tabs.
   assert.match(css, /@media \(min-width: 1024px\) \{\n {2}\.dock \{ display: none; \}/)
   assert.match(css, /\.topnav \{ display: none; \}/)
   const header = readFileSync(new URL('../src/components/Header.jsx', import.meta.url), 'utf8')
-  assert.match(header, /<nav className="topnav" aria-label="Main">\s*\{NAV_TABS\.map/)
+  assert.match(header, /<nav className="topnav" aria-label=\{t\(["']nav\.main["']\)\}>\s*\{NAV_TABS\.map/)
   const dock = readFileSync(new URL('../src/components/Dock.jsx', import.meta.url), 'utf8')
   assert.match(dock, /import \{ NAV_TABS \} from '..\/navTabs.js'/)
 })
@@ -51,7 +57,7 @@ test('the mockup rent figure sits next to "effective April 1, 2026" and is a Cit
   assert.equal(s.line, 'Sample: 1-bedroom, household of 2, $2,650/mo with all utilities included — fits your CityFHEPS limit ($2,734).')
   assert.match(hero, /<span className="mock-rent">\{s\.usd\(s\.limit\)\}<\/span>\s*<span className="mock-effective">\{s\.program\} · \{s\.effective\}<\/span>/)
   assert.match(hero, /<span className="mock-label">Max rent<\/span>\s*<span className="mock-rent">\{s\.usd\(s\.limit\)\}/)
-  assert.match(hero, /<span className="mock-tag">Example<\/span>/)
+  assert.match(hero, /<span className="mock-tag">\{t\(["']hero\.mock\.tag["']\)\}<\/span>/)
   const mock = hero.slice(hero.indexOf('function PhoneMockup'), hero.indexOf('export function LandingHero'))
   assert.doesNotMatch(mock, /HASA|Section/, 'mockup is CityFHEPS only')
 })
@@ -132,8 +138,9 @@ test('Ruby theme text colors pass WCAG AA (4.5:1)', () => {
   assert.doesNotMatch(css, /[^-]color: var\(--ruby-gold/)
 })
 
-test('Ruby opens the chat with Michael\'s exact welcome, in paragraphs, plus Yes / Not yet replies', () => {
+test('Ruby opens the chat with Michael\'s exact welcome, in paragraphs, plus Yes / Not yet replies', async () => {
   const app = readFileSync(new URL('../src/App.jsx', import.meta.url), 'utf8')
+  const i18n = readFileSync(new URL('../src/i18n.js', import.meta.url), 'utf8')
   const expected = [
     "Hi, I'm Ruby. I'm designed to assist you in your housing search and help you navigate the complex and fiercely competitive NYC rental market.",
     'I help you stay focused on finding that apartment with a housing voucher.',
@@ -142,9 +149,12 @@ test('Ruby opens the chat with Michael\'s exact welcome, in paragraphs, plus Yes
     "Welcome to LeasePath. Let's get you into an apartment.",
     'Have you been given a shopping letter yet by your caseworker?',
   ].join('\n\n')
-  const m = app.match(/const WELCOME = \{[^]*?content:\s*("(?:[^"\\]|\\.)*")/)
-  assert.ok(m, 'WELCOME content found')
-  assert.equal(JSON.parse(m[1]), expected)
+  assert.match(app, /welcomeMessage\(/)
+  assert.match(app, /i18nT\(lang, 'ruby\.welcome'\)/)
+  assert.ok(i18n.includes("Hi, I'm Ruby. I'm designed to assist you in your housing search"), 'WELCOME content found')
+  // Prefer the live EN table so escaped newlines stay exact.
+  const { EN } = await import('../src/i18n.js')
+  assert.equal(EN['ruby.welcome'], expected)
   // Bubbles keep the paragraph breaks.
   assert.match(css, /\.bubble \{[^}]*white-space: pre-wrap/)
   const sheet = readFileSync(new URL('../src/components/AssistantSheet.jsx', import.meta.url), 'utf8')

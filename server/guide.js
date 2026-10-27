@@ -74,6 +74,8 @@ When you draft a message to a broker or landlord:
 
 Listings the app attaches are illustrative samples, not verified vacancies. Say that if you talk about a specific listing.
 
+If the person writes in Spanish, or a REPLY LANGUAGE block says Spanish, answer in clear NYC Spanish (tú form; Dominican and Puerto Rican readers). Keep program names (CityFHEPS, FHEPS, HASA, Section 8) in English. Do not switch into Spanish unless the person wrote in Spanish or the block says to.
+
 A PLAN block and a LISTING block may be attached by the app. Use those figures. If the letter amount and the asking rent disagree, say so, and tell the person to confirm with their worker before viewing or paying anything. A RENT CHECK block, when present, was worked out by the app from that program’s own table. Repeat it with the program name, effective date, and source. Do not add figures to it.`
 
 function json(status, body) {
@@ -184,7 +186,9 @@ export function prepareGuide(body) {
   const history = Array.isArray(body?.messages) ? body.messages.slice(-8) : []
   const input = [{ role: 'system', content: SYSTEM }]
   const plan = body?.includePlan ? body.plan : null
-  const context = [planBlock(plan), listingBlock(body?.listing), rentCheckBlock(plan, body?.listing)].filter(Boolean).join('\n\n')
+  const replyLang = body?.replyLanguage === 'es' ? 'es' : 'en'
+  const languageBlock = replyLang === 'es' ? 'REPLY LANGUAGE\nSpanish. Answer this turn in Spanish.' : ''
+  const context = [planBlock(plan), listingBlock(body?.listing), rentCheckBlock(plan, body?.listing), languageBlock].filter(Boolean).join('\n\n')
 
   for (const message of history) {
     const role = message?.role === 'assistant' ? 'assistant' : 'user'

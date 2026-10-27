@@ -1858,6 +1858,23 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 }
 
 
+.lang-toggle {
+  border: 1px solid color-mix(in srgb, var(--navy) 18%, transparent);
+  background: #fff;
+  color: var(--navy);
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.lang-toggle:hover,
+.lang-toggle:focus-visible {
+  border-color: var(--gold);
+  outline: none;
+}
+
 /* Income pre-screen. Calm by design: every result uses the neutral note palette, and the over-the-line result is a plain note. */
 .prescreen-results { display: grid; gap: 12px; margin-top: 14px; }
 .prescreen-result { padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--note-bg); color: var(--note); }
@@ -1922,3 +1939,5 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   .dock, .site-header, .pack-actions, .cookie-prompt, .analytics-consent { display: none !important; }
   .pack-pre { max-height: none; border: none; }
 }
+
+

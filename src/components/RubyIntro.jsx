@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef } from 'react'
 import { Icon } from './Icon.jsx'
+import { useLanguage } from './LanguageProvider.jsx'
 
 const FOCUSABLE = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
 
@@ -8,6 +9,7 @@ const FOCUSABLE = 'a[href], button:not([disabled]), textarea, input, select, [ta
  * dismissible with Esc / backdrop / Maybe later, and re-openable when chat is empty.
  */
 export function RubyIntro({ open, onTalk, onLater }) {
+  const { t } = useLanguage()
   const titleId = useId()
   const descId = useId()
   const dialogRef = useRef(null)
@@ -72,17 +74,17 @@ export function RubyIntro({ open, onTalk, onLater }) {
         <div className="ruby-intro-avatar" aria-hidden="true">
           <Icon name="spark" size={36} />
         </div>
-        <p className="eyebrow">Resource Navigator</p>
-        <h2 id={titleId}>Meet Ruby</h2>
+        <p className="eyebrow">{t("ruby.intro.eyebrow")}</p>
+        <h2 id={titleId}>{t("ruby.intro.title")}</h2>
         <p id={descId} className="ruby-intro-body">
-          Ruby is LeasePath’s Resource Navigator and voucher specialist. She helps voucher holders through the NYC rental search — shelter, SRO, HRA bureaucracy, documents for a landlord, broker, or caseworker, and deadlines.
+          {t('ruby.intro.body')}
         </p>
         <p className="ruby-intro-persona">
-          A spunky, straightforward Dominican woman in her 40s who takes no BS. Short answers. No runaround.
+          {t('ruby.intro.persona')}
         </p>
         <div className="ruby-intro-actions">
-          <button ref={primaryRef} type="button" className="button ruby-send" onClick={onTalk}>Talk to Ruby</button>
-          <button type="button" className="button button-quiet" onClick={onLater}>Maybe later</button>
+          <button ref={primaryRef} type="button" className="button ruby-send" onClick={onTalk}>{t('ruby.intro.talk')}</button>
+          <button type="button" className="button button-quiet" onClick={onLater}>{t('ruby.intro.later')}</button>
         </div>
       </section>
     </div>

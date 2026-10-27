@@ -65,6 +65,57 @@ export function Icon({ name, size = 20 }) {
         <path d="M5 12h14" />
       </>
     ),
+    food: (
+      <>
+        <path d="M8 3v8a3 3 0 0 0 3 3h0V3" />
+        <path d="M8 14v7" />
+        <path d="M16 3v18" />
+        <path d="M16 8h3a2 2 0 0 1 0 4h-3" />
+      </>
+    ),
+    home: (
+      <>
+        <path d="m4 11 8-7 8 7" />
+        <path d="M6 10v9h12v-9" />
+        <path d="M10 19v-5h4v5" />
+      </>
+    ),
+    bike: (
+      <>
+        <circle cx="6.5" cy="16.5" r="3" />
+        <circle cx="17.5" cy="16.5" r="3" />
+        <path d="M6.5 16.5 10 8h3l3.5 8.5" />
+        <path d="M10 8h5" />
+        <path d="m14 8 1.5 4H10" />
+      </>
+    ),
+    health: (
+      <>
+        <path d="M12 21s-7-4.4-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 4.6-7 9-7 9Z" />
+        <path d="M12 9v5" />
+        <path d="M9.5 11.5h5" />
+      </>
+    ),
+    elders: (
+      <>
+        <circle cx="12" cy="7" r="3" />
+        <path d="M6 20v-1a5 5 0 0 1 10 0v1" />
+        <path d="M16 11.5c1.2.6 2 1.8 2 3.2V17" />
+      </>
+    ),
+    city: (
+      <>
+        <path d="M4 20V9l5-3v14" />
+        <path d="M9 20V7l6-3v16" />
+        <path d="M15 20v-8l5 3v5" />
+        <path d="M4 20h16" />
+      </>
+    ),
+    phone: (
+      <>
+        <path d="M7.5 3.5h3l1.2 3.2-1.8 1.2a12 12 0 0 0 5.2 5.2l1.2-1.8 3.2 1.2v3A2 2 0 0 1 17.5 17 14.5 14.5 0 0 1 3.5 3a2 2 0 0 1 2-2Z" />
+      </>
+    ),
     blog: (
       <>
         <path d="M6 4h9l3 3v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z" />

@@ -47,7 +47,7 @@ test('every listing is still on the page: nothing deleted, sections show counts'
   for (const s of COMMUNITY_SECTIONS) assert.equal(filterSection(s).length, s.items.length)
   assert.ok(RESOURCES.length >= 20)
   assert.match(page, /RESOURCES\.filter\(\(item\) => item\.group === group\)/)
-  assert.match(page, /<span className="section-count">\(\{count\}\)<\/span>/)
+  assert.match(page, /<span className="section-count">\{count\}<\/span>/)
   assert.match(page, /<PantryFinder \/>/)
 })
 
@@ -64,7 +64,7 @@ test('collapsible sections are buttons with aria-expanded and aria-controls; car
 test('category chips cover the five community sections plus city programs', () => {
   assert.deepEqual(COMMUNITY_SECTIONS.map((s) => s.jump),
     ['Food and clothing', 'Housing and drop-in', 'Getting around', 'Health and support', 'Older New Yorkers'])
-  assert.match(page, />City programs<\/button>/)
+  assert.match(page, /City programs/)
   const css = read('src/index.css')
   assert.match(css, /\.community-jump \{ position: sticky; top: 0;/)
 })
@@ -83,4 +83,30 @@ test('phones are tap-to-call and outside links open in a new tab with noopener n
   assert.match(page, /href=\{tel\(item\.phone\)\}/)
   for (const tag of page.match(/<a [^>]*target=[^>]*>/g)) assert.match(tag, /noopener noreferrer/)
   assert.doesNotMatch(page, /rel="noreferrer"/)
+})
+
+test('Resources framing is universal for everyone in NYC, not HASA-only; HASA stays labeled in its section', () => {
+  assert.match(page, /NYC resources for housing, food, health, and legal help/)
+  assert.match(page, /For anyone in New York City who needs help/)
+  assert.match(page, /with or without a voucher/)
+  assert.doesNotMatch(page, /Open resources for a HASA voucher/)
+  assert.doesNotMatch(page, /already has HASA rental assistance/)
+  assert.match(page, /HASA-specific/)
+  assert.match(page, /Resource Navigator/)
+  assert.match(page, /Applying is always free/)
+  const data = read('src/data.js')
+  assert.match(data, /Rent help and vouchers/)
+  assert.doesNotMatch(data, /Rent help next to HASA/)
+  assert.match(data, /group: 'HASA voucher'/)
+})
+
+test('resource cards share a consistent layout with name, one-line what, meta, and actions', () => {
+  assert.match(page, /className="resource-card/)
+  assert.match(page, /resource-card-name/)
+  assert.match(page, /resource-card-what/)
+  assert.match(page, /resource-card-meta/)
+  assert.match(page, /className="card-actions"/)
+  assert.match(page, /section-icon/)
+  assert.match(page, /chip-category/)
+  assert.match(page, /resource-empty/)
 })

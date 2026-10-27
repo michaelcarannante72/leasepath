@@ -16,6 +16,7 @@ import { PlanPage } from './components/PlanPage.jsx'
 import { DeleteAccountDialog } from './components/DeleteAccountDialog.jsx'
 import { clearDeviceData } from './deviceData.js'
 import { ResourcesPage } from './components/ResourcesPage.jsx'
+import { RubyIntro } from './components/RubyIntro.jsx'
 import { SearchPage } from './components/SearchPage.jsx'
 import { AfterYouFindPage } from './components/AfterYouFindPage.jsx'
 import { StepsPage } from './components/StepsPage.jsx'
@@ -42,6 +43,7 @@ const NEIGHBORHOOD_KEY = 'leasepath.neighborhood'
 // Never sent to /api/account or /api/guide.
 const CHECKS_KEY = 'leasepath.checks'
 const SHARE_KEY = 'leasepath.shareWithRuby'
+const RUBY_INTRO_KEY = 'leasepath.rubyIntroSeen'
 
 const WELCOME = {
   role: 'assistant',
@@ -138,6 +140,7 @@ export default function App() {
   })
   const [paywall, setPaywall] = useState(null)
   const [assistantOpen, setAssistantOpen] = useState(false)
+  const [rubyIntroOpen, setRubyIntroOpen] = useState(() => readItem(RUBY_INTRO_KEY) !== '1')
   const [analyticsConsent, setAnalyticsConsent] = useState(readConsent)
 
   // Analytics: nothing loads or is pushed without consent, and HASA views and Ruby's chat send nothing.
@@ -342,6 +345,23 @@ export default function App() {
   }, [assistantOpen])
 
   const closeAssistant = useCallback(() => setAssistantOpen(false), [])
+  const markRubyIntroSeen = useCallback(() => {
+    writeItem(RUBY_INTRO_KEY, '1')
+  }, [])
+  const dismissRubyIntro = useCallback(() => {
+    markRubyIntroSeen()
+    setRubyIntroOpen(false)
+  }, [markRubyIntroSeen])
+  const talkToRuby = useCallback(() => {
+    markRubyIntroSeen()
+    setRubyIntroOpen(false)
+    setAssistantListingId(null)
+    setAssistantOpen(true)
+  }, [markRubyIntroSeen])
+  const openRubyIntro = useCallback(() => {
+    setAssistantOpen(false)
+    setRubyIntroOpen(true)
+  }, [])
 
   const go = (hash) => {
     if (`#${window.location.hash.replace(/^#/, '')}` === hash || (hash === '#/' && !window.location.hash)) {
@@ -650,7 +670,7 @@ export default function App() {
   const listing = route.name === 'detail' ? LISTINGS.find((item) => item.id === route.id) : null
   const post = route.name === 'post' ? POSTS.find((item) => item.slug === route.id) : null
   const infoPage = route.name === 'info' ? SITE_PAGES.find((item) => item.slug === route.id) : null
-  const dockActive = assistantOpen
+  const dockActive = assistantOpen || rubyIntroOpen
     ? 'assistant'
     : route.name === 'detail'
       ? 'search'
@@ -661,11 +681,18 @@ export default function App() {
           : route.name
   const navSelect = (id) => {
     if (id === 'assistant') {
+      // Empty chat (welcome only): show or re-open Ruby's intro. After the person has sent a message, open chat.
+      const chatEmpty = messages.length <= 1
+      if (chatEmpty) {
+        openRubyIntro()
+        return
+      }
       setAssistantListingId(route.name === 'detail' ? route.id : null)
       setAssistantOpen(true)
       return
     }
     setAssistantOpen(false)
+    setRubyIntroOpen(false)
     go(id === 'search' ? '#/' : `#/${id}`)
   }
 
@@ -740,6 +767,7 @@ export default function App() {
         onDone={finishDelete}
       />
       <Dock active={dockActive} onSelect={navSelect} />
+      <RubyIntro open={rubyIntroOpen} onTalk={talkToRuby} onLater={dismissRubyIntro} />
       {assistantOpen && (
         <AssistantSheet
           messages={messages}

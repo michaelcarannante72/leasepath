@@ -33,7 +33,7 @@ export function writeConsent(value, storage = globalThis.localStorage) {
  * A view is sensitive (no page event) when:
  * - Ruby's chat sheet is open, on any route;
  * - the route is My voucher (#/plan), which shows the program panels, including HASA, and the income pre-screen;
- * - the route is Resources (#/resources), the page titled "Open resources for a HASA voucher";
+ * - the route is Resources (#/resources), which lists city and community help (housing, food, health, legal);
  * - any route path that mentions HASA (for example a #/blog/... or #/info/... slug with "hasa").
  */
 export function isSensitiveView({ hashPath = '', assistantOpen = false } = {}) {

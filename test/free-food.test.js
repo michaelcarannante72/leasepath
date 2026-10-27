@@ -137,10 +137,13 @@ test('source credit links to Mutual Aid NYC resources', () => {
 
 test('every outside link opens in a new tab with noopener noreferrer', () => {
   const start = page.indexOf('function CommunityCard')
-  const community = page.slice(start, page.indexOf('</section>', page.indexOf('className="resource-group free-food"')))
+  const community = page.slice(start, page.indexOf('function CityCard'))
   const blank = community.match(/<a [^>]*target="_blank"[^>]*>/g)
-  assert.equal(blank.length, 2)
+  assert.equal(blank.length, 1)
   for (const tag of blank) assert.match(tag, /rel="noopener noreferrer"/)
+  assert.match(page, /SOURCE_CREDIT\.href[^>]*target="_blank"[^>]*rel="noopener noreferrer"|SOURCE_CREDIT\.href[^>]*rel="noopener noreferrer"[^>]*target="_blank"/)
+  const city = page.slice(page.indexOf('function CityCard'), page.indexOf('function Collapsible'))
+  for (const tag of city.match(/<a [^>]*target="_blank"[^>]*>/g) || []) assert.match(tag, /rel="noopener noreferrer"/)
   for (const item of all) for (const href of [item.link, ...(item.links || []).map((l) => l.href)].filter(Boolean)) assert.match(href, /^https:\/\//)
 })
 

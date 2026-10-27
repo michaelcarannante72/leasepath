@@ -3,6 +3,7 @@ import { PRIVACY_DRAFT } from './analytics.js'
 export const SITE_PAGES = [
   { slug: 'hiring', group: 'LeasePath', title: "We're hiring!", body: 'LeasePath is not posting roles yet. When a job opens, it will be listed on this page.' },
   { slug: 'submit-listings', group: 'LeasePath', title: 'Submit your listings', body: 'Landlords and brokers can list a voucher-ready unit for review. Open List a voucher-ready unit (#/list-unit). Submissions stay in a pending queue and are never shown publicly until LeasePath approves them. Sample apartments on Search are still for practice only.' },
+  { slug: 'sponsor-leasepath', group: 'LeasePath', title: 'Sponsor LeasePath', body: 'Sponsored placements on LeasePath are clearly labeled. Sponsors must accept vouchers, never run fee scams, and LeasePath can refuse any sponsor. Sponsorship never affects Ruby or Search rankings. Email michaelcarannante@yahoo.com. Full rules: open Sponsor LeasePath from the app (#/sponsor).' },
   { slug: 'work-with-us', group: 'LeasePath', title: 'Work with us', body: 'Partnerships are not open yet. If you place tenants with HASA, CityFHEPS, or Section 8, this is where a work-with-us form will go.' },
   { slug: 'press', group: 'LeasePath', title: 'Press room', body: 'There are no press notes yet. Announcements will be posted here.' },
   { slug: 'rental-network', group: 'Explore', title: 'NYC rental network', body: 'A directory of landlords who take vouchers is planned. This page does not list buildings, owners, or phone numbers.' },

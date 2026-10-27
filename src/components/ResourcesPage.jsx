@@ -4,6 +4,7 @@ import { Icon } from './Icon.jsx'
 import { PantryFinder } from './PantryFinder.jsx'
 import { FREE_FOOD_CAUTION, FREE_FOOD_LABEL, ADDED_ON, SOURCE_CREDIT, COMMUNITY_SECTIONS } from '../freeFood.js'
 import { BOROUGHS, filterSection } from '../resourceFilter.js'
+import { SponsoredSlot } from './SponsoredSlot.jsx'
 
 // Search and filters live only in component state: nothing is fetched, saved, or sent.
 
@@ -197,6 +198,8 @@ export function ResourcesPage() {
           <button type="button" onClick={() => jumpTo('health-title')}>Health and support</button>
         </p>
       </aside>
+
+      <SponsoredSlot placement="resources" />
 
       <section className="resource-group free-food" aria-label="Community resources">
         <div className="resource-search" role="search">

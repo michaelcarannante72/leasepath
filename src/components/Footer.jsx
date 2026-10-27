@@ -51,6 +51,7 @@ export function Footer({ compact = false }) {
               <a key={page.slug} href={pageHref(page.slug)}>{page.title}</a>
             ) : null
           })}
+          <a href="#/sponsor">Sponsor LeasePath</a>
           <AnalyticsChoiceLink />
         </nav>
       </footer>
@@ -74,7 +75,7 @@ export function Footer({ compact = false }) {
           </section>
         ))}
       </div>
-      <p className="footer-analytics-row"><AnalyticsChoiceLink /></p>
+      <p className="footer-analytics-row"><a href="#/sponsor">Sponsor LeasePath</a> · <AnalyticsChoiceLink /></p>
     </footer>
   )
 }

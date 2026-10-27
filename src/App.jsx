@@ -17,6 +17,7 @@ import { DeleteAccountDialog } from './components/DeleteAccountDialog.jsx'
 import { clearDeviceData } from './deviceData.js'
 import { ResourcesPage } from './components/ResourcesPage.jsx'
 import { HousingConnectPage } from './components/HousingConnectPage.jsx'
+import { SponsorPage } from './components/SponsorPage.jsx'
 import { RubyIntro } from './components/RubyIntro.jsx'
 import { SearchPage } from './components/SearchPage.jsx'
 import { ListUnitPage } from './components/ListUnitPage.jsx'
@@ -119,6 +120,7 @@ function parseHash() {
   if (hash === '/know-your-rights') return { name: 'rights' }
   if (hash === '/landlord-welcome') return { name: 'landlord' }
   if (hash === '/housing-connect') return { name: 'housing-connect' }
+  if (hash === '/sponsor') return { name: 'sponsor' }
   if (hash === '/list-unit') return { name: 'list-unit' }
   if (hash === '/listings-admin') return { name: 'listings-admin' }
   if (hash === '/voucher-ready') return { name: 'voucher-ready' }
@@ -700,7 +702,7 @@ export default function App() {
           ? 'steps'
           : route.name === 'pack' || route.name === 'prep'
             ? 'steps'
-            : route.name === 'scam' || route.name === 'moving' || route.name === 'rights' || route.name === 'landlord' || route.name === 'housing-connect'
+            : route.name === 'scam' || route.name === 'moving' || route.name === 'rights' || route.name === 'landlord' || route.name === 'housing-connect' || route.name === 'sponsor'
               ? 'resources'
               : route.name === 'list-unit' || route.name === 'voucher-ready' || route.name === 'listings-admin'
                 ? 'search'
@@ -783,6 +785,7 @@ export default function App() {
         {route.name === 'rights' && <KnowYourRightsPage />}
         {route.name === 'landlord' && <LandlordWelcomePage />}
         {route.name === 'housing-connect' && <HousingConnectPage />}
+        {route.name === 'sponsor' && <SponsorPage />}
         {route.name === 'plan' && <PlanPage plan={plan} onChange={updatePlan} checks={checks} onChecks={updateChecks} onClearIncome={clearIncome} signedIn={session.signedIn} onDeleteAccount={openDelete} />}
         {route.name === 'blog' && <BlogList />}
         {route.name === 'post' && <BlogPost post={post} />}

@@ -17,6 +17,7 @@ export function MovingNotice() {
       <h3 id="moving-title">{MOVING_NOTICE.title}</h3>
       <p>{MOVING_NOTICE.body}</p>
       <p className="fine"><SourceLink id={MOVING_NOTICE.source} /></p>
+      <p className="after-link"><a href="#/moving-help">HRA moving help and One Shot Deal →</a></p>
     </aside>
   )
 }

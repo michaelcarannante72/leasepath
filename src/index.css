@@ -1614,3 +1614,5 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   transform: translateX(-50%);
   z-index: 1000;
 }
+
+.moving-page .moving-actions { margin: 0 0 10px; }

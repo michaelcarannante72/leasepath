@@ -104,6 +104,11 @@ export function PlanPage({ plan, onChange, checks, onChecks, onClearIncome, sign
         </label>
       </form>
 
+      <aside className="rent-share-callout" aria-labelledby="rent-share-callout-title">
+        <h2 id="rent-share-callout-title">Estimate your rent share</h2>
+        <p>Section 8 uses HUD’s ~30% rule (practice only). CityFHEPS share stays on your shopping letter. Nothing leaves this device.</p>
+        <p><a className="button" href="#/rent-share">Open rent calculator</a></p>
+      </aside>
       <IncomePrescreen plan={plan} checks={checks} onChecks={onChecks} onClear={onClearIncome} />
 
       {plan.program === 'CityFHEPS' && <CityfhepsPanel checks={checks} onChecks={onChecks} />}

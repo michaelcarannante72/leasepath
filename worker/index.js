@@ -39,7 +39,7 @@ function badRequest(status) {
 }
 
 // Clean shareable paths for hash-routed app pages. Each one 301s to the app route.
-const SHARE_PAGES = ['after-you-find', 'steps', 'resources', 'plan', 'blog']
+const SHARE_PAGES = ['after-you-find', 'steps', 'resources', 'plan', 'blog', 'rent-share', 'rent-calculator']
 export const SHARE_PATHS = Object.fromEntries(
   SHARE_PAGES.flatMap((page) => [[`/${page}`, `/#/${page}`], [`/${page}/`, `/#/${page}`]]),
 )

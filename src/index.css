@@ -1859,3 +1859,23 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   transform: translateX(-50%);
   z-index: 1000;
 }
+
+.rent-share-callout, .rent-share-result, .rent-share-disclaimer {
+  margin: 14px 0; padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: white;
+  box-shadow: 0 6px 18px rgba(28, 45, 66, 0.05);
+}
+.rent-share-callout h2, .rent-share-result h2, .rent-share-disclaimer h2 { margin: 0 0 6px; font-size: 1.05rem; color: var(--navy); }
+.rent-share-form { display: grid; gap: 14px; margin: 14px 0; }
+.rent-share-form fieldset { border: 0; margin: 0; padding: 0; }
+.rent-share-form legend { font-weight: 600; color: var(--navy); margin-bottom: 8px; }
+.rent-share-form label.chip { cursor: pointer; }
+.rent-share-form .chip.is-pressed, .rent-share-form .chip:has(input:checked) {
+  background: var(--navy); color: white; border-color: var(--navy);
+}
+.rent-share-form label[for="rent-income"] { display: grid; gap: 6px; font-weight: 600; color: var(--navy); }
+.rent-share-form input[type="text"], .rent-share-form input:not([type]), .rent-share-form input[inputmode] {
+  font: inherit; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line);
+}
+.rent-share-amount { font-size: 1.25rem; font-weight: 700; color: var(--navy); }
+.rent-share-hint { color: var(--brick); font-weight: 600; }
+.source-list { margin: 8px 0 0; padding-left: 1.1rem; color: var(--muted); font-size: 0.9rem; }

@@ -2,6 +2,7 @@ import { Building } from './Building.jsx'
 import { Icon } from './Icon.jsx'
 import { LandingHero, LandingSteps } from './LandingHero.jsx'
 import { ACCESS_HRA_URL, BOROUGHS, HOMEBASE_URL } from '../data.js'
+import { SponsoredSlot } from './SponsoredSlot.jsx'
 import { PROGRAMS, cardFlags, cardLabel, cardText, money, sizeLabel, utilityLabel } from '../fit.js'
 
 const SORT_LABELS = {
@@ -98,6 +99,7 @@ export function SearchPage({
     <div className="landing">
       <LandingHero onCheck={scrollToSearch} />
       <LandingSteps onFind={scrollToSearch} onAsk={onAsk} />
+      <SponsoredSlot placement="search" />
       <section className="landing-hero" aria-labelledby="search-title">
         <div className="hero-copy">
           <h2 id="search-title" className="search-title">Search apartments</h2>

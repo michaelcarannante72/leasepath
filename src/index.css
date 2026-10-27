@@ -1817,6 +1817,39 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 }
 
 
+
+/* Paid placement slots — clearly labeled Sponsored in the UI, no tracking */
+.sponsor-placement {
+  margin: 14px 0 16px;
+  padding: 12px 14px;
+  border: 1px dashed var(--line);
+  border-radius: 14px;
+  background: #f7f9fc;
+}
+.sponsor-placement-label {
+  margin: 0 0 8px;
+  font-size: 0.875rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.sponsor-placement-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.sponsor-placement-card {
+  display: grid;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid var(--line);
+}
+.sponsor-placement-title { color: var(--navy); }
+.sponsor-placement-blurb { margin: 4px 0 0; color: var(--muted); font-size: 0.92rem; line-height: 1.4; }
+.sponsor-placement-note { margin: 10px 0 0; font-size: 0.875rem; color: var(--muted); line-height: 1.4; }
+.sponsor-page .sponsor-rules { margin: 8px 0 16px; padding-left: 1.2rem; line-height: 1.55; }
+.sponsor-page .sponsor-rules li { margin-bottom: 8px; }
+.sponsor-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 8px; }
+
 /* Income pre-screen. Calm by design: every result uses the neutral note palette, and the over-the-line result is a plain note. */
 .prescreen-results { display: grid; gap: 12px; margin-top: 14px; }
 .prescreen-result { padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--note-bg); color: var(--note); }

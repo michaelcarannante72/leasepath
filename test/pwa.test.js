@@ -91,7 +91,7 @@ test('every internal link and route in the app resolves', () => {
     for (const match of text.matchAll(/href=\{?[`"]#\/blog\/\$\{[^}]+\}/g)) assert.ok(match[0])
     for (const match of text.matchAll(/href="(\/[a-z][^"#?]*)"/g)) {
       const href = match[1]
-      const ok = href === '/privacy' || href === '/terms' || href === '/search' || href === '/housing-connect' || href === '/sponsor' || href === '/listing-check' || href === '/guides' || href === '/partners' || href === '/quiz' || href === '/start' || href.startsWith('/search/')
+      const ok = href === '/privacy' || href === '/terms' || href === '/search' || href === '/housing-connect' || href === '/sponsor' || href === '/listing-check' || href === '/guides' || href === '/partners' || href === '/quiz' || href === '/start' || href === '/rent-share' || href === '/rent-calculator' || href.startsWith('/search/')
       assert.ok(ok, `${file}: ${href} is not a served page`)
     }
   }

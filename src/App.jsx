@@ -27,6 +27,7 @@ import { ListingCheckerPage } from './components/ListingCheckerPage.jsx'
 import { BoroughGuidesIndex, BoroughGuidePage } from './components/BoroughGuidesPage.jsx'
 import { PartnerDirectoryPage } from './components/PartnerDirectoryPage.jsx'
 import { QuickStartQuizPage } from './components/QuickStartQuizPage.jsx'
+import { RentCalculatorPage } from './components/RentCalculatorPage.jsx'
 import { RubyIntro } from './components/RubyIntro.jsx'
 import { SearchPage } from './components/SearchPage.jsx'
 import { ListUnitPage } from './components/ListUnitPage.jsx'
@@ -142,6 +143,7 @@ function parseHash() {
   if (hash === '/voucher-ready') return { name: 'voucher-ready' }
   if (hash === '/partners') return { name: 'partners' }
   if (hash === '/quiz' || hash === '/start') return { name: 'quiz' }
+  if (hash === '/rent-share' || hash === '/rent-calculator') return { name: 'rent' }
   if (hash === '/steps' || hash === '/resources' || hash === '/plan' || hash === '/blog') {
     return { name: hash.slice(1) }
   }
@@ -747,6 +749,8 @@ export default function App() {
             ? 'steps'
             : route.name === 'scam' || route.name === 'moving' || route.name === 'rights' || route.name === 'landlord' || route.name === 'housing-connect' || route.name === 'sponsor' || route.name === 'listing-check' || route.name === 'guides' || route.name === 'guide' || route.name === 'partners'
               ? 'resources'
+              : route.name === 'rent'
+                ? 'plan'
               : route.name === 'list-unit' || route.name === 'voucher-ready' || route.name === 'listings-admin' || route.name === 'quiz'
                 ? 'search'
             : route.name
@@ -844,6 +848,7 @@ export default function App() {
         {route.name === 'guide' && <BoroughGuidePage slug={route.id} />}
         {route.name === 'partners' && <PartnerDirectoryPage />}
         {route.name === 'quiz' && <QuickStartQuizPage />}
+        {route.name === 'rent' && <RentCalculatorPage />}
         {route.name === 'plan' && <PlanPage plan={plan} onChange={updatePlan} checks={checks} onChecks={updateChecks} onClearIncome={clearIncome} signedIn={session.signedIn} onDeleteAccount={openDelete} matchPrefs={matchPrefs} onMatchPrefs={setMatchPrefs} matchSeed={{ borough: filters.borough && filters.borough !== 'All' ? filters.borough : '', bedrooms: checks.voucherBedrooms || '', program: plan.program || '' }} />}
         {route.name === 'blog' && <BlogList />}
         {route.name === 'post' && <BlogPost post={post} />}

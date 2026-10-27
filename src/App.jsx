@@ -21,6 +21,7 @@ import { ResourcesPage } from './components/ResourcesPage.jsx'
 import { HousingConnectPage } from './components/HousingConnectPage.jsx'
 import { SponsorPage } from './components/SponsorPage.jsx'
 import { ListingCheckerPage } from './components/ListingCheckerPage.jsx'
+import { BoroughGuidesIndex, BoroughGuidePage } from './components/BoroughGuidesPage.jsx'
 import { RubyIntro } from './components/RubyIntro.jsx'
 import { SearchPage } from './components/SearchPage.jsx'
 import { ListUnitPage } from './components/ListUnitPage.jsx'
@@ -118,6 +119,9 @@ function parseHash() {
   const info = hash.match(/^\/info\/([a-z0-9-]+)$/)
   if (info) return { name: 'info', id: info[1] }
   if (hash === '/listing-check') return { name: 'listing-check' }
+  const guide = hash.match(/^\/guides\/([a-z0-9-]+)$/)
+  if (guide) return { name: 'guide', id: guide[1] }
+  if (hash === '/guides') return { name: 'guides' }
   if (hash === '/after-you-find' || hash === '/after-you-find#chap') return { name: 'after' }
   if (hash === '/caseworker-pack') return { name: 'pack' }
   if (hash === '/inspection-prep') return { name: 'prep' }
@@ -718,7 +722,7 @@ export default function App() {
           ? 'steps'
           : route.name === 'pack' || route.name === 'prep' || route.name === 'docs'
             ? 'steps'
-            : route.name === 'scam' || route.name === 'moving' || route.name === 'rights' || route.name === 'landlord' || route.name === 'housing-connect' || route.name === 'sponsor' || route.name === 'listing-check'
+            : route.name === 'scam' || route.name === 'moving' || route.name === 'rights' || route.name === 'landlord' || route.name === 'housing-connect' || route.name === 'sponsor' || route.name === 'listing-check' || route.name === 'guides' || route.name === 'guide'
               ? 'resources'
               : route.name === 'list-unit' || route.name === 'voucher-ready' || route.name === 'listings-admin'
                 ? 'search'
@@ -805,6 +809,8 @@ export default function App() {
         {route.name === 'sponsor' && <SponsorPage />}
         {route.name === 'listing-check' && <ListingCheckerPage />}
         {route.name === 'docs' && <DocsDeadlinePage />}
+        {route.name === 'guides' && <BoroughGuidesIndex />}
+        {route.name === 'guide' && <BoroughGuidePage slug={route.id} />}
         {route.name === 'plan' && <PlanPage plan={plan} onChange={updatePlan} checks={checks} onChecks={updateChecks} onClearIncome={clearIncome} signedIn={session.signedIn} onDeleteAccount={openDelete} />}
         {route.name === 'blog' && <BlogList />}
         {route.name === 'post' && <BlogPost post={post} />}

@@ -73,7 +73,7 @@ test('the service worker precaches only files that exist, skips /api, and has no
 test('every internal link and route in the app resolves', () => {
   const slugs = new Set(SITE_PAGES.map((page) => page.slug))
   const posts = new Set(POSTS.map((post) => post.slug))
-  const routes = new Set(['', '/', '/steps', '/resources', '/plan', '/blog', '/after-you-find', '/after-you-find#chap', '/caseworker-pack', '/inspection-prep', '/scam-alerts', '/moving-help', '/know-your-rights', '/landlord-welcome', '/housing-connect', '/sponsor', '/listing-check', '/docs-tracker', '/list-unit', '/listings-admin', '/voucher-ready'])
+  const routes = new Set(['', '/', '/steps', '/resources', '/plan', '/blog', '/guides', '/after-you-find', '/after-you-find#chap', '/caseworker-pack', '/inspection-prep', '/scam-alerts', '/moving-help', '/know-your-rights', '/landlord-welcome', '/housing-connect', '/sponsor', '/listing-check', '/docs-tracker', '/list-unit', '/listings-admin', '/voucher-ready'])
   const files = walk('src').filter((path) => /\.(jsx?|css)$/.test(path))
   for (const file of files) {
     const text = read(file)
@@ -82,12 +82,16 @@ test('every internal link and route in the app resolves', () => {
       if (routes.has(route)) continue
       const info = route.match(/^\/info\/([a-z0-9-]+)$/)
       if (info) assert.ok(slugs.has(info[1]), `${file}: ${route}`)
-      else assert.fail(`${file}: unknown route ${route}`)
+      else {
+        const guide = route.match(/^\/guides\/([a-z0-9-]+)$/)
+        if (guide) assert.ok(['bronx', 'brooklyn', 'manhattan', 'queens', 'staten-island'].includes(guide[1]), `${file}: ${route}`)
+        else assert.fail(`${file}: unknown route ${route}`)
+      }
     }
     for (const match of text.matchAll(/href=\{?[`"]#\/blog\/\$\{[^}]+\}/g)) assert.ok(match[0])
     for (const match of text.matchAll(/href="(\/[a-z][^"#?]*)"/g)) {
       const href = match[1]
-      const ok = href === '/privacy' || href === '/terms' || href === '/search' || href === '/housing-connect' || href === '/sponsor' || href === '/listing-check' || href.startsWith('/search/')
+      const ok = href === '/privacy' || href === '/terms' || href === '/search' || href === '/housing-connect' || href === '/sponsor' || href === '/listing-check' || href === '/guides' || href.startsWith('/search/')
       assert.ok(ok, `${file}: ${href} is not a served page`)
     }
   }

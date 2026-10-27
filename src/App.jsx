@@ -20,6 +20,7 @@ import { RubyIntro } from './components/RubyIntro.jsx'
 import { SearchPage } from './components/SearchPage.jsx'
 import { AfterYouFindPage } from './components/AfterYouFindPage.jsx'
 import { CaseworkerPackPage } from './components/CaseworkerPackPage.jsx'
+import { InspectionPrepPage } from './components/InspectionPrepPage.jsx'
 import { StepsPage } from './components/StepsPage.jsx'
 import { FREE_COACH_QUESTIONS } from './coachLimit.js'
 import { POSTS } from './blog.js'
@@ -104,6 +105,7 @@ function parseHash() {
   if (info) return { name: 'info', id: info[1] }
   if (hash === '/after-you-find' || hash === '/after-you-find#chap') return { name: 'after' }
   if (hash === '/caseworker-pack') return { name: 'pack' }
+  if (hash === '/inspection-prep') return { name: 'prep' }
   if (hash === '/steps' || hash === '/resources' || hash === '/plan' || hash === '/blog') {
     return { name: hash.slice(1) }
   }
@@ -680,7 +682,7 @@ export default function App() {
         ? 'blog'
         : route.name === 'after'
           ? 'steps'
-          : route.name === 'pack'
+          : route.name === 'pack' || route.name === 'prep'
             ? 'steps'
             : route.name
   const navSelect = (id) => {
@@ -754,6 +756,7 @@ export default function App() {
         {route.name === 'steps' && <StepsPage checked={checked} onToggle={toggleStep} />}
         {route.name === 'after' && <AfterYouFindPage />}
         {route.name === 'pack' && <CaseworkerPackPage />}
+        {route.name === 'prep' && <InspectionPrepPage />}
         {route.name === 'resources' && <ResourcesPage />}
         {route.name === 'plan' && <PlanPage plan={plan} onChange={updatePlan} checks={checks} onChecks={updateChecks} onClearIncome={clearIncome} signedIn={session.signedIn} onDeleteAccount={openDelete} />}
         {route.name === 'blog' && <BlogList />}

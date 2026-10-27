@@ -3,6 +3,7 @@ import { VOUCHER_PROGRAMS } from '../fit.js'
 import { HOUSEHOLD_CHOICES, LARGE_HOUSEHOLD } from '../rentCheck.js'
 import { IncomePrescreen } from './IncomePrescreen.jsx'
 import { CityfhepsPanel, HasaPanel, Section8Panel } from './ProgramPanels.jsx'
+import { MatchAlertsCard } from './MatchAlertsCard.jsx'
 
 const SITUATIONS = [
   'Shelter or transitional housing',
@@ -12,7 +13,7 @@ const SITUATIONS = [
   'Unsure',
 ]
 
-export function PlanPage({ plan, onChange, checks, onChecks, onClearIncome, signedIn, onDeleteAccount }) {
+export function PlanPage({ plan, onChange, checks, onChecks, onClearIncome, signedIn, onDeleteAccount, matchPrefs, onMatchPrefs, matchSeed }) {
   return (
     <div className="page">
       <p className="eyebrow">My voucher</p>
@@ -104,6 +105,9 @@ export function PlanPage({ plan, onChange, checks, onChecks, onClearIncome, sign
         </label>
       </form>
 
+      {matchPrefs && onMatchPrefs ? (
+        <MatchAlertsCard prefs={matchPrefs} onPrefs={onMatchPrefs} seed={matchSeed} />
+      ) : null}
       <IncomePrescreen plan={plan} checks={checks} onChecks={onChecks} onClear={onClearIncome} />
 
       {plan.program === 'CityFHEPS' && <CityfhepsPanel checks={checks} onChecks={onChecks} />}

@@ -1859,3 +1859,24 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   transform: translateX(-50%);
   z-index: 1000;
 }
+
+.match-alerts-card .match-alert-fields {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0;
+}
+@media (min-width: 720px) {
+  .match-alerts-card .match-alert-fields { grid-template-columns: 1fr 1fr 1fr; }
+}
+.match-alert-banner {
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--navy-soft);
+  display: grid;
+  gap: 10px;
+}
+.match-alert-banner h2 { margin: 0; font-size: 1rem; color: var(--navy); }
+.match-alert-banner p { margin: 4px 0 0; color: var(--muted); font-size: 0.9rem; }
+.match-alert-status { color: var(--navy); font-weight: 600; }

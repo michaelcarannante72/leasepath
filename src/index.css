@@ -1859,3 +1859,54 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   transform: translateX(-50%);
   z-index: 1000;
 }
+
+/* Housing Connect lotteries page */
+.housing-connect-page .hc-scam-note {
+  margin: 14px 0 16px;
+  padding: 12px 14px;
+  border-left: 4px solid var(--gold);
+  background: var(--panel, #fff);
+  border-radius: 12px;
+  line-height: 1.5;
+}
+.housing-connect-page .hc-scam-note p { margin: 0; }
+.housing-connect-page .borough-chips { margin: 12px 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.hc-list { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 12px; }
+.hc-card {
+  display: grid;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--panel, #fff);
+}
+.hc-card-name { font-size: 1.05rem; color: var(--navy); }
+.hc-card-meta, .hc-card-address, .hc-sizes, .hc-deadline {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+.hc-card-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.hc-ami {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.hc-ami li {
+  display: inline-flex;
+  gap: 6px;
+  align-items: baseline;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #eef2f7;
+  font-size: 0.875rem;
+}
+.hc-ami-label { font-weight: 700; color: var(--navy); }
+.hc-ami-count { color: var(--muted); }
+.hc-deadline strong { color: var(--brick, #A04A2C); }
+.hc-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 10px; }
+.housing-connect-page .source-line { font-size: 0.875rem; color: var(--muted); line-height: 1.45; }

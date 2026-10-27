@@ -146,7 +146,7 @@ export function searchPageHtml(page) {
     <section aria-labelledby="lottery-heading">
       <h2 id="lottery-heading">Housing Connect lotteries</h2>
       <p>NYC Housing Connect posts affordable lotteries across the five boroughs. You may qualify for openings in ${escapeHtml(page.borough.the)}. Applying is always free. Anyone who asks for a fee is a scam.</p>
-      <p><a href="${escapeHtml(HOUSING_CONNECT_URL)}" rel="noopener noreferrer">Open NYC Housing Connect</a></p>
+      <p><a href="/housing-connect">See open Housing Connect lotteries</a> · <a href="${escapeHtml(HOUSING_CONNECT_URL)}" rel="noopener noreferrer">Open NYC Housing Connect</a></p>
     </section>
 
     <section aria-labelledby="tips-heading">

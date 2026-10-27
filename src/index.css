@@ -1614,3 +1614,22 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   transform: translateX(-50%);
   z-index: 1000;
 }
+
+
+/* Landlord voucher-ready listing form */
+.list-unit-page .soi-note { margin: 16px 0; border-left: 4px solid var(--gold); padding: 12px 14px; }
+.list-unit-form { display: grid; gap: 14px; margin-top: 16px; }
+.list-unit-form label, .listings-admin-page label { display: grid; gap: 6px; font-weight: 700; }
+.list-unit-form input, .list-unit-form select, .listings-admin-page input {
+  min-height: 44px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: white; font-weight: 500;
+}
+.list-unit-form fieldset { border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin: 0; }
+.list-unit-form legend { padding: 0 4px; font-weight: 800; }
+.list-unit-form .check-grid { display: grid; gap: 8px; margin-top: 8px; }
+.list-unit-form .attestation { font-weight: 600; align-items: start; }
+.list-unit-form .fine, .voucher-ready .fine { color: var(--muted); font-size: 0.875rem; }
+.voucher-ready { margin: 18px 0; }
+.voucher-ready-cards { margin-top: 12px; }
+.voucher-ready-cards h3 { margin: 4px 0; font-size: 1.05rem; }
+.ok-msg { color: var(--ok); font-weight: 700; }
+.listings-admin-page .panel { display: grid; gap: 12px; margin: 16px 0; }

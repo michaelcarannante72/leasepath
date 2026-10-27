@@ -3,6 +3,16 @@ import { checkPassword, hashPassword, passwordAccepted } from './passwords.js'
 import { openAuth, readCookie, validNonce, verifyGoogleIdToken, googleCerts } from './auth.js'
 import { MODEL, prepareGuide, completeGuide } from './guide.js'
 import { loadPantries } from './pantries.js'
+import {
+  adminAuthorized,
+  approveListing,
+  listApproved,
+  listPending,
+  parseListingSubmission,
+  readBearer,
+  rejectListing,
+  storePendingListing,
+} from './listings.js'
 
 function withAccess(status, body, auth, cookies = auth.cookies) {
   return {
@@ -38,6 +48,10 @@ export async function handleApi({
   verifyToken = verifyGoogleIdToken,
   loadCerts = googleCerts,
   loadPantryList = loadPantries,
+  listingsKv = null,
+  listingsAdminToken = '',
+  authorization = '',
+  searchParams = null,
 }) {
   if (pathname === '/api/pantries') {
     if (method === 'OPTIONS') return { status: 204, json: {}, cookies: [] }
@@ -59,6 +73,93 @@ export async function handleApi({
           message: 'The Food Help NYC list did not load. The map link below still works.',
         },
       }
+    }
+  }
+
+  // Voucher-ready unit listings: public approved list, landlord submit, admin review.
+  if (pathname === '/api/listings/approved') {
+    if (method === 'OPTIONS') return { status: 204, json: {}, cookies: [] }
+    if (method !== 'GET') return { status: 405, json: { error: 'method' }, cookies: [] }
+    if (!listingsKv) {
+      return { status: 200, cookies: [], cacheControl: 'public, max-age=60', json: { listings: [] } }
+    }
+    try {
+      const listings = await listApproved(listingsKv)
+      return { status: 200, cookies: [], cacheControl: 'public, max-age=60', json: { listings } }
+    } catch {
+      return { status: 503, cookies: [], json: { error: 'listings', message: 'Approved units could not load. Try again in a moment.' } }
+    }
+  }
+
+  if (pathname === '/api/listings/pending') {
+    if (method === 'OPTIONS') return { status: 204, json: {}, cookies: [] }
+    if (method !== 'GET') return { status: 405, json: { error: 'method' }, cookies: [] }
+    const token = readBearer(authorization) || (searchParams && searchParams.get('token')) || ''
+    if (!adminAuthorized(token, '', listingsAdminToken)) {
+      return { status: 401, cookies: [], json: { error: 'unauthorized', message: 'Admin token required.' } }
+    }
+    if (!listingsKv) return { status: 503, cookies: [], json: { error: 'listings', message: 'Listings storage is not configured.' } }
+    try {
+      const listings = await listPending(listingsKv)
+      return { status: 200, cookies: [], json: { listings } }
+    } catch {
+      return { status: 503, cookies: [], json: { error: 'listings', message: 'Pending units could not load.' } }
+    }
+  }
+
+  const reviewMatch = pathname.match(/^\/api\/listings\/([a-zA-Z0-9]+)\/(approve|reject)$/)
+  if (reviewMatch) {
+    if (method === 'OPTIONS') return { status: 204, json: {}, cookies: [] }
+    if (method !== 'POST') return { status: 405, json: { error: 'method' }, cookies: [] }
+    if ((!origin || origin !== requestOrigin)) {
+      return { status: 403, json: { error: 'origin', message: 'That request did not come from LeasePath.' }, cookies: [] }
+    }
+    const token = readBearer(authorization) || (body && body.token) || ''
+    if (!adminAuthorized(token, '', listingsAdminToken)) {
+      return { status: 401, cookies: [], json: { error: 'unauthorized', message: 'Admin token required.' } }
+    }
+    if (!listingsKv) return { status: 503, cookies: [], json: { error: 'listings', message: 'Listings storage is not configured.' } }
+    const [, id, action] = reviewMatch
+    try {
+      if (action === 'approve') {
+        const listing = await approveListing(listingsKv, id)
+        if (!listing) return { status: 404, cookies: [], json: { error: 'not_found', message: 'That pending unit was not found.' } }
+        return { status: 200, cookies: [], json: { ok: true, listing } }
+      }
+      const ok = await rejectListing(listingsKv, id)
+      if (!ok) return { status: 404, cookies: [], json: { error: 'not_found', message: 'That pending unit was not found.' } }
+      return { status: 200, cookies: [], json: { ok: true } }
+    } catch {
+      return { status: 503, cookies: [], json: { error: 'listings', message: 'Could not update that unit.' } }
+    }
+  }
+
+  if (pathname === '/api/listings') {
+    if (method === 'OPTIONS') return { status: 204, json: {}, cookies: [] }
+    if (method !== 'POST') return { status: 405, json: { error: 'method' }, cookies: [] }
+    if ((!origin || origin !== requestOrigin)) {
+      return { status: 403, json: { error: 'origin', message: 'That request did not come from LeasePath.' }, cookies: [] }
+    }
+    const parsed = parseListingSubmission(body)
+    if (!parsed.ok) {
+      return { status: 400, cookies: [], json: { error: 'validation', message: parsed.error } }
+    }
+    if (!listingsKv) {
+      return { status: 503, cookies: [], json: { error: 'listings', message: 'Listings storage is not configured yet. Try again later.' } }
+    }
+    try {
+      const record = await storePendingListing(listingsKv, parsed.listing)
+      return {
+        status: 201,
+        cookies: [],
+        json: {
+          ok: true,
+          id: record.id,
+          message: 'Thanks. Your unit is in the pending-review queue. It will not show publicly until LeasePath approves it.',
+        },
+      }
+    } catch {
+      return { status: 503, cookies: [], json: { error: 'listings', message: 'Could not save that listing. Try again in a moment.' } }
     }
   }
 

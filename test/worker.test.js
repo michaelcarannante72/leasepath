@@ -112,3 +112,17 @@ test('/steps, /resources, /plan, /blog (with or without slash) 301 to their hash
   }
   assert.equal((await worker.fetch(new Request(`${base}/resourcesx`), env)).status, 404)
 })
+
+test('/list-unit, /listings-admin, /voucher-ready 301 to their hash routes', async () => {
+  const config = (await import('node:fs')).readFileSync(new URL('../wrangler.jsonc', import.meta.url), 'utf8')
+  for (const page of ['list-unit', 'listings-admin', 'voucher-ready']) {
+    for (const path of [`/${page}`, `/${page}/`]) {
+      const response = await worker.fetch(new Request(`${base}${path}`), env)
+      assert.equal(response.status, 301)
+      assert.equal(response.headers.get('location'), `${base}/#/${page}`)
+    }
+  }
+  assert.match(config, /\/list-unit/)
+  assert.match(config, /\/listings-admin/)
+  assert.match(config, /\/voucher-ready/)
+})

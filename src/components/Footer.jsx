@@ -10,6 +10,7 @@ const COMPACT_SLUGS = ['help', 'privacy', 'terms', 'submit-listings']
 
 function pageHref(slug) {
   if (slug === 'privacy' || slug === 'terms') return `/${slug}`
+  if (slug === 'submit-listings') return '#/list-unit'
   return `#/info/${slug}`
 }
 

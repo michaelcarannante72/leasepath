@@ -5,6 +5,7 @@ import { AccountBook, durableAccounts } from './accountBook.js'
 import { UsageMeter, durableUsage } from './usageMeter.js'
 import { SECURITY_HEADERS } from './security.js'
 import { guardChat } from './chatGuard.js'
+import { guardListingSubmit } from './listingsGuard.js'
 
 export { UsageMeter, AccountBook }
 
@@ -39,7 +40,7 @@ function badRequest(status) {
 }
 
 // Clean shareable paths for hash-routed app pages. Each one 301s to the app route.
-const SHARE_PAGES = ['after-you-find', 'steps', 'resources', 'plan', 'blog']
+const SHARE_PAGES = ['after-you-find', 'steps', 'resources', 'plan', 'blog', 'list-unit', 'listings-admin', 'voucher-ready']
 export const SHARE_PATHS = Object.fromEntries(
   SHARE_PAGES.flatMap((page) => [[`/${page}`, `/#/${page}`], [`/${page}/`, `/#/${page}`]]),
 )
@@ -114,6 +115,17 @@ async function route(request, env) {
     guardCookie = guard.cookie || null
   }
 
+  if (url.pathname === '/api/listings' && request.method === 'POST') {
+    const token = typeof body?.turnstileToken === 'string' ? body.turnstileToken : ''
+    if (body && typeof body === 'object') delete body.turnstileToken
+    const guard = await guardListingSubmit({
+      env,
+      ip: request.headers.get('cf-connecting-ip') || '',
+      token,
+    })
+    if (!guard.ok) return jsonResponse({ status: guard.status, json: guard.json, cookies: [] })
+  }
+
   const result = await handleApi({
     method: request.method,
     pathname: url.pathname,
@@ -127,6 +139,10 @@ async function route(request, env) {
     googleClientId: env.GOOGLE_CLIENT_ID || '',
     usage: env.USAGE_METER ? durableUsage(env.USAGE_METER) : null,
     accounts: env.ACCOUNT_BOOK ? durableAccounts(env.ACCOUNT_BOOK) : null,
+    listingsKv: env.LISTINGS_KV || null,
+    listingsAdminToken: env.LISTINGS_ADMIN_TOKEN || '',
+    authorization: request.headers.get('authorization') || '',
+    searchParams: url.searchParams,
     secure: url.protocol === 'https:',
   })
   if (guardCookie) result.cookies = [...(result.cookies || []), guardCookie]

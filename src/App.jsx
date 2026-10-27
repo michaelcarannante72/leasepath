@@ -18,6 +18,9 @@ import { clearDeviceData } from './deviceData.js'
 import { ResourcesPage } from './components/ResourcesPage.jsx'
 import { RubyIntro } from './components/RubyIntro.jsx'
 import { SearchPage } from './components/SearchPage.jsx'
+import { ListUnitPage } from './components/ListUnitPage.jsx'
+import { ListingsAdminPage } from './components/ListingsAdminPage.jsx'
+import { VoucherReadyUnits } from './components/VoucherReadyUnits.jsx'
 import { AfterYouFindPage } from './components/AfterYouFindPage.jsx'
 import { CaseworkerPackPage } from './components/CaseworkerPackPage.jsx'
 import { InspectionPrepPage } from './components/InspectionPrepPage.jsx'
@@ -112,6 +115,9 @@ function parseHash() {
   if (hash === '/scam-alerts') return { name: 'scam' }
   if (hash === '/moving-help') return { name: 'moving' }
   if (hash === '/know-your-rights') return { name: 'rights' }
+  if (hash === '/list-unit') return { name: 'list-unit' }
+  if (hash === '/listings-admin') return { name: 'listings-admin' }
+  if (hash === '/voucher-ready') return { name: 'voucher-ready' }
   if (hash === '/steps' || hash === '/resources' || hash === '/plan' || hash === '/blog') {
     return { name: hash.slice(1) }
   }
@@ -692,6 +698,8 @@ export default function App() {
             ? 'steps'
             : route.name === 'scam' || route.name === 'moving' || route.name === 'rights'
               ? 'resources'
+              : route.name === 'list-unit' || route.name === 'voucher-ready' || route.name === 'listings-admin'
+                ? 'search'
             : route.name
   const navSelect = (id) => {
     if (id === 'assistant') {
@@ -772,6 +780,13 @@ export default function App() {
         {route.name === 'plan' && <PlanPage plan={plan} onChange={updatePlan} checks={checks} onChecks={updateChecks} onClearIncome={clearIncome} signedIn={session.signedIn} onDeleteAccount={openDelete} />}
         {route.name === 'blog' && <BlogList />}
         {route.name === 'post' && <BlogPost post={post} />}
+        {route.name === 'list-unit' && <ListUnitPage />}
+        {route.name === 'listings-admin' && <ListingsAdminPage />}
+        {route.name === 'voucher-ready' && (
+          <article className="page">
+            <VoucherReadyUnits />
+          </article>
+        )}
         {route.name === 'info' && <InfoPage page={infoPage} />}
         </div>
         <Footer compact={route.name === 'search'} />

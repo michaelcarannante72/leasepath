@@ -1926,6 +1926,7 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 .lang-toggle:focus-visible {
   border-color: var(--gold);
   outline: none;
+}
 /* Documents and deadlines — on-device checklist (no network). */
 .docs-page .docs-privacy {
   margin: 0 0 1rem;

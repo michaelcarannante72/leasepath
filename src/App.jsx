@@ -16,6 +16,7 @@ import { PlanPage } from './components/PlanPage.jsx'
 import { DeleteAccountDialog } from './components/DeleteAccountDialog.jsx'
 import { clearDeviceData } from './deviceData.js'
 import { ResourcesPage } from './components/ResourcesPage.jsx'
+import { ShelterRoadmapPage } from './components/ShelterRoadmapPage.jsx'
 import { RubyIntro } from './components/RubyIntro.jsx'
 import { SearchPage } from './components/SearchPage.jsx'
 import { AfterYouFindPage } from './components/AfterYouFindPage.jsx'
@@ -112,6 +113,7 @@ function parseHash() {
   if (hash === '/scam-alerts') return { name: 'scam' }
   if (hash === '/moving-help') return { name: 'moving' }
   if (hash === '/know-your-rights') return { name: 'rights' }
+  if (hash === '/roadmap' || hash === '/shelter-roadmap') return { name: 'roadmap' }
   if (hash === '/steps' || hash === '/resources' || hash === '/plan' || hash === '/blog') {
     return { name: hash.slice(1) }
   }
@@ -688,7 +690,7 @@ export default function App() {
         ? 'blog'
         : route.name === 'after'
           ? 'steps'
-          : route.name === 'pack' || route.name === 'prep'
+          : route.name === 'pack' || route.name === 'prep' || route.name === 'roadmap'
             ? 'steps'
             : route.name === 'scam' || route.name === 'moving' || route.name === 'rights'
               ? 'resources'
@@ -766,6 +768,7 @@ export default function App() {
         {route.name === 'pack' && <CaseworkerPackPage />}
         {route.name === 'prep' && <InspectionPrepPage />}
         {route.name === 'resources' && <ResourcesPage />}
+        {route.name === 'roadmap' && <ShelterRoadmapPage />}
         {route.name === 'scam' && <ScamAlertsPage />}
         {route.name === 'moving' && <MovingHelpPage />}
         {route.name === 'rights' && <KnowYourRightsPage />}

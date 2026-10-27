@@ -1959,3 +1959,4 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   .prep-check-item { break-inside: avoid; border-color: #999; }
   .page { max-width: 100%; }
 }
+.moving-page .moving-actions { margin: 0 0 10px; }

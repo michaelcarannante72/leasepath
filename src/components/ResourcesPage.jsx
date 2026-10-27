@@ -184,7 +184,7 @@ export function ResourcesPage() {
       <p className="eyebrow">Resource Navigator</p>
       <h1>NYC resources for housing, food, health, and legal help</h1>
       <p className="lede">No sign-in. For anyone in New York City who needs help — with or without a voucher. Community groups and official city programs, with the agency site as the source of record. HASA-specific help is labeled in its own section.</p>
-      <p className="after-link"><a href="#/after-you-find#chap">Coming 2027: CHAP, a new city voucher (press reporting)</a> · <a href="#/after-you-find">After you find an apartment</a> · <a href="#/inspection-prep">HQS inspection prep</a> · <a href="#/scam-alerts">Voucher scam alerts</a></p>
+      <p className="after-link"><a href="#/after-you-find#chap">Coming 2027: CHAP, a new city voucher (press reporting)</a> · <a href="#/after-you-find">After you find an apartment</a> · <a href="#/inspection-prep">HQS inspection prep</a> · <a href="#/scam-alerts">Voucher scam alerts</a> · <a href="#/moving-help">Moving help</a></p>
 
       <aside className="help-now" aria-labelledby="help-now-title">
         <h2 id="help-now-title">Need help now?</h2>

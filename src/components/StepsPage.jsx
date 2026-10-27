@@ -14,6 +14,7 @@ export function StepsPage({ checked, onToggle }) {
       <p className="after-link"><a href="#/after-you-find">After you find an apartment: rent review, inspection, and move-in →</a></p>
       <p className="after-link"><a href="#/caseworker-pack">Share a caseworker pack (PDF on this phone) →</a></p>
       <p className="after-link"><a href="#/inspection-prep">HQS inspection prep checklist →</a></p>
+      <p className="after-link"><a href="#/moving-help">Moving help: One Shot Deal and special grants →</a></p>
       <ol className="steps">
         {STEPS.map((step, index) => {
           const on = checked.includes(index)

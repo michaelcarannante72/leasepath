@@ -137,6 +137,7 @@ export function SearchPage({
               type="button"
               className={intent === 'apply' ? 'is-on' : ''}
               aria-pressed={intent === 'apply'}
+              aria-label="I need to apply for a housing voucher"
               onClick={() => onIntent('apply')}
             >
               I need to apply

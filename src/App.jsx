@@ -742,6 +742,7 @@ export default function App() {
 
   return (
     <div className="app">
+      <a className="skip-link" href="#main-content">Skip to main content</a>
       <Header
         navActive={dockActive}
         onNav={navSelect}
@@ -755,7 +756,7 @@ export default function App() {
         onEmailAuth={signUpWithEmail}
         onSignOut={signOut}
       />
-      <main className="stage" ref={stageRef}>
+      <main id="main-content" className="stage" ref={stageRef} tabIndex={-1}>
         <div className="view" key={route.id ? `${route.name}-${route.id}` : route.name}>
         {route.name === 'search' && (
             <SearchPage

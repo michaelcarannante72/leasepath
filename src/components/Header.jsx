@@ -18,9 +18,9 @@ export function Header({ canInstall, onInstall, planCurrent, session, signingIn,
 
   return (
     <header className="topbar">
-      <a className="brand" href="#/">
+      <a className="brand" href="#/" aria-label="LeasePath home">
         <img className="brand-mark" src="/favicon.svg" alt="" width="36" height="36" />
-        <span className="brand-name">Lease<span>Path</span></span>
+        <span className="brand-name" aria-hidden="true">Lease<span>Path</span></span>
       </a>
       <p className="topbar-note">HASA · CityFHEPS · Section 8</p>
       {onNav && (
@@ -46,9 +46,9 @@ export function Header({ canInstall, onInstall, planCurrent, session, signingIn,
             <span className="install-short">{t("install.short")}</span>
           </button>
         )}
-        <a className="plan-pill" href="#/plan" aria-current={planCurrent ? 'page' : undefined}>
+        <a className="plan-pill" href="#/plan" aria-label="My voucher" aria-current={planCurrent ? 'page' : undefined}>
           <span className="plan-mark" aria-hidden="true"><Icon name="heart" size={15} /></span>
-          <span className="plan-pill-label">{t("nav.plan")}</span>
+          <span className="plan-pill-label" aria-hidden="true">{t("nav.plan")}</span>
           <Icon name="chevron" size={16} />
         </a>
         {session?.signedIn ? (

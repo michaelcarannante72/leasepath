@@ -65,6 +65,14 @@ export function Icon({ name, size = 20 }) {
         <path d="M5 12h14" />
       </>
     ),
+    mic: (
+      <>
+        <path d="M12 3a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3Z" />
+        <path d="M19 11a7 7 0 0 1-14 0" />
+        <path d="M12 18v3" />
+        <path d="M8 21h8" />
+      </>
+    ),
     blog: (
       <>
         <path d="M6 4h9l3 3v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z" />

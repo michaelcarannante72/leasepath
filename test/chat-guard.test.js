@@ -120,6 +120,7 @@ test('security headers: CSP covers what the app loads and blocks framing', () =>
   assert.equal(SECURITY_HEADERS['x-frame-options'], 'DENY')
   assert.equal(SECURITY_HEADERS['referrer-policy'], 'strict-origin-when-cross-origin')
   assert.match(SECURITY_HEADERS['permissions-policy'], /camera=\(\)/)
+  assert.match(SECURITY_HEADERS['permissions-policy'], /microphone=\(self\)/)
 })
 
 test('public/_headers matches worker/security.js', () => {

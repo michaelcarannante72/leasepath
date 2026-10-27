@@ -69,6 +69,7 @@ export function LandingHero({ onCheck }) {
         <button type="button" className="hero-cta" onClick={onCheck}>{t("hero.cta")}</button>
         <p className="hero-account"><a className="hero-account-link" href="#/" onClick={(event) => { event.preventDefault(); openAccount() }}>{t("hero.account")}</a></p>
         <p className="hero-any-phone">{t("hero.anyPhone")}</p>
+        <p className="hero-quiz"><a className="hero-quiz-link" href="#/quiz">Not sure where to start? Three questions →</a></p>
         <p className="not-affiliated">{t("hero.notAffiliated")}</p>
       </div>
     </section>

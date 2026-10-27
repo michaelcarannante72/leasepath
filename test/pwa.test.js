@@ -73,7 +73,7 @@ test('the service worker precaches only files that exist, skips /api, and has no
 test('every internal link and route in the app resolves', () => {
   const slugs = new Set(SITE_PAGES.map((page) => page.slug))
   const posts = new Set(POSTS.map((post) => post.slug))
-  const routes = new Set(['', '/', '/steps', '/resources', '/plan', '/blog', '/guides', '/partners', '/after-you-find', '/after-you-find#chap', '/caseworker-pack', '/inspection-prep', '/scam-alerts', '/moving-help', '/know-your-rights', '/landlord-welcome', '/housing-connect', '/sponsor', '/listing-check', '/docs-tracker', '/list-unit', '/listings-admin', '/voucher-ready'])
+  const routes = new Set(['', '/', '/steps', '/resources', '/plan', '/blog', '/guides', '/partners', '/after-you-find', '/after-you-find#chap', '/caseworker-pack', '/inspection-prep', '/scam-alerts', '/moving-help', '/know-your-rights', '/landlord-welcome', '/housing-connect', '/sponsor', '/listing-check', '/docs-tracker', '/list-unit', '/listings-admin', '/voucher-ready', '/quiz', '/start'])
   const files = walk('src').filter((path) => /\.(jsx?|css)$/.test(path))
   for (const file of files) {
     const text = read(file)
@@ -91,7 +91,7 @@ test('every internal link and route in the app resolves', () => {
     for (const match of text.matchAll(/href=\{?[`"]#\/blog\/\$\{[^}]+\}/g)) assert.ok(match[0])
     for (const match of text.matchAll(/href="(\/[a-z][^"#?]*)"/g)) {
       const href = match[1]
-      const ok = href === '/privacy' || href === '/terms' || href === '/search' || href === '/housing-connect' || href === '/sponsor' || href === '/listing-check' || href === '/guides' || href === '/partners' || href.startsWith('/search/')
+      const ok = href === '/privacy' || href === '/terms' || href === '/search' || href === '/housing-connect' || href === '/sponsor' || href === '/listing-check' || href === '/guides' || href === '/partners' || href === '/quiz' || href === '/start' || href.startsWith('/search/')
       assert.ok(ok, `${file}: ${href} is not a served page`)
     }
   }

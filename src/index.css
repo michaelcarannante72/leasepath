@@ -2326,3 +2326,19 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 .partner-card h2 { margin: 0 0 8px; font-size: 1.05rem; color: var(--navy); }
 .partner-boroughs { display: flex; gap: 6px; align-items: flex-start; color: var(--muted); font-size: 0.88rem; }
 .partner-directory-nav { margin-top: 18px; }
+.hero-quiz { margin: 10px 0 0; }
+.hero-quiz-link { color: var(--brick); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.quick-start-quiz .quiz-options { border: 0; margin: 12px 0; padding: 0; display: grid; gap: 8px; }
+.quick-start-quiz .quiz-option {
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: white; cursor: pointer;
+}
+.quick-start-quiz .quiz-option.is-selected { border-color: var(--navy); box-shadow: 0 0 0 2px rgba(28, 45, 66, 0.15); }
+.quick-start-quiz .quiz-option input { margin-top: 4px; }
+.quick-start-quiz .quiz-option-text { display: flex; flex-direction: column; gap: 2px; }
+.quick-start-quiz .quiz-result {
+  margin: 14px 0; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--line);
+  background: white; box-shadow: 0 6px 18px rgba(28, 45, 66, 0.05);
+}
+.quick-start-quiz .quiz-result-title { font-weight: 700; color: var(--navy); font-size: 1.1rem; }
+.quiz-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }

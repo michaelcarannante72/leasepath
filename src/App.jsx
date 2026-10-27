@@ -23,6 +23,7 @@ import { CaseworkerPackPage } from './components/CaseworkerPackPage.jsx'
 import { InspectionPrepPage } from './components/InspectionPrepPage.jsx'
 import { ScamAlertsPage } from './components/ScamAlertsPage.jsx'
 import { MovingHelpPage } from './components/MovingHelpPage.jsx'
+import { KnowYourRightsPage } from './components/KnowYourRightsPage.jsx'
 import { StepsPage } from './components/StepsPage.jsx'
 import { FREE_COACH_QUESTIONS } from './coachLimit.js'
 import { POSTS } from './blog.js'
@@ -110,6 +111,7 @@ function parseHash() {
   if (hash === '/inspection-prep') return { name: 'prep' }
   if (hash === '/scam-alerts') return { name: 'scam' }
   if (hash === '/moving-help') return { name: 'moving' }
+  if (hash === '/know-your-rights') return { name: 'rights' }
   if (hash === '/steps' || hash === '/resources' || hash === '/plan' || hash === '/blog') {
     return { name: hash.slice(1) }
   }
@@ -688,7 +690,7 @@ export default function App() {
           ? 'steps'
           : route.name === 'pack' || route.name === 'prep'
             ? 'steps'
-            : route.name === 'scam' || route.name === 'moving'
+            : route.name === 'scam' || route.name === 'moving' || route.name === 'rights'
               ? 'resources'
             : route.name
   const navSelect = (id) => {
@@ -766,6 +768,7 @@ export default function App() {
         {route.name === 'resources' && <ResourcesPage />}
         {route.name === 'scam' && <ScamAlertsPage />}
         {route.name === 'moving' && <MovingHelpPage />}
+        {route.name === 'rights' && <KnowYourRightsPage />}
         {route.name === 'plan' && <PlanPage plan={plan} onChange={updatePlan} checks={checks} onChecks={updateChecks} onClearIncome={clearIncome} signedIn={session.signedIn} onDeleteAccount={openDelete} />}
         {route.name === 'blog' && <BlogList />}
         {route.name === 'post' && <BlogPost post={post} />}

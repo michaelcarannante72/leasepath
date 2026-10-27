@@ -97,6 +97,7 @@ export function AfterYouFindPage() {
         <h2 id="rights">{RIGHTS.title}</h2>
         <p>{RIGHTS.body}</p>
         <p className="fine"><SourceLink id={RIGHTS.source} /></p>
+        <p className="after-link"><a href="#/know-your-rights">Full know-your-rights card and scripts →</a></p>
       </section>
 
       <section id="nycha-apply" className="panel" aria-labelledby="nycha-apply-title">

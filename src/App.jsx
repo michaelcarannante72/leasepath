@@ -29,6 +29,7 @@ import { PartnerDirectoryPage } from './components/PartnerDirectoryPage.jsx'
 import { QuickStartQuizPage } from './components/QuickStartQuizPage.jsx'
 import { RentCalculatorPage } from './components/RentCalculatorPage.jsx'
 import { ShelterRoadmapPage } from './components/ShelterRoadmapPage.jsx'
+import { TenantRightsAfterMoveinPage } from './components/TenantRightsAfterMoveinPage.jsx'
 import { RubyIntro } from './components/RubyIntro.jsx'
 import { SearchPage } from './components/SearchPage.jsx'
 import { ListUnitPage } from './components/ListUnitPage.jsx'
@@ -146,6 +147,7 @@ function parseHash() {
   if (hash === '/quiz' || hash === '/start') return { name: 'quiz' }
   if (hash === '/rent-share' || hash === '/rent-calculator') return { name: 'rent' }
   if (hash === '/roadmap' || hash === '/shelter-roadmap') return { name: 'roadmap' }
+  if (hash === '/after-movein' || hash === '/tenant-rights') return { name: 'rights-movein' }
   if (hash === '/steps' || hash === '/resources' || hash === '/plan' || hash === '/blog') {
     return { name: hash.slice(1) }
   }
@@ -749,7 +751,7 @@ export default function App() {
           ? 'steps'
           : route.name === 'pack' || route.name === 'prep' || route.name === 'docs' || route.name === 'roadmap'
             ? 'steps'
-            : route.name === 'scam' || route.name === 'moving' || route.name === 'rights' || route.name === 'landlord' || route.name === 'housing-connect' || route.name === 'sponsor' || route.name === 'listing-check' || route.name === 'guides' || route.name === 'guide' || route.name === 'partners'
+            : route.name === 'scam' || route.name === 'moving' || route.name === 'rights' || route.name === 'landlord' || route.name === 'housing-connect' || route.name === 'sponsor' || route.name === 'listing-check' || route.name === 'guides' || route.name === 'guide' || route.name === 'partners' || route.name === 'rights-movein'
               ? 'resources'
               : route.name === 'rent'
                 ? 'plan'
@@ -842,6 +844,7 @@ export default function App() {
         {route.name === 'scam' && <ScamAlertsPage />}
         {route.name === 'moving' && <MovingHelpPage />}
         {route.name === 'rights' && <KnowYourRightsPage />}
+        {route.name === 'rights-movein' && <TenantRightsAfterMoveinPage />}
         {route.name === 'landlord' && <LandlordWelcomePage />}
         {route.name === 'housing-connect' && <HousingConnectPage />}
         {route.name === 'sponsor' && <SponsorPage />}

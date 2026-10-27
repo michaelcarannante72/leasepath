@@ -100,9 +100,9 @@ test('/after-you-find and /after-you-find/ 301 to the hash route; other paths st
   assert.match(config, /"not_found_handling": "404-page"/)
 })
 
-test('/steps, /resources, /plan, /blog, /housing-connect, /sponsor, /listing-check, /docs-tracker, /guides, /partners, /quiz, /start, /rent-share, /rent-calculator, /roadmap, /shelter-roadmap (with or without slash) 301 to their hash routes', async () => {
+test('/steps, /resources, /plan, /blog, /housing-connect, /sponsor, /listing-check, /docs-tracker, /guides, /partners, /quiz, /start, /rent-share, /rent-calculator, /roadmap, /shelter-roadmap, /after-movein, /tenant-rights (with or without slash) 301 to their hash routes', async () => {
   const config = (await import('node:fs')).readFileSync(new URL('../wrangler.jsonc', import.meta.url), 'utf8')
-  for (const page of ['steps', 'resources', 'plan', 'blog', 'housing-connect', 'sponsor', 'listing-check', 'docs-tracker', 'guides', 'partners', 'quiz', 'start', 'rent-share', 'rent-calculator', 'roadmap', 'shelter-roadmap']) {
+  for (const page of ['steps', 'resources', 'plan', 'blog', 'housing-connect', 'sponsor', 'listing-check', 'docs-tracker', 'guides', 'partners', 'quiz', 'start', 'rent-share', 'rent-calculator', 'roadmap', 'shelter-roadmap', 'after-movein', 'tenant-rights']) {
     for (const path of [`/${page}`, `/${page}/`]) {
       const response = await worker.fetch(new Request(`${base}${path}`), env)
       assert.equal(response.status, 301)

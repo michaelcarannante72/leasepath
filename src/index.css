@@ -1911,6 +1911,22 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 .lc-questions li { line-height: 1.4; }
 .lc-law { margin-top: 18px; font-size: 0.9rem; color: var(--muted); line-height: 1.45; }
 .lc-flag p { margin: 4px 0 0; }
+.lang-toggle {
+  border: 1px solid color-mix(in srgb, var(--navy) 18%, transparent);
+  background: #fff;
+  color: var(--navy);
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.lang-toggle:hover,
+.lang-toggle:focus-visible {
+  border-color: var(--gold);
+  outline: none;
+}
 
 /* Income pre-screen. Calm by design: every result uses the neutral note palette, and the over-the-line result is a plain note. */
 .prescreen-results { display: grid; gap: 12px; margin-top: 14px; }
@@ -2114,3 +2130,5 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   .page { max-width: 100%; }
   .rights-card-face { border-width: 2px; max-width: 100%; }
 }
+
+

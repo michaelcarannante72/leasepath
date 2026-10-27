@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
-import { HERO_PHOTO, LANDING_STEPS, NOT_AFFILIATED, landingSample, openAccount } from '../landing.js'
+import { HERO_PHOTO, LANDING_STEPS, landingSample, openAccount } from '../landing.js'
+import { useLanguage } from './LanguageProvider.jsx'
 
 function PhoneMockup() {
+  const { t } = useLanguage()
   const s = landingSample()
   return (
-    <figure className="phone-mock" aria-label="Example of a rent check">
+    <figure className="phone-mock" aria-label={t('hero.mock.title')}>
       <div className="phone-screen">
-        <span className="mock-tag">Example</span>
-        <p className="mock-title">Rent check</p>
+        <span className="mock-tag">{t('hero.mock.tag')}</span>
+        <p className="mock-title">{t('hero.mock.title')}</p>
         <p className="mock-line">{s.line}</p>
         <div className="mock-figure">
           <span className="mock-label">Max rent</span>
@@ -38,6 +40,7 @@ function useWide() {
 
 export function LandingHero({ onCheck }) {
   const wide = useWide()
+  const { t } = useLanguage()
   return (
     <section className="hero-split" aria-labelledby="hero-title">
       {wide && (
@@ -60,23 +63,29 @@ export function LandingHero({ onCheck }) {
       </div>
       )}
       <div className="hero-text">
-        <p className="eyebrow">NYC housing search</p>
-        <h1 id="hero-title">NYC apartments that take HASA, CityFHEPS, and Section{'\u00A0'}8.</h1>
-        <p className="hero-value">See if a listing fits your voucher before you call the broker.</p>
-        <button type="button" className="hero-cta" onClick={onCheck}>Check a listing</button>
-        <p className="hero-account"><a className="hero-account-link" href="#/" onClick={(event) => { event.preventDefault(); openAccount() }}>Create a free account</a></p>
-        <p className="hero-any-phone">Works on any phone, no download needed.</p>
-        <p className="not-affiliated">{NOT_AFFILIATED}</p>
+        <p className="eyebrow">{t("hero.eyebrow")}</p>
+        <h1 id="hero-title">{t("hero.title")}</h1>
+        <p className="hero-value">{t("hero.value")}</p>
+        <button type="button" className="hero-cta" onClick={onCheck}>{t("hero.cta")}</button>
+        <p className="hero-account"><a className="hero-account-link" href="#/" onClick={(event) => { event.preventDefault(); openAccount() }}>{t("hero.account")}</a></p>
+        <p className="hero-any-phone">{t("hero.anyPhone")}</p>
+        <p className="not-affiliated">{t("hero.notAffiliated")}</p>
       </div>
     </section>
   )
 }
 
 export function LandingSteps({ onFind, onAsk }) {
+  const { t } = useLanguage()
+  const steps = [
+    { title: t('landing.step1.title'), detail: t('landing.step1.detail'), href: '#/plan' },
+    { title: t('landing.step2.title'), detail: t('landing.step2.detail'), href: '#search-results' },
+    { title: t('landing.step3.title'), detail: t('landing.step3.detail'), action: 'assistant' },
+  ]
   return (
-    <section className="landing-steps" aria-label="How LeasePath helps">
+    <section className="landing-steps" aria-label={t('landing.stepsLabel')}>
       <ol>
-        {LANDING_STEPS.map((step, i) => (
+        {steps.map((step, i) => (
           <li key={step.title}>
             <a
               href={step.href || '#/'}

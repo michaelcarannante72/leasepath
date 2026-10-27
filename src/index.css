@@ -2416,3 +2416,9 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 .waitlist-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 .waitlist-list-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
 .waitlist-list-head h2 { margin: 0; font-size: 1.05rem; color: var(--navy); }
+.youth-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.youth-card {
+  margin: 0; padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: white;
+  box-shadow: 0 6px 18px rgba(28, 45, 66, 0.05);
+}
+.youth-card h2 { margin: 0 0 6px; font-size: 1.05rem; color: var(--navy); }

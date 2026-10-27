@@ -2296,3 +2296,25 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 .match-alert-banner h2 { margin: 0; font-size: 1rem; color: var(--navy); }
 .match-alert-banner p { margin: 4px 0 0; color: var(--muted); font-size: 0.9rem; }
 .match-alert-status { color: var(--navy); font-weight: 600; }
+.offline-banner {
+  margin: 10px 12px 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: #fff8e8;
+  color: var(--navy);
+  box-shadow: 0 6px 18px rgba(28, 45, 66, 0.06);
+}
+.offline-banner h2 { margin: 0 0 6px; font-size: 1rem; }
+.offline-banner p { margin: 0 0 8px; color: var(--muted); font-size: 0.9rem; line-height: 1.4; }
+.offline-banner-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin: 0 !important;
+}
+.offline-banner-links a {
+  color: var(--terracotta);
+  font-weight: 700;
+  font-size: 0.88rem;
+}

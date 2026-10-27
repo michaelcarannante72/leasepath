@@ -9,6 +9,7 @@ import { useLanguage } from './components/LanguageProvider.jsx'
 import { looksLikeSpanish, readLang, t as i18nT } from './i18n.js'
 import { Footer, InfoPage } from './components/Footer.jsx'
 import { Header } from './components/Header.jsx'
+import { OfflineBanner } from './components/OfflineBanner.jsx'
 import { CookiePrompt } from './components/CookiePrompt.jsx'
 import { AnalyticsConsent } from './components/AnalyticsConsent.jsx'
 import { readConsent, trackView } from './analytics.js'
@@ -779,6 +780,7 @@ export default function App() {
         onSignOut={signOut}
       />
       <main id="main-content" className="stage" ref={stageRef} tabIndex={-1}>
+        <OfflineBanner />
         <div className="view" key={route.id ? `${route.name}-${route.id}` : route.name}>
         {route.name === 'search' && (
           <>

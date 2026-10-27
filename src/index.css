@@ -45,7 +45,14 @@
 
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; }
+html { overflow-x: clip; }
 body { margin: 0; overflow: hidden; background: var(--bg); }
+img, svg, video { max-width: 100%; height: auto; }
+.stage, .view, .page, .landing, .card, .search-panel, .site-footer { overflow-wrap: anywhere; }
+@media (min-width: 1px) {
+  /* Keep content readable when the user bumps text size; avoid fixed clipping. */
+  .dock-label, .topbar-note, .sample-label, .source-line { overflow-wrap: anywhere; }
+}
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
 a { color: inherit; }
@@ -54,6 +61,26 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   outline: 3px solid #e7c56a;
   outline-offset: 3px;
 }
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  z-index: 100;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: var(--gold);
+  color: var(--navy);
+  font-weight: 800;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+.skip-link:focus, .skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 3px solid var(--navy);
+  outline-offset: 3px;
+}
+main.stage:focus { outline: none; }
+main.stage:focus-visible { outline: 3px solid #e7c56a; outline-offset: -3px; }
 ::selection { color: var(--navy); background: #f4e1b0; }
 
 .app {
@@ -112,12 +139,12 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   color: var(--navy);
   font-weight: 700;
   border-radius: 999px;
-  min-height: 40px;
+  min-height: 44px;
   padding: 6px 14px;
 }
 .install-short { display: none; }
 .account-button {
-  min-height: 40px;
+  min-height: 44px;
   padding: 6px 14px;
   border: 1.5px solid var(--navy);
   border-radius: 999px;
@@ -213,7 +240,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  min-height: 40px;
+  min-height: 44px;
   padding: 5px 10px 5px 5px;
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -302,8 +329,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .landing-hero .eyebrow { color: var(--gold); }
 .program-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
 .program-chip {
-  min-height: 34px;
-  padding: 6px 12px;
+  min-height: 44px;
+  padding: 8px 14px;
   border: 1.5px solid rgba(242, 169, 0, 0.55);
   border-radius: 999px;
   background: transparent;
@@ -498,7 +525,7 @@ button.setup-cta { cursor: pointer; }
 .search-field input, .search-field select {
   width: 100%;
   min-width: 0;
-  min-height: 28px;
+  min-height: 44px;
   padding: 0;
   border: 0;
   background: transparent;
@@ -671,8 +698,10 @@ button.setup-cta { cursor: pointer; }
 .save, .icon-button {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   border: 0;
   border-radius: 999px;
   background: white;
@@ -971,6 +1000,7 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   justify-items: center;
   gap: 3px;
   min-width: 0;
+  min-height: 48px;
   padding: 4px 2px;
   border: 0;
   border-radius: 12px;
@@ -1215,8 +1245,10 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   .dock-center .dock-icon { width: 44px; height: 44px; }
   .plan-pill-label, .plan-pill > svg { display: none; }
   .plan-pill {
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
     justify-content: center;
     padding: 0;
     border: 1px solid var(--line);
@@ -1280,8 +1312,14 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   50% { transform: scale(1.16); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .card, .save, .step-progress span, .dock-tab, .dock-center { transition: none; }
-  .view, .save.is-saved { animation: none; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .card, .save, .step-progress span, .dock-tab, .dock-center, .section-chevron { transition: none; }
+  .view, .save.is-saved, .ruby-theme .sheet-head::after, .dock-center.ruby-dock .dock-icon::after { animation: none; }
 }
 
 /* Sources, rent tables, and device-only checks */

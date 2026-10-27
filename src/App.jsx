@@ -34,6 +34,7 @@ import { MovingHelpPage } from './components/MovingHelpPage.jsx'
 import { KnowYourRightsPage } from './components/KnowYourRightsPage.jsx'
 import { LandlordWelcomePage } from './components/LandlordWelcomePage.jsx'
 import { StepsPage } from './components/StepsPage.jsx'
+import { DocsDeadlinePage } from './components/DocsDeadlinePage.jsx'
 import { FREE_COACH_QUESTIONS } from './coachLimit.js'
 import { POSTS } from './blog.js'
 import { LISTINGS } from './data.js'
@@ -126,6 +127,7 @@ function parseHash() {
   if (hash === '/landlord-welcome') return { name: 'landlord' }
   if (hash === '/housing-connect') return { name: 'housing-connect' }
   if (hash === '/sponsor') return { name: 'sponsor' }
+  if (hash === '/docs-tracker') return { name: 'docs' }
   if (hash === '/list-unit') return { name: 'list-unit' }
   if (hash === '/listings-admin') return { name: 'listings-admin' }
   if (hash === '/voucher-ready') return { name: 'voucher-ready' }
@@ -714,7 +716,7 @@ export default function App() {
         ? 'blog'
         : route.name === 'after'
           ? 'steps'
-          : route.name === 'pack' || route.name === 'prep'
+          : route.name === 'pack' || route.name === 'prep' || route.name === 'docs'
             ? 'steps'
             : route.name === 'scam' || route.name === 'moving' || route.name === 'rights' || route.name === 'landlord' || route.name === 'housing-connect' || route.name === 'sponsor' || route.name === 'listing-check'
               ? 'resources'
@@ -801,6 +803,7 @@ export default function App() {
         {route.name === 'housing-connect' && <HousingConnectPage />}
         {route.name === 'sponsor' && <SponsorPage />}
         {route.name === 'listing-check' && <ListingCheckerPage />}
+        {route.name === 'docs' && <DocsDeadlinePage />}
         {route.name === 'plan' && <PlanPage plan={plan} onChange={updatePlan} checks={checks} onChecks={updateChecks} onClearIncome={clearIncome} signedIn={session.signedIn} onDeleteAccount={openDelete} />}
         {route.name === 'blog' && <BlogList />}
         {route.name === 'post' && <BlogPost post={post} />}

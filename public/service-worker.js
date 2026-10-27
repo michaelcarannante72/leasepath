@@ -1,7 +1,7 @@
 // Bump CACHE_VERSION when this file's caching rules change. Hashed files under /assets/
 // are refreshed on every install, and old ones are pruned on activate.
 const CACHE_PREFIX = 'leasepath-shell-'
-const CACHE_VERSION = 'v3'
+const CACHE_VERSION = 'v4'
 const CACHE_NAME = `${CACHE_PREFIX}${CACHE_VERSION}`
 
 const SHELL = [
@@ -96,6 +96,45 @@ self.addEventListener('fetch', (event) => {
         }
         throw error
       }
+    })(),
+  )
+})
+
+
+// Match alerts: the page posts new on-device matches; show a notification only when the user already granted permission.
+self.addEventListener('message', (event) => {
+  const data = event.data
+  if (!data || data.type !== 'leasepath-match-alert') return
+  const title = typeof data.title === 'string' ? data.title : 'LeasePath match'
+  const body = typeof data.body === 'string' ? data.body : ''
+  const tag = typeof data.tag === 'string' ? data.tag : 'leasepath-match'
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body,
+      tag,
+      data: data.data || { open: '/#/plan' },
+      icon: '/icons/icon-192.png',
+      badge: '/icons/icon-192.png',
+    }),
+  )
+})
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close()
+  const target = '/#/plan'
+  event.waitUntil(
+    (async () => {
+      const clientsList = await self.clients.matchAll({ type: 'window', includeUncontrolled: true })
+      for (const client of clientsList) {
+        if ('focus' in client) {
+          await client.focus()
+          if ('navigate' in client) {
+            try { await client.navigate(target) } catch { /* older clients */ }
+          }
+          return
+        }
+      }
+      if (self.clients.openWindow) await self.clients.openWindow(target)
     })(),
   )
 })

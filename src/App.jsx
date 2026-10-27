@@ -15,6 +15,8 @@ import { readConsent, trackView } from './analytics.js'
 import { Onboarding } from './components/Onboarding.jsx'
 import { Paywall } from './components/Paywall.jsx'
 import { PlanPage } from './components/PlanPage.jsx'
+import { MatchAlertBanner } from './components/MatchAlertsCard.jsx'
+import { loadMatchPrefs, runMatchCheck } from './matchAlerts.js'
 import { DeleteAccountDialog } from './components/DeleteAccountDialog.jsx'
 import { clearDeviceData } from './deviceData.js'
 import { ResourcesPage } from './components/ResourcesPage.jsx'
@@ -176,11 +178,27 @@ export default function App() {
   const [assistantOpen, setAssistantOpen] = useState(false)
   const [rubyIntroOpen, setRubyIntroOpen] = useState(() => readItem(RUBY_INTRO_KEY) !== '1')
   const [analyticsConsent, setAnalyticsConsent] = useState(readConsent)
+  const [matchPrefs, setMatchPrefs] = useState(loadMatchPrefs)
+  const [matchHits, setMatchHits] = useState([])
 
   // Analytics: nothing loads or is pushed without consent, and HASA views and Ruby's chat send nothing.
   useEffect(() => {
     trackView(window, document, { hashPath: window.location.hash.replace(/^#/, '') || '/', assistantOpen, consent: analyticsConsent })
   }, [route, assistantOpen, analyticsConsent])
+
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      const prefs = loadMatchPrefs()
+      if (!prefs.enabled) return
+      const result = await runMatchCheck(prefs)
+      if (cancelled) return
+      setMatchPrefs(result.prefs)
+      if (result.matches.length) setMatchHits(result.matches)
+    })()
+    return () => { cancelled = true }
+  }, [])
+
   const [assistantListingId, setAssistantListingId] = useState(null)
   const [messages, setMessages] = useState(() => [welcomeMessage(readLang())])
   useEffect(() => {
@@ -763,6 +781,12 @@ export default function App() {
       <main id="main-content" className="stage" ref={stageRef} tabIndex={-1}>
         <div className="view" key={route.id ? `${route.name}-${route.id}` : route.name}>
         {route.name === 'search' && (
+          <>
+            <MatchAlertBanner
+              matches={matchHits}
+              onDismiss={() => setMatchHits([])}
+              onOpen={() => { setMatchHits([]); go('#/plan') }}
+            />
             <SearchPage
               listings={listings}
               total={LISTINGS.length}
@@ -776,6 +800,7 @@ export default function App() {
               onIntent={chooseIntent}
               onAsk={() => { setAssistantListingId(null); setAssistantOpen(true) }}
             />
+          </>
         )}
         {route.name === 'detail' && listing && (
           <DetailPage
@@ -811,7 +836,7 @@ export default function App() {
         {route.name === 'docs' && <DocsDeadlinePage />}
         {route.name === 'guides' && <BoroughGuidesIndex />}
         {route.name === 'guide' && <BoroughGuidePage slug={route.id} />}
-        {route.name === 'plan' && <PlanPage plan={plan} onChange={updatePlan} checks={checks} onChecks={updateChecks} onClearIncome={clearIncome} signedIn={session.signedIn} onDeleteAccount={openDelete} />}
+        {route.name === 'plan' && <PlanPage plan={plan} onChange={updatePlan} checks={checks} onChecks={updateChecks} onClearIncome={clearIncome} signedIn={session.signedIn} onDeleteAccount={openDelete} matchPrefs={matchPrefs} onMatchPrefs={setMatchPrefs} matchSeed={{ borough: filters.borough && filters.borough !== 'All' ? filters.borough : '', bedrooms: checks.voucherBedrooms || '', program: plan.program || '' }} />}
         {route.name === 'blog' && <BlogList />}
         {route.name === 'post' && <BlogPost post={post} />}
         {route.name === 'list-unit' && <ListUnitPage />}

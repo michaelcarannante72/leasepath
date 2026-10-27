@@ -1614,3 +1614,25 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   transform: translateX(-50%);
   z-index: 1000;
 }
+
+.pack-page .pack-summary { margin: 8px 0 14px; padding-left: 20px; line-height: 1.5; }
+.pack-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.pack-status { margin: 10px 0 0; color: var(--navy, #1C2D42); font-weight: 600; }
+.pack-preview .pack-pre {
+  margin: 0;
+  padding: 14px;
+  background: #f7f5f1;
+  border: 1px solid var(--line, #d7d2c8);
+  border-radius: 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  max-height: 420px;
+  overflow: auto;
+  color: var(--ink, #1a1a1a);
+}
+@media print {
+  .dock, .site-header, .pack-actions, .cookie-prompt, .analytics-consent { display: none !important; }
+  .pack-pre { max-height: none; border: none; }
+}

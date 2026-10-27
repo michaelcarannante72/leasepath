@@ -18,6 +18,7 @@ import { clearDeviceData } from './deviceData.js'
 import { ResourcesPage } from './components/ResourcesPage.jsx'
 import { SearchPage } from './components/SearchPage.jsx'
 import { AfterYouFindPage } from './components/AfterYouFindPage.jsx'
+import { CaseworkerPackPage } from './components/CaseworkerPackPage.jsx'
 import { StepsPage } from './components/StepsPage.jsx'
 import { FREE_COACH_QUESTIONS } from './coachLimit.js'
 import { POSTS } from './blog.js'
@@ -100,6 +101,7 @@ function parseHash() {
   const info = hash.match(/^\/info\/([a-z0-9-]+)$/)
   if (info) return { name: 'info', id: info[1] }
   if (hash === '/after-you-find' || hash === '/after-you-find#chap') return { name: 'after' }
+  if (hash === '/caseworker-pack') return { name: 'pack' }
   if (hash === '/steps' || hash === '/resources' || hash === '/plan' || hash === '/blog') {
     return { name: hash.slice(1) }
   }
@@ -658,7 +660,9 @@ export default function App() {
         ? 'blog'
         : route.name === 'after'
           ? 'steps'
-          : route.name
+          : route.name === 'pack'
+            ? 'steps'
+            : route.name
   const navSelect = (id) => {
     if (id === 'assistant') {
       setAssistantListingId(route.name === 'detail' ? route.id : null)
@@ -722,6 +726,7 @@ export default function App() {
         )}
         {route.name === 'steps' && <StepsPage checked={checked} onToggle={toggleStep} />}
         {route.name === 'after' && <AfterYouFindPage />}
+        {route.name === 'pack' && <CaseworkerPackPage />}
         {route.name === 'resources' && <ResourcesPage />}
         {route.name === 'plan' && <PlanPage plan={plan} onChange={updatePlan} checks={checks} onChecks={updateChecks} onClearIncome={clearIncome} signedIn={session.signedIn} onDeleteAccount={openDelete} />}
         {route.name === 'blog' && <BlogList />}

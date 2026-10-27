@@ -20,6 +20,7 @@ export function PlanPage({ plan, onChange, checks, onChecks, onClearIncome, sign
       <p className="lede">
         LeasePath keeps this on this phone so search can compare sample rents with it. The shopping letter date and the other check answers below stay on this phone only. If you sign in, the same figures stay on your account. It does not decide eligibility.
       </p>
+      <p className="after-link"><a href="#/caseworker-pack">Build a caseworker share pack from this phone →</a></p>
       <p className="next-action">
         {plan.receiving === 'none'
           ? 'Apply first. Search stays open while you do.'

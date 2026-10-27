@@ -105,6 +105,11 @@ export function PlanPage({ plan, onChange, checks, onChecks, onClearIncome, sign
         </label>
       </form>
 
+      <aside className="waitlist-callout" aria-labelledby="waitlist-callout-title">
+        <h2 id="waitlist-callout-title">Waitlist and lottery tracker</h2>
+        <p>Save NYCHA, Housing Connect, and other application statuses on this device. Export .ics reminders. Delete all anytime.</p>
+        <p><a className="button" href="#/waitlist">Open tracker</a></p>
+      </aside>
       <IncomePrescreen plan={plan} checks={checks} onChecks={onChecks} onClear={onClearIncome} />
 
       {plan.program === 'CityFHEPS' && <CityfhepsPanel checks={checks} onChecks={onChecks} />}

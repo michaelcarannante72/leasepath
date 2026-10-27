@@ -16,6 +16,7 @@ import { PlanPage } from './components/PlanPage.jsx'
 import { DeleteAccountDialog } from './components/DeleteAccountDialog.jsx'
 import { clearDeviceData } from './deviceData.js'
 import { ResourcesPage } from './components/ResourcesPage.jsx'
+import { WaitlistTrackerPage } from './components/WaitlistTrackerPage.jsx'
 import { RubyIntro } from './components/RubyIntro.jsx'
 import { SearchPage } from './components/SearchPage.jsx'
 import { AfterYouFindPage } from './components/AfterYouFindPage.jsx'
@@ -112,6 +113,7 @@ function parseHash() {
   if (hash === '/scam-alerts') return { name: 'scam' }
   if (hash === '/moving-help') return { name: 'moving' }
   if (hash === '/know-your-rights') return { name: 'rights' }
+  if (hash === '/waitlist' || hash === '/waitlist-tracker') return { name: 'waitlist' }
   if (hash === '/steps' || hash === '/resources' || hash === '/plan' || hash === '/blog') {
     return { name: hash.slice(1) }
   }
@@ -692,6 +694,8 @@ export default function App() {
             ? 'steps'
             : route.name === 'scam' || route.name === 'moving' || route.name === 'rights'
               ? 'resources'
+            : route.name === 'waitlist'
+              ? 'plan'
             : route.name
   const navSelect = (id) => {
     if (id === 'assistant') {
@@ -766,6 +770,7 @@ export default function App() {
         {route.name === 'pack' && <CaseworkerPackPage />}
         {route.name === 'prep' && <InspectionPrepPage />}
         {route.name === 'resources' && <ResourcesPage />}
+        {route.name === 'waitlist' && <WaitlistTrackerPage />}
         {route.name === 'scam' && <ScamAlertsPage />}
         {route.name === 'moving' && <MovingHelpPage />}
         {route.name === 'rights' && <KnowYourRightsPage />}

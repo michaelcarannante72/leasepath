@@ -184,11 +184,10 @@ export function ResourcesPage() {
 
   return (
     <div className="page resources-page">
-<<<<<<< HEAD
       <p className="eyebrow">{t("resources.eyebrow")}</p>
       <h1>{t("resources.title")}</h1>
       <p className="lede">{t("resources.lede")}</p>
-      <p className="after-link"><a href="#/housing-connect">Housing Connect lotteries</a> · <a href="#/listing-check">Check a listing</a> · <a href="#/after-you-find#chap">{t("resources.chap")}</a> · <a href="#/after-you-find">{t("resources.afterFind")}</a> · <a href="#/inspection-prep">HQS inspection prep</a> · <a href="#/scam-alerts">Voucher scam alerts</a> · <a href="#/moving-help">Moving help</a> · <a href="#/know-your-rights">Know your rights</a> · <a href="#/landlord-welcome">Landlords: why take vouchers</a> · <a href="#/docs-tracker">Documents and deadlines</a></p>
+      <p className="after-link"><a href="#/housing-connect">Housing Connect lotteries</a> · <a href="#/listing-check">Check a listing</a> · <a href="#/after-you-find#chap">{t("resources.chap")}</a> · <a href="#/after-you-find">{t("resources.afterFind")}</a> · <a href="#/inspection-prep">HQS inspection prep</a> · <a href="#/scam-alerts">Voucher scam alerts</a> · <a href="#/moving-help">Moving help</a> · <a href="#/know-your-rights">Know your rights</a> · <a href="#/landlord-welcome">Landlords: why take vouchers</a> · <a href="#/docs-tracker">Documents and deadlines</a> · <a href="#/roadmap">Shelter to housing roadmap</a></p>
 
       <aside className="borough-guides-callout" aria-labelledby="borough-guides-title">
         <h2 id="borough-guides-title">Borough voucher-renter guides</h2>
@@ -201,12 +200,6 @@ export function ResourcesPage() {
         <p>Legal Aid Society, Housing Court Answers, the NYC Tenant Helpline, Office of Civil Justice, and more — filterable by borough.</p>
         <p><a className="button" href="#/partners">Open partner directory</a></p>
       </aside>
-=======
-      <p className="eyebrow">Resource Navigator</p>
-      <h1>NYC resources for housing, food, health, and legal help</h1>
-      <p className="lede">No sign-in. For anyone in New York City who needs help — with or without a voucher. Community groups and official city programs, with the agency site as the source of record. HASA-specific help is labeled in its own section.</p>
-      <p className="after-link"><a href="#/after-you-find#chap">Coming 2027: CHAP, a new city voucher (press reporting)</a> · <a href="#/after-you-find">After you find an apartment</a> · <a href="#/inspection-prep">HQS inspection prep</a> · <a href="#/scam-alerts">Voucher scam alerts</a> · <a href="#/moving-help">Moving help</a> · <a href="#/know-your-rights">Know your rights</a> · <a href="#/roadmap">Shelter to housing roadmap</a></p>
->>>>>>> shelter-to-housing-roadmap
 
       <aside className="help-now" aria-labelledby="help-now-title">
         <h2 id="help-now-title">{t("resources.helpNow")}</h2>

@@ -2422,3 +2422,26 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   box-shadow: 0 6px 18px rgba(28, 45, 66, 0.05);
 }
 .youth-card h2 { margin: 0 0 6px; font-size: 1.05rem; color: var(--navy); }
+.install-guide { margin: 12px 0; padding: 12px 14px; border: 1px solid var(--line); border-radius: 14px; background: white; }
+.install-guide h3 { margin: 0 0 8px; color: var(--navy); font-size: 1.05rem; }
+.install-guide ol { margin: 0; padding-left: 1.2rem; }
+.install-guide li { margin: 4px 0; }
+.share-preview {
+  margin: 8px 0 12px; padding: 12px 14px; border-left: 4px solid var(--gold);
+  background: #f7f4ec; border-radius: 0 12px 12px 0; font-weight: 600;
+}
+.flyer {
+  margin: 16px 0; padding: 24px 20px; text-align: center;
+  border: 2px solid var(--navy); border-radius: 16px; background: white;
+  color: var(--navy);
+}
+.flyer-brand { margin: 0; font-size: 1.6rem; font-weight: 800; letter-spacing: 0.02em; }
+.flyer-tag { margin: 4px 0 16px; color: var(--brick); font-weight: 600; }
+.flyer-qr { display: block; margin: 0 auto 12px; width: 220px; height: 220px; }
+.flyer-url { margin: 0; font-weight: 700; font-size: 1.1rem; }
+.flyer-note { margin: 8px 0 0; color: var(--muted); font-size: 0.9rem; }
+@media print {
+  .site-header, .site-dock, .offline-banner, .ruby-launcher, .card-actions .button, .eyebrow, .lede, .install-block, .share-block, .flyer-block > p, .flyer-block > .card-actions { display: none !important; }
+  .flyer-block, .flyer { display: block !important; border: none; }
+  .page.install-share { padding: 0; }
+}

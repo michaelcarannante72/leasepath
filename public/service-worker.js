@@ -1,7 +1,7 @@
 // Bump CACHE_VERSION when this file's caching rules change. Hashed files under /assets/
 // are refreshed on every install, and old ones are pruned on activate.
 const CACHE_PREFIX = 'leasepath-shell-'
-const CACHE_VERSION = 'v4'
+const CACHE_VERSION = 'v5' // install-and-share + prior offline/match-alert handlers
 const CACHE_NAME = `${CACHE_PREFIX}${CACHE_VERSION}`
 
 // App shell + icons. Hash routes (#/resources, #/steps, #/plan, …) load from '/' once cached,

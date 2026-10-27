@@ -1,5 +1,6 @@
+import { tx } from '../i18nAuto.js'
 import { useMemo, useState } from 'react'
-import { useLanguage } from './LanguageProvider.jsx'
+import { useLanguage } from './languageContext.js'
 import { RESOURCES } from '../data.js'
 import { Icon } from './Icon.jsx'
 import { PantryFinder } from './PantryFinder.jsx'
@@ -77,28 +78,28 @@ function CommunityCard({ item, caution }) {
       </div>
       {(item.phone || links.length > 0) && (
         <div className="card-actions">
-          {item.phone && <a className="card-call" href={tel(item.phone)} aria-label={`Call ${item.name} at ${item.phone}`}>Call {item.phone}</a>}
+          {item.phone && <a className="card-call" href={tel(item.phone)} aria-label={`${tx('Call')} ${item.phone} (${item.name})`}>{tx("Call")} {item.phone}</a>}
           {links.map((link) => (
             <a key={link.href} className="card-link" href={link.href} target="_blank" rel="noopener noreferrer">{link.label} <Icon name="external" size={14} /></a>
           ))}
         </div>
       )}
       <details className="card-more">
-        <summary>More<span className="sr-only"> about {item.name}</span></summary>
-        {item.group !== item.name && <span>Run by {item.group}</span>}
+        <summary>{tx("More")}<span className="sr-only"> {tx("about")} {item.name}</span></summary>
+        {item.group !== item.name && <span>{tx("Run by")} {item.group}</span>}
         <dl>
-          {item.who && <div><dt>Who</dt><dd>{item.who}</dd></div>}
-          {item.when && <div><dt>When</dt><dd>{item.when}</dd></div>}
-          {item.where && <div><dt>Where</dt><dd>{item.where}</dd></div>}
-          {item.centers && <div><dt>Centers</dt><dd>{item.centers}</dd></div>}
-          {item.cost && <div><dt>Cost</dt><dd>{item.cost}</dd></div>}
-          {item.how && <div><dt>How</dt><dd>{item.how}</dd></div>}
-          {item.phone && <div><dt>Phone</dt><dd><a href={tel(item.phone)}>{item.phone}</a></dd></div>}
+          {item.who && <div><dt>{tx("Who")}</dt><dd>{item.who}</dd></div>}
+          {item.when && <div><dt>{tx("When")}</dt><dd>{item.when}</dd></div>}
+          {item.where && <div><dt>{tx("Where")}</dt><dd>{item.where}</dd></div>}
+          {item.centers && <div><dt>{tx("Centers")}</dt><dd>{item.centers}</dd></div>}
+          {item.cost && <div><dt>{tx("Cost")}</dt><dd>{item.cost}</dd></div>}
+          {item.how && <div><dt>{tx("How")}</dt><dd>{item.how}</dd></div>}
+          {item.phone && <div><dt>{tx("Phone")}</dt><dd><a href={tel(item.phone)}>{item.phone}</a></dd></div>}
           {item.email && <div><dt>Email</dt><dd><a href={`mailto:${item.email}`}>{item.email}</a></dd></div>}
-          {item.offers && <div><dt>Offers</dt><dd>{item.offers}</dd></div>}
+          {item.offers && <div><dt>{tx("Offers")}</dt><dd>{item.offers}</dd></div>}
         </dl>
         {item.note && <p className="free-food-note">{item.note}</p>}
-        <p className="free-food-caution">{caution ? <>{FREE_FOOD_CAUTION} Added {ADDED_ON}.</> : <>Added {ADDED_ON}.</>}</p>
+        <p className="free-food-caution">{caution ? <>{FREE_FOOD_CAUTION} {tx("Added")} {ADDED_ON}.</> : <>{tx("Added")} {ADDED_ON}.</>}</p>
       </details>
     </li>
   )
@@ -110,9 +111,9 @@ function CityCard({ item, hasa }) {
     <li className={`resource-card${hasa ? ' resource-card-hasa' : ''}`}>
       <div className="resource-card-main">
         <strong className="resource-card-name">{item.title}</strong>
-        {hasa && <span className="resource-badge">HASA-specific</span>}
+        {hasa && <span className="resource-badge">{tx("HASA-specific")}</span>}
         <p className="resource-card-what">{oneLine(item.detail)}</p>
-        <p className="resource-card-meta"><Icon name="pin" size={14} /><span>Citywide · official source</span></p>
+        <p className="resource-card-meta"><Icon name="pin" size={14} /><span>{tx("Citywide · official source")}</span></p>
       </div>
       <div className="card-actions">
         {phone ? (
@@ -122,7 +123,7 @@ function CityCard({ item, hasa }) {
         )}
       </div>
       <details className="card-more">
-        <summary>More<span className="sr-only"> about {item.title}</span></summary>
+        <summary>{tx("More")}<span className="sr-only"> {tx("about")} {item.title}</span></summary>
         <p className="resource-card-full">{item.detail}</p>
       </details>
     </li>
@@ -210,15 +211,15 @@ export function ResourcesPage() {
       </nav>
 
       <aside className="borough-guides-callout" aria-labelledby="borough-guides-title">
-        <h2 id="borough-guides-title">Borough voucher-renter guides</h2>
-        <p>Transit notes, HRA Benefits Access and SNAP centers (addresses from HRA), and tips for each borough.</p>
-        <p><a className="button" href="#/guides">Open borough guides</a></p>
+        <h2 id="borough-guides-title">{tx("Borough voucher-renter guides")}</h2>
+        <p>{tx("Transit notes, HRA Benefits Access and SNAP centers (addresses from HRA), and tips for each borough.")}</p>
+        <p><a className="button" href="#/guides">{tx("Open borough guides")}</a></p>
       </aside>
 
       <aside className="partners-callout" aria-labelledby="partners-callout-title">
-        <h2 id="partners-callout-title">Legal aid and nonprofit partners</h2>
-        <p>Legal Aid Society, Housing Court Answers, the NYC Tenant Helpline, Office of Civil Justice, and more — filterable by borough.</p>
-        <p><a className="button" href="#/partners">Open partner directory</a></p>
+        <h2 id="partners-callout-title">{tx("Legal aid and nonprofit partners")}</h2>
+        <p>{tx("Legal Aid Society, Housing Court Answers, the NYC Tenant Helpline, Office of Civil Justice, and more — filterable by borough.")}</p>
+        <p><a className="button" href="#/partners">{tx("Open partner directory")}</a></p>
       </aside>
 
       <aside className="help-now" aria-labelledby="help-now-title">
@@ -235,7 +236,7 @@ export function ResourcesPage() {
 
       <SponsoredSlot placement="resources" />
 
-      <section className="resource-group free-food" aria-label="Community resources">
+      <section className="resource-group free-food" aria-label={tx("Community resources")}>
         <div className="resource-search" role="search">
           <label htmlFor="resource-q">{t("resources.searchLabel")}</label>
           <input id="resource-q" type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("resources.searchPlaceholder")} autoComplete="off" spellCheck="false" />

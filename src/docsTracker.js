@@ -57,7 +57,6 @@ export function docsForProgram(program) {
 }
 
 export function emptyState(program = '') {
-  const docs = docsForProgram(program)
   return {
     program: program || '',
     checked: {},

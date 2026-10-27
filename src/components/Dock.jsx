@@ -1,6 +1,6 @@
 import { Icon } from './Icon.jsx'
 import { NAV_TABS } from '../navTabs.js'
-import { useLanguage } from './LanguageProvider.jsx'
+import { useLanguage } from './languageContext.js'
 
 export function Dock({ active, onSelect }) {
   const { t } = useLanguage()

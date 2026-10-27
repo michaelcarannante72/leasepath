@@ -1,3 +1,4 @@
+import { tx } from '../i18nAuto.js'
 import { useState } from 'react'
 import { HOUSING_CONNECT } from '../data/matchFeed.js'
 import {
@@ -81,57 +82,56 @@ export function MatchAlertsCard({ prefs, onPrefs, seed }) {
 
   return (
     <section className="panel match-alerts-card" aria-labelledby="match-alerts-title">
-      <h2 id="match-alerts-title">Match alerts</h2>
+      <h2 id="match-alerts-title">{tx("Match alerts")}</h2>
       <p>
-        Opt in to check this phone when LeasePath opens for a new Housing Connect lottery reminder or a sample voucher-ready unit that fits your borough, size, and voucher.
-        Preferences stay on this device. LeasePath does not scrape Housing Connect and does not send your choices to a server.
+        {tx("Opt in to check this phone when LeasePath opens for a new Housing Connect lottery reminder or a sample voucher-ready unit that fits your borough, size, and voucher. Preferences stay on this device. LeasePath does not scrape Housing Connect and does not send your choices to a server.")}
       </p>
       <p className="device-note">
-        Official lotteries: <a href={HOUSING_CONNECT.href} target="_blank" rel="noreferrer">{HOUSING_CONNECT.label}</a>
+        {tx("Official lotteries:")} <a href={HOUSING_CONNECT.href} target="_blank" rel="noreferrer">{HOUSING_CONNECT.label}</a>
         {' · '}
-        <a href={HOUSING_CONNECT.hpd} target="_blank" rel="noreferrer">HPD Housing Connect page</a>
+        <a href={HOUSING_CONNECT.hpd} target="_blank" rel="noreferrer">{tx("HPD Housing Connect page")}</a>
         {HOUSING_CONNECT.hotline ? (
           <>
-            {' · '}Applicant hotline <a href={`tel:${HOUSING_CONNECT.hotline.replace(/\D/g, '')}`}>{HOUSING_CONNECT.hotline}</a>
+            {' · '}{tx("Applicant hotline")} <a href={`tel:${HOUSING_CONNECT.hotline.replace(/\D/g, '')}`}>{HOUSING_CONNECT.hotline}</a>
           </>
         ) : null}
       </p>
 
       <div className="match-alert-fields">
         <label>
-          <span>Borough</span>
+          <span>{tx("Borough")}</span>
           <select
             value={prefs.borough}
             onChange={(event) => update({ borough: event.target.value })}
             disabled={busy}
           >
-            <option value="">Any borough</option>
+            <option value="">{tx("Any borough")}</option>
             {MATCH_BOROUGHS.map((name) => (
               <option key={name} value={name}>{name}</option>
             ))}
           </select>
         </label>
         <label>
-          <span>Bedroom size</span>
+          <span>{tx("Bedroom size")}</span>
           <select
             value={prefs.bedrooms}
             onChange={(event) => update({ bedrooms: event.target.value })}
             disabled={busy}
           >
-            <option value="">Any size</option>
+            <option value="">{tx("Any size")}</option>
             {MATCH_BEDROOMS.map((value) => (
               <option key={value} value={value}>{bedLabel(value)}</option>
             ))}
           </select>
         </label>
         <label>
-          <span>Voucher</span>
+          <span>{tx("Voucher")}</span>
           <select
             value={prefs.program}
             onChange={(event) => update({ program: event.target.value })}
             disabled={busy}
           >
-            <option value="">Any voucher</option>
+            <option value="">{tx("Any voucher")}</option>
             {MATCH_PROGRAMS.map((name) => (
               <option key={name} value={name}>{name}</option>
             ))}
@@ -142,27 +142,26 @@ export function MatchAlertsCard({ prefs, onPrefs, seed }) {
       <div className="button-row">
         {!prefs.enabled ? (
           <button type="button" className="button" disabled={busy} onClick={enable}>
-            Turn on match alerts
+            {tx("Turn on match alerts")}
           </button>
         ) : (
           <button type="button" className="button button-quiet" disabled={busy} onClick={disable}>
-            Turn off alerts
+            {tx("Turn off alerts")}
           </button>
         )}
         {notificationSupported() && prefs.enabled && perm !== 'granted' ? (
           <button type="button" className="button" disabled={busy} onClick={askNotify}>
-            Allow phone notifications
+            {tx("Allow phone notifications")}
           </button>
         ) : null}
         {prefs.enabled && perm === 'granted' && prefs.notify ? (
-          <span className="fine">Phone notifications allowed</span>
+          <span className="fine">{tx("Phone notifications allowed")}</span>
         ) : null}
       </div>
       {status ? <p className="fine match-alert-status" role="status">{status}</p> : null}
       {prefs.enabled ? (
         <p className="fine">
-          Watching: {prefs.borough || 'any borough'} · {bedLabel(prefs.bedrooms)} · {prefs.program || 'any voucher'}.
-          Last check stays on this phone only.
+          {tx("Watching:")} {prefs.borough || 'any borough'} · {bedLabel(prefs.bedrooms)} · {prefs.program || 'any voucher'}{tx(". Last check stays on this phone only.")}
         </p>
       ) : null}
     </section>
@@ -178,11 +177,11 @@ export function MatchAlertBanner({ matches, onDismiss, onOpen }) {
         <h2 id="match-banner-title">
           {matches.length === 1 ? 'New match on this device' : `${matches.length} new matches on this device`}
         </h2>
-        <p>{first.title}{matches.length > 1 ? ` and ${matches.length - 1} more` : ''}. Preferences stay on this phone.</p>
+        <p>{first.title}{matches.length > 1 ? ` and ${matches.length - 1} more` : ''}{tx(". Preferences stay on this phone.")}</p>
       </div>
       <div className="button-row">
-        <button type="button" className="button" onClick={onOpen}>Review</button>
-        <button type="button" className="button button-quiet" onClick={onDismiss}>Dismiss</button>
+        <button type="button" className="button" onClick={onOpen}>{tx("Review")}</button>
+        <button type="button" className="button button-quiet" onClick={onDismiss}>{tx("Dismiss")}</button>
       </div>
     </aside>
   )

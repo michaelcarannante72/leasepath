@@ -2457,7 +2457,7 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 .page > .lede, .page > p { max-width: 68ch; }
 .page-back { margin: 0 0 8px; font-weight: 700; }
 
-.page a:not(.button):not(.chip):not(.popular-search-chip),
+.page a:not(.button):not(.chip):not(.popular-search-chip):not(.help-call),
 .site-footer a:not(.popular-search-chip),
 .after-link a, .fit-note a, .consent-links a { color: var(--terracotta); }
 
@@ -2541,3 +2541,73 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 .hero-cta, .show-apartments, .text-button:not(.ruby-theme .text-button) { background: var(--navy); color: white; }
 .how-num { background: var(--navy); color: white; }
 .hero-split .hero-cta { background: white; color: var(--navy); }
+
+/* ---- layout-cleanup-2 ---------------------------------------------------- */
+
+/* The window scrolls, not main.stage. The header stays sticky; the dock is fixed on phones. */
+html, body, #root { height: auto; }
+html { scroll-padding-top: 76px; }
+body { overflow: visible; overflow-x: clip; }
+.app { height: auto; min-height: 100dvh; display: flex; flex-direction: column; }
+.app > .stage { flex: 1 0 auto; overflow: visible; overscroll-behavior: auto; }
+.topbar { position: sticky; top: 0; z-index: 40; }
+@media (max-width: 1023px) {
+  /* Reserve the dock's height plus the home-indicator area so it never covers the last content. */
+  .app { padding-bottom: calc(92px + env(safe-area-inset-bottom)); }
+  .dock {
+    position: fixed;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: min(100% - 16px, 560px);
+    margin: 0 0 calc(8px + env(safe-area-inset-bottom));
+    z-index: 45;
+  }
+  .consent-bar, .cookie-prompt { position: fixed; left: 8px; right: 8px; bottom: calc(92px + env(safe-area-inset-bottom)); z-index: 46; }
+}
+@media (min-width: 1024px) {
+  .consent-bar, .cookie-prompt { position: fixed; left: 16px; right: 16px; bottom: 16px; z-index: 46; }
+}
+
+/* Home: one light search panel right under the hero. */
+.home-search {
+  margin: 16px 0;
+  padding: 16px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  color: var(--navy);
+}
+.home-search-head .search-title { margin: 0 0 10px; color: var(--navy); }
+.home-search .program-chips { margin-bottom: 10px; }
+.home-search .program-chip { color: var(--navy); border-color: var(--line); background: white; }
+.home-search .program-chip.is-on { background: var(--navy); color: white; border-color: var(--navy); }
+.home-search label, .home-search legend { color: var(--muted); }
+.audience.audience-compact { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
+.audience.audience-compact button {
+  min-height: 40px;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: white;
+  color: var(--navy);
+  font-size: 0.875rem;
+}
+.audience.audience-compact button span { display: inline; margin: 0 0 0 4px; color: var(--muted); font-size: 0.875rem; }
+.audience.audience-compact button.is-on { background: var(--navy); color: white; border-color: var(--navy); }
+.audience.audience-compact button.is-on span { color: #dce6f0; }
+
+/* Steps page: the pitch and the 3-step strip moved here from home. */
+.steps-intro { margin: 8px 0 18px; }
+.steps-intro .pitch { margin: 0 0 10px; color: var(--muted); }
+.steps-intro .landing-steps { margin: 0; }
+
+/* Caseworker pack: a full-height, copyable block (no inner scroll box). */
+.pack-preview .pack-pre {
+  max-height: none;
+  overflow: visible;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  user-select: text;
+  -webkit-user-select: text;
+}

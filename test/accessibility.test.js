@@ -1,3 +1,4 @@
+import { untx } from './source-text.js'
 import assert from 'node:assert/strict'
 import { spawn } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
@@ -8,7 +9,7 @@ import { fileURLToPath } from 'node:url'
 import { auditRoutes, MAIN_ROUTES } from '../scripts/axe-audit.mjs'
 
 const root = fileURLToPath(new URL('..', import.meta.url))
-const read = (path) => readFileSync(join(root, path), 'utf8')
+const read = (path) => untx(readFileSync(join(root, path), 'utf8'))
 
 const TYPES = {
   '.html': 'text/html; charset=utf-8',

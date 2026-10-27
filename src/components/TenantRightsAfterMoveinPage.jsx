@@ -1,26 +1,26 @@
+import { tx } from '../i18nAuto.js'
 import { HEAT_RULES, SECTIONS, SOURCES } from '../data/tenantRightsAfterMovein.js'
 import { Icon } from './Icon.jsx'
 
 export function TenantRightsAfterMoveinPage() {
   return (
     <article className="page tenant-rights-movein">
-      <p className="eyebrow">After move-in</p>
-      <h1>Tenant rights after you move in</h1>
+      <p className="eyebrow">{tx("After move-in")}</p>
+      <h1>{tx("Tenant rights after you move in")}</h1>
       <p className="lede">
-        Repairs, heat season, 311 / HPD complaints, and Housing Court help. Phones and temperatures are from the official pages named on each card.
-        You may qualify for free legal help — the provider decides.
+        {tx("Repairs, heat season, 311 / HPD complaints, and Housing Court help. Phones and temperatures are from the official pages named on each card. You may qualify for free legal help — the provider decides.")}
       </p>
 
       <section className="heat-card" aria-labelledby="heat-card-title">
-        <h2 id="heat-card-title">Heat Season at a glance</h2>
+        <h2 id="heat-card-title">{tx("Heat Season at a glance")}</h2>
         <ul>
-          <li><strong>Season:</strong> {HEAT_RULES.season}</li>
-          <li><strong>Day ({HEAT_RULES.day.hours}):</strong> if outside &lt; {HEAT_RULES.day.outsideBelow}°F, inside ≥ {HEAT_RULES.day.insideAtLeast}°F</li>
-          <li><strong>Night ({HEAT_RULES.night.hours}):</strong> inside ≥ {HEAT_RULES.night.insideAtLeast}°F ({HEAT_RULES.night.note.toLowerCase()})</li>
-          <li><strong>Hot water:</strong> ≥ {HEAT_RULES.hotWater.minF}°F, {HEAT_RULES.hotWater.days}</li>
+          <li><strong>{tx("Season:")}</strong> {HEAT_RULES.season}</li>
+          <li><strong>{tx("Day (")}{HEAT_RULES.day.hours}):</strong> {tx("if outside <")} {HEAT_RULES.day.outsideBelow}{tx("°F, inside ≥")} {HEAT_RULES.day.insideAtLeast}°F</li>
+          <li><strong>{tx("Night (")}{HEAT_RULES.night.hours}):</strong> {tx("inside ≥")} {HEAT_RULES.night.insideAtLeast}°F ({HEAT_RULES.night.note.toLowerCase()})</li>
+          <li><strong>{tx("Hot water:")}</strong> ≥ {HEAT_RULES.hotWater.minF}°F, {HEAT_RULES.hotWater.days}</li>
         </ul>
         <p className="fine">
-          Source:{' '}
+          {tx("Source:")}{' '}
           <a href={SOURCES.hpdHeat.href} target="_blank" rel="noreferrer">{SOURCES.hpdHeat.label}</a>
         </p>
       </section>
@@ -48,8 +48,8 @@ export function TenantRightsAfterMoveinPage() {
       </ul>
 
       <p className="card-actions">
-        <a className="button" href="#/know-your-rights">Know your rights</a>
-        <a className="button button-quiet" href="#/resources">Resources</a>
+        <a className="button" href="#/know-your-rights">{tx("Know your rights")}</a>
+        <a className="button button-quiet" href="#/resources">{tx("Resources")}</a>
       </p>
     </article>
   )

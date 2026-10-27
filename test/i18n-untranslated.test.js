@@ -43,3 +43,69 @@ test('translated pages carry no hard-coded English text between JSX tags', () =>
     for (const m of src.matchAll(/(?:aria-label|placeholder|title|alt)="([^"]*[A-Za-z]{3,}[^"]*)"/g)) assert.fail(`${file}: hard-coded ${m[0]}`)
   }
 })
+
+// ---- Every route: parse each component with espree and look at the real JSX tree. ----
+import { readdirSync } from 'node:fs'
+import * as espree from 'espree'
+import { UI_ES } from '../src/i18nUi.es.js'
+
+const BRAND_OK = new Set([...SAME_OK, 'Section 8', 'FHEPS', 'ACCESS HRA', 'HRA', 'HPD', 'DSS', 'SNAP', 'HEAP', 'PDF', 'Email', 'SMS', 'Blog', 'Homebase', 'Lease', 'Path', 'access.nyc.gov', 'iPhone (Safari)', '· HPD:'])
+const ATTRS = new Set(['aria-label', 'placeholder', 'title', 'alt', 'label', 'aria-description'])
+const componentFiles = ['src/App.jsx', ...readdirSync(new URL('../src/components', import.meta.url)).filter((f) => f.endsWith('.jsx')).map((f) => `src/components/${f}`)]
+const norm = (s) => s.replace(/\s*\n\s*/g, ' ').trim()
+
+function walk(node, fn) {
+  if (!node || typeof node.type !== 'string') return
+  fn(node)
+  for (const key of Object.keys(node)) {
+    const value = node[key]
+    if (Array.isArray(value)) value.forEach((child) => walk(child, fn))
+    else if (value && typeof value.type === 'string') walk(value, fn)
+  }
+}
+const parse = (file) => espree.parse(read(file), { ecmaVersion: 'latest', sourceType: 'module', ecmaFeatures: { jsx: true } })
+
+test('no route component hard-codes English text or labels in JSX', () => {
+  const hits = []
+  for (const file of componentFiles) {
+    walk(parse(file), (node) => {
+      if (node.type === 'JSXText') {
+        const text = norm(node.value)
+        if (/[A-Za-z]{2,}/.test(text) && !BRAND_OK.has(text)) hits.push(`${file}: "${text}"`)
+      } else if (node.type === 'JSXAttribute' && ATTRS.has(node.name.name) && node.value?.type === 'Literal') {
+        const text = norm(String(node.value.value))
+        if (/[A-Za-z]{2,}/.test(text) && !BRAND_OK.has(text)) hits.push(`${file}: ${node.name.name}="${text}"`)
+      }
+    })
+  }
+  assert.deepEqual(hits, [], `untranslated JSX text:\n${hits.join('\n')}`)
+})
+
+test('every tx("…") string used by a component has its own Spanish', () => {
+  const missing = []
+  for (const file of componentFiles) {
+    walk(parse(file), (node) => {
+      if (node.type === 'CallExpression' && node.callee.name === 'tx' && node.arguments[0]?.type === 'Literal') {
+        const en = node.arguments[0].value
+        const es = UI_ES[en]
+        if (!es || (es === en && !BRAND_OK.has(en))) missing.push(`${file}: ${en}`)
+        else {
+          const vars = (s) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort().join()
+          if (vars(es) !== vars(en)) missing.push(`${file}: {vars} differ in ${en}`)
+        }
+      }
+    })
+  }
+  assert.deepEqual(missing, [], missing.join('\n'))
+})
+
+test('install steps and share text have Spanish versions', async () => {
+  const data = await import('../src/data/installAndShare.js')
+  assert.notEqual(data.shareText('es'), data.shareText('en'))
+  assert.match(data.shareText('es'), /https:\/\/leasepath\.app/)
+  for (const [key, guide] of Object.entries(data.installSteps('en'))) {
+    const es = data.installSteps('es')[key]
+    assert.equal(es.steps.length, guide.steps.length, key)
+    es.steps.forEach((step, i) => assert.notEqual(step, guide.steps[i], `${key} step ${i + 1}`))
+  }
+})

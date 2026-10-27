@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { writeConsent } from '../analytics.js'
 import { OPEN_ANALYTICS_CHOICE } from './AnalyticsConsent.jsx'
-import { useLanguage } from './LanguageProvider.jsx'
+import { useLanguage } from './languageContext.js'
 import { COOKIE_CHOICE_KEY, consentSettled } from '../consent.js'
 
 /**

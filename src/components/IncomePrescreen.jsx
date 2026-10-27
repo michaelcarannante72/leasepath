@@ -1,3 +1,4 @@
+import { tx } from '../i18nAuto.js'
 import { useEffect, useRef, useState } from 'react'
 import {
   INCOME_HINT,
@@ -87,7 +88,7 @@ export function IncomePrescreen({ plan, checks, onChecks, onClear }) {
       <p className="device-note">{INCOME_NOTE}</p>
       {shown.length === 0 ? (
         <p className="fine">
-          The 200% of poverty pre-screen covers HASA and CityFHEPS only. For {program}, {askFor(program).toLowerCase()}.
+          {tx("The 200% of poverty pre-screen covers HASA and CityFHEPS only. For")} {program}, {askFor(program).toLowerCase()}.
         </p>
       ) : (
         <>
@@ -100,20 +101,20 @@ export function IncomePrescreen({ plan, checks, onChecks, onClear }) {
                 value={checks.incomeAmount}
                 aria-describedby="income-hint"
                 onChange={(event) => onChecks({ incomeAmount: storedIncome(event.target.value) })}
-                placeholder="Whole dollars"
+                placeholder={tx("Whole dollars")}
               />
             </label>
             <p id="income-hint" className="fine">{INCOME_HINT}</p>
             <label>
-              <span>Is that amount for a month or a year?</span>
+              <span>{tx("Is that amount for a month or a year?")}</span>
               <select value={incomePeriod(checks.incomePeriod)} onChange={(event) => onChecks({ incomePeriod: event.target.value })}>
-                <option value="month">A month</option>
-                <option value="year">A year</option>
+                <option value="month">{tx("A month")}</option>
+                <option value="year">{tx("A year")}</option>
               </select>
             </label>
-            {plan.household === '' && <p className="fine">The number of people comes from “People in the household” above.</p>}
+            {plan.household === '' && <p className="fine">{tx("The number of people comes from “People in the household” above.")}</p>}
             {checks.incomeAmount !== '' && (
-              <button type="button" className="text-button" onClick={onClear}>Clear income</button>
+              <button type="button" className="text-button" onClick={onClear}>{tx("Clear income")}</button>
             )}
           </div>
           <div className="prescreen-results">

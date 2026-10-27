@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict'
+import { untx } from './source-text.js'
 import { readFileSync } from 'node:fs'
 import test from 'node:test'
 import { CAVEAT, CHAP, HAVP, LAST_REVIEWED, PROGRAMS, RIGHTS, SOURCES, STEPS } from '../src/afterYouFind.js'
 
-const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8')
+const read = (path) => untx(readFileSync(new URL(`../${path}`, import.meta.url), 'utf8'))
 
 test('the page has five tenant-side steps, tagged by program, each with an official source', () => {
   assert.deepEqual(STEPS.map((s) => s.id), ['program', 'ceiling', 'package', 'inspection', 'approval'])

@@ -1,10 +1,11 @@
-import { useLanguage } from './LanguageProvider.jsx'
+import { tx } from '../i18nAuto.js'
+import { useLanguage } from './languageContext.js'
 import { FOOTER_GROUPS, SITE_PAGES } from '../sitePages.js'
 import { SEARCH_PAGES } from '../data/voucherSearches.js'
 import { OPEN_ANALYTICS_CHOICE } from './AnalyticsConsent.jsx'
 
 function AnalyticsChoiceLink() {
-  return <button type="button" className="text-button footer-analytics" onClick={() => window.dispatchEvent(new Event(OPEN_ANALYTICS_CHOICE))}>Analytics choice</button>
+  return <button type="button" className="text-button footer-analytics" onClick={() => window.dispatchEvent(new Event(OPEN_ANALYTICS_CHOICE))}>{tx("Analytics choice")}</button>
 }
 
 const COMPACT_SLUGS = ['help', 'privacy', 'terms', 'submit-listings']
@@ -39,14 +40,14 @@ export function Footer({ compact = false }) {
     return (
       <footer className="site-footer site-footer-compact">
         <PopularSearchChips />
-        <nav aria-label="Footer">
+        <nav aria-label={tx("Footer")}>
           {COMPACT_SLUGS.map((slug) => {
             const page = SITE_PAGES.find((item) => item.slug === slug)
             return page ? (
               <a key={page.slug} href={pageHref(page.slug)}>{page.title}</a>
             ) : null
           })}
-          <a href="#/sponsor">Sponsor LeasePath</a>
+          <a href="#/sponsor">{tx("Sponsor LeasePath")}</a>
           <AnalyticsChoiceLink />
         </nav>
       </footer>
@@ -70,7 +71,7 @@ export function Footer({ compact = false }) {
           </section>
         ))}
       </div>
-      <p className="footer-analytics-row"><a href="#/sponsor">Sponsor LeasePath</a> · <AnalyticsChoiceLink /></p>
+      <p className="footer-analytics-row"><a href="#/sponsor">{tx("Sponsor LeasePath")}</a> · <AnalyticsChoiceLink /></p>
     </footer>
   )
 }
@@ -79,8 +80,8 @@ export function InfoPage({ page }) {
   if (!page) {
     return (
       <div className="page">
-        <h1>That page is not on this list.</h1>
-        <a className="button" href="#/">Back to search</a>
+        <h1>{tx("That page is not on this list.")}</h1>
+        <a className="button" href="#/">{tx("Back to search")}</a>
       </div>
     )
   }
@@ -91,7 +92,7 @@ export function InfoPage({ page }) {
       {String(page.body || '').split(/\n\n+/).filter(Boolean).map((part) => (
         <p className="lede" key={part}>{part}</p>
       ))}
-      <a className="button button-quiet" href="#/">Back to search</a>
+      <a className="button button-quiet" href="#/">{tx("Back to search")}</a>
     </article>
   )
 }

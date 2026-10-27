@@ -1,10 +1,11 @@
+import { tx } from '../i18nAuto.js'
 import { CAVEAT, INTRO, LAST_REVIEWED, RED_FLAGS, REPORT, SCAM_TITLE, SOURCES } from '../scamAlerts.js'
 import { Icon } from './Icon.jsx'
 
 function Sources({ ids }) {
   return (
     <p className="fine after-sources">
-      Source:{' '}
+      {tx("Source:")}{' '}
       {ids.map((id, i) => {
         const source = SOURCES[id]
         if (!source) return null
@@ -24,21 +25,20 @@ function Sources({ ids }) {
 export function ScamAlertsPage() {
   return (
     <div className="page scam-page">
-      <p className="eyebrow">Resources</p>
+      <p className="eyebrow">{tx("Resources")}</p>
       <h1>{SCAM_TITLE}</h1>
       <p className="lede">{INTRO}</p>
 
       <aside className="notice-card" aria-labelledby="scam-nycha">
-        <h2 id="scam-nycha">NYCHA’s warning</h2>
+        <h2 id="scam-nycha">{tx("NYCHA’s warning")}</h2>
         <p>
-          NYCHA never charges a fee to apply for public housing or Section 8, or to process a Section 8 rental.
-          If anyone asks you for money while posing as NYCHA, report it.
+          {tx("NYCHA never charges a fee to apply for public housing or Section 8, or to process a Section 8 rental. If anyone asks you for money while posing as NYCHA, report it.")}
         </p>
         <Sources ids={['nychaEligibility']} />
       </aside>
 
       <section className="panel" aria-labelledby="scam-flags">
-        <h2 id="scam-flags">Red flags</h2>
+        <h2 id="scam-flags">{tx("Red flags")}</h2>
         <ul className="scam-flags">
           {RED_FLAGS.map((flag) => (
             <li key={flag.id} className="scam-flag">
@@ -51,7 +51,7 @@ export function ScamAlertsPage() {
       </section>
 
       <section className="panel" aria-labelledby="scam-report">
-        <h2 id="scam-report">How to report</h2>
+        <h2 id="scam-report">{tx("How to report")}</h2>
         <ul className="scam-report">
           {REPORT.map((item) => (
             <li key={item.id} className="scam-report-item">
@@ -60,7 +60,7 @@ export function ScamAlertsPage() {
               <div className="button-row">
                 {item.phone && (
                   <a className="button" href={`tel:${item.phone.replace(/\D/g, '')}`}>
-                    Call {item.phone}
+                    {tx("Call")} {item.phone}
                   </a>
                 )}
                 {item.href && (
@@ -75,7 +75,7 @@ export function ScamAlertsPage() {
         </ul>
       </section>
 
-      <p className="fine after-caveat">{CAVEAT} Last reviewed {LAST_REVIEWED}.</p>
+      <p className="fine after-caveat">{CAVEAT} {tx("Last reviewed")} {LAST_REVIEWED}.</p>
     </div>
   )
 }

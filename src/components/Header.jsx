@@ -1,9 +1,10 @@
+import { tx } from '../i18nAuto.js'
 import { useEffect, useState } from 'react'
 import { AccountDialog } from './AccountDialog.jsx'
 import { NAV_TABS } from '../navTabs.js'
 import { Icon } from './Icon.jsx'
 import { LanguageToggle } from './LanguageToggle.jsx'
-import { useLanguage } from './LanguageProvider.jsx'
+import { useLanguage } from './languageContext.js'
 
 export function Header({ canInstall, onInstall, planCurrent, session, signingIn, signInError, onGoogleCredential, onEmailAuth, onSignOut, navActive, onNav }) {
   const { t } = useLanguage()
@@ -18,11 +19,11 @@ export function Header({ canInstall, onInstall, planCurrent, session, signingIn,
 
   return (
     <header className="topbar">
-      <a className="brand" href="#/" aria-label="LeasePath home">
+      <a className="brand" href="#/" aria-label={tx("LeasePath home")}>
         <img className="brand-mark" src="/favicon.svg" alt="" width="36" height="36" />
-        <span className="brand-name" aria-hidden="true">Lease<span>Path</span></span>
+        <span className="brand-name" aria-hidden="true">{tx("Lease")}<span>{tx("Path")}</span></span>
       </a>
-      <p className="topbar-note">HASA · CityFHEPS · Section 8</p>
+      <p className="topbar-note">{tx("HASA · CityFHEPS · Section 8")}</p>
       {onNav && (
         <nav className="topnav" aria-label={t("nav.main")}>
           {NAV_TABS.map((tab) => (
@@ -46,7 +47,7 @@ export function Header({ canInstall, onInstall, planCurrent, session, signingIn,
             <span className="install-short">{t("install.short")}</span>
           </button>
         )}
-        <a className="plan-pill" href="#/plan" aria-label="My voucher" aria-current={planCurrent ? 'page' : undefined}>
+        <a className="plan-pill" href="#/plan" aria-label={tx("My voucher")} aria-current={planCurrent ? 'page' : undefined}>
           <span className="plan-mark" aria-hidden="true"><Icon name="heart" size={15} /></span>
           <span className="plan-pill-label" aria-hidden="true">{t("nav.plan")}</span>
           <Icon name="chevron" size={16} />
@@ -55,8 +56,8 @@ export function Header({ canInstall, onInstall, planCurrent, session, signingIn,
           <>
             <span className="account-email" title={session.email}>{session.email}</span>
             <button type="button" className="account-button" onClick={onSignOut}>
-              <span className="account-long">Sign out</span>
-              <span className="account-short">Sign out</span>
+              <span className="account-long">{tx("Sign out")}</span>
+              <span className="account-short">{tx("Sign out")}</span>
             </button>
           </>
         ) : (

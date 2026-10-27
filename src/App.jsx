@@ -1,3 +1,4 @@
+import { tx } from './i18nAuto.js'
 import { getTurnstileToken } from './turnstile.js'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './index.css'
@@ -5,7 +6,7 @@ import { AssistantSheet } from './components/AssistantSheet.jsx'
 import { DetailPage } from './components/DetailPage.jsx'
 import { BlogList, BlogPost } from './components/BlogPage.jsx'
 import { Dock } from './components/Dock.jsx'
-import { useLanguage } from './components/LanguageProvider.jsx'
+import { useLanguage } from './components/languageContext.js'
 import { looksLikeSpanish, readLang, t as i18nT } from './i18n.js'
 import { Footer, InfoPage } from './components/Footer.jsx'
 import { Header } from './components/Header.jsx'
@@ -230,13 +231,13 @@ export default function App() {
 
   const [assistantListingId, setAssistantListingId] = useState(null)
   const [messages, setMessages] = useState(() => [welcomeMessage(readLang())])
-  useEffect(() => {
-    // Refresh Ruby welcome when the language toggles and the person has not started chatting yet.
-    setMessages((current) => {
-      if (current.length === 1 && current[0]?.local) return [welcomeMessage(lang)]
-      return current
-    })
-  }, [lang])
+  // Refresh Ruby's welcome when the language toggles and the person has not started chatting yet.
+  // Adjusted during render (not in an effect) so it never paints the old language first.
+  const [welcomeLang, setWelcomeLang] = useState(lang)
+  if (welcomeLang !== lang) {
+    setWelcomeLang(lang)
+    if (messages.length === 1 && messages[0]?.local) setMessages([welcomeMessage(lang)])
+  }
   const [input, setInput] = useState('')
   const [pending, setPending] = useState(false)
   // Off by default. The choice is saved on this device for this person, and cleared by Delete my data.
@@ -312,7 +313,8 @@ export default function App() {
   }, [])
 
   const stageRef = useRef(null)
-  const scrollStage = () => stageRef.current?.scrollTo({ top: 0 })
+  // The window scrolls now (not main.stage), so route changes reset the window.
+  const scrollStage = () => window.scrollTo({ top: 0 })
 
   useEffect(() => onInstallAvailable(setCanInstall), [])
 
@@ -453,7 +455,7 @@ export default function App() {
 
   const go = (hash) => {
     if (`#${window.location.hash.replace(/^#/, '')}` === hash || (hash === '#/' && !window.location.hash)) {
-      stageRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
+      window.scrollTo({ top: 0, behavior: 'smooth' })
       return
     }
     window.location.hash = hash
@@ -795,7 +797,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <a className="skip-link" href="#main-content">Skip to main content</a>
+      <a className="skip-link" href="#main-content">{tx("Skip to main content")}</a>
       <Header
         navActive={dockActive}
         onNav={navSelect}
@@ -849,11 +851,11 @@ export default function App() {
         )}
         {route.name === 'detail' && !listing && (
           <div className="empty">
-            <h1>That sample is not on this list.</h1>
-            <button type="button" className="button" onClick={() => go('#/')}>Back to search</button>
+            <h1>{tx("That sample is not on this list.")}</h1>
+            <button type="button" className="button" onClick={() => go('#/')}>{tx("Back to search")}</button>
           </div>
         )}
-        {route.name === 'steps' && <StepsPage checked={checked} onToggle={toggleStep} />}
+        {route.name === 'steps' && <StepsPage checked={checked} onToggle={toggleStep} onAsk={() => { setAssistantListingId(null); setAssistantOpen(true) }} />}
         {route.name === 'after' && <AfterYouFindPage />}
         {route.name === 'pack' && <CaseworkerPackPage />}
         {route.name === 'prep' && <InspectionPrepPage />}

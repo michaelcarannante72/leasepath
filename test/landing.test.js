@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict'
+import { untx } from './source-text.js'
 import { readFileSync, statSync } from 'node:fs'
 import test from 'node:test'
 import { HERO_PHOTO, NOT_AFFILIATED, landingSample } from '../src/landing.js'
 
-const hero = readFileSync(new URL('../src/components/LandingHero.jsx', import.meta.url), 'utf8')
+const hero = untx(readFileSync(new URL('../src/components/LandingHero.jsx', import.meta.url), 'utf8'))
 const css = readFileSync(new URL('../src/index.css', import.meta.url), 'utf8')
 
 test('the not-affiliated line is rendered in the hero text and never hidden on either layout', () => {

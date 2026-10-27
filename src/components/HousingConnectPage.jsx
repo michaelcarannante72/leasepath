@@ -1,3 +1,4 @@
+import { tx } from '../i18nAuto.js'
 import { useEffect, useMemo, useState } from 'react'
 import {
   BOROUGH_CODES,
@@ -7,7 +8,7 @@ import {
   filterByBorough,
 } from '../data/housingConnect.js'
 import { Icon } from './Icon.jsx'
-import { useLanguage } from './LanguageProvider.jsx'
+import { useLanguage } from './languageContext.js'
 
 function LotteryCard({ lottery }) {
   const { t } = useLanguage()
@@ -19,7 +20,7 @@ function LotteryCard({ lottery }) {
           <Icon name="pin" size={14} />
           <span>{lottery.borough}</span>
           {lottery.unitCount != null && <span aria-hidden="true"> · </span>}
-          {lottery.unitCount != null && <span>{lottery.unitCount} units</span>}
+          {lottery.unitCount != null && <span>{lottery.unitCount} {tx("units")}</span>}
         </p>
         {lottery.addresses.length > 0 && (
           <p className="hc-card-address">{lottery.addresses.slice(0, 3).join(' · ')}{lottery.addresses.length > 3 ? ' · …' : ''}</p>
@@ -36,7 +37,7 @@ function LotteryCard({ lottery }) {
         )}
         {lottery.unitSizes.length > 0 && (
           <p className="hc-sizes">
-            Sizes:{' '}
+            {tx("Sizes:")}{' '}
             {lottery.unitSizes.map((s) => `${s.label} (${s.units})`).join(' · ')}
           </p>
         )}
@@ -64,8 +65,6 @@ export function HousingConnectPage() {
 
   useEffect(() => {
     let cancelled = false
-    setStatus('loading')
-    setError('')
     loadActiveLotteries()
       .then((list) => {
         if (cancelled) return
@@ -143,11 +142,11 @@ export function HousingConnectPage() {
       </p>
 
       <p className="source-line">
-        Source:{' '}
+        {tx("Source:")}{' '}
         <a href={OPEN_DATA_SOURCE.url} target="_blank" rel="noopener noreferrer">
           {OPEN_DATA_SOURCE.title}
         </a>
-        . Dataset vy5i-a666 (lotteries) and nibs-na6y (addresses). No income dollar figures shown — only AMI tier names and unit counts.
+        {tx(". Dataset vy5i-a666 (lotteries) and nibs-na6y (addresses). No income dollar figures shown — only AMI tier names and unit counts.")}
       </p>
     </div>
   )

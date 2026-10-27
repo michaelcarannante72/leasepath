@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef } from 'react'
 import { Icon } from './Icon.jsx'
-import { useLanguage } from './LanguageProvider.jsx'
+import { useLanguage } from './languageContext.js'
 
 const FOCUSABLE = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
 

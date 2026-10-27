@@ -1,3 +1,4 @@
+import { tx } from '../i18nAuto.js'
 import { useEffect, useState } from 'react'
 import { readConsent, writeConsent } from '../analytics.js'
 
@@ -20,12 +21,12 @@ export function AnalyticsConsent({ onChange }) {
   return (
     <aside className="cookie-prompt analytics-consent" aria-labelledby="analytics-title">
       <div>
-        <h2 id="analytics-title">Help improve LeasePath?</h2>
-        <p>Allow Google Analytics to count which pages are opened. It never runs on HASA pages or in Ruby’s chat, and never sees your voucher, income, or questions.</p>
+        <h2 id="analytics-title">{tx("Help improve LeasePath?")}</h2>
+        <p>{tx("Allow Google Analytics to count which pages are opened. It never runs on HASA pages or in Ruby’s chat, and never sees your voucher, income, or questions.")}</p>
       </div>
       <div className="cookie-actions">
-        <button type="button" className="button button-quiet" onClick={() => choose('denied')}>No thanks</button>
-        <button type="button" className="button" onClick={() => choose('granted')}>Allow</button>
+        <button type="button" className="button button-quiet" onClick={() => choose('denied')}>{tx("No thanks")}</button>
+        <button type="button" className="button" onClick={() => choose('granted')}>{tx("Allow")}</button>
       </div>
     </aside>
   )

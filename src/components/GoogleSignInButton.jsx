@@ -1,3 +1,4 @@
+import { tx } from '../i18nAuto.js'
 import { useEffect, useRef, useState } from 'react'
 import { loadGoogleSignIn } from '../googleSignIn.js'
 
@@ -40,10 +41,10 @@ export function GoogleSignInButton({ clientId, nonce, onCredential, active = tru
   }, [active, clientId, nonce, onCredential])
 
   if (!clientId) {
-    return <p className="account-empty">This server does not have a Google client id yet, so the button cannot load.</p>
+    return <p className="account-empty">{tx("This server does not have a Google client id yet, so the button cannot load.")}</p>
   }
   if (!nonce) {
-    return <p className="account-empty">Sign-in is still loading. Wait a moment and try again.</p>
+    return <p className="account-empty">{tx("Sign-in is still loading. Wait a moment and try again.")}</p>
   }
 
   return (

@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict'
+import { untx } from './source-text.js'
 import { readFileSync } from 'node:fs'
 import test from 'node:test'
 import { COUNT_PATTERN, criteriaRedactPlugin, redactRules } from '../server/criteriaRedact.js'
 
-const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8')
+const read = (path) => untx(readFileSync(new URL(`../${path}`, import.meta.url), 'utf8'))
 
 test('NYCHA voucher and owner counts never reach Ruby’s prompt', async () => {
   const { SYSTEM } = await import('../server/guide.js')

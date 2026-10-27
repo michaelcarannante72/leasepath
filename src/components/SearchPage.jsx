@@ -1,17 +1,12 @@
+import { tx } from '../i18nAuto.js'
 import { Building } from './Building.jsx'
 import { Icon } from './Icon.jsx'
-import { LandingHero, LandingSteps } from './LandingHero.jsx'
+import { LandingHero } from './LandingHero.jsx'
 import { ACCESS_HRA_URL, BOROUGHS, HOMEBASE_URL } from '../data.js'
 import { VoucherReadyUnits } from './VoucherReadyUnits.jsx'
 import { SponsoredSlot } from './SponsoredSlot.jsx'
 import { PROGRAMS, cardFlags, cardLabel, cardText, money, sizeLabel, utilityLabel } from '../fit.js'
-import { useLanguage } from './LanguageProvider.jsx'
-
-const SORT_LABELS = {
-  'rent-asc': 'Rent, low to high',
-  'rent-desc': 'Rent, high to low',
-  neighborhood: 'Neighborhood',
-}
+import { useLanguage } from './languageContext.js'
 
 const APPLY_DOORS = [
   {
@@ -75,7 +70,6 @@ export function SearchPage({
   planFlags,
   intent,
   onIntent,
-  onAsk,
 }) {
   const { t } = useLanguage()
   const chips = activeChips(filters, t)
@@ -83,33 +77,25 @@ export function SearchPage({
 
   const showApartments = (event) => {
     event.preventDefault()
-    const results = document.getElementById('search-results')
-    const stage = results?.closest('.stage')
-    if (!results || !stage) return
-    const top = results.getBoundingClientRect().top - stage.getBoundingClientRect().top + stage.scrollTop - 8
-    stage.scrollTo({ top, behavior: 'smooth' })
+    // The window scrolls; html scroll-padding-top keeps the sticky header off the target.
+    document.getElementById('search-results')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   const scrollToSearch = () => {
-    const panel = document.querySelector('.landing-hero')
-    const stage = panel?.closest('.stage')
-    if (!panel || !stage) return
-    const top = panel.getBoundingClientRect().top - stage.getBoundingClientRect().top + stage.scrollTop - 8
-    stage.scrollTo({ top, behavior: 'smooth' })
+    const panel = document.querySelector('.home-search')
+    if (!panel) return
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' })
     panel.querySelector('input')?.focus({ preventScroll: true })
   }
 
   return (
     <div className="landing">
       <LandingHero onCheck={scrollToSearch} />
-      <LandingSteps onFind={scrollToSearch} onAsk={onAsk} />
-      <VoucherReadyUnits compact />
-      <SponsoredSlot placement="search" />
-      <section className="landing-hero search-band" aria-labelledby="search-title">
-        <div className="hero-copy">
+      {/* One compact search panel. The pitch and the 3-step strip now open the Steps page. */}
+      <section className="home-search" aria-labelledby="search-title">
+        <div className="home-search-head">
           <h2 id="search-title" className="search-title">{t("nav.search")}</h2>
-          <p className="pitch">Brokers who say “I’ll call you back” and then transfer you are the reason this exists.</p>
-          <div className="program-chips" role="group" aria-label="Filter by voucher">
+          <div className="program-chips" role="group" aria-label={tx("Filter by voucher")}>
             {PROGRAMS.map((program) => (
               <button
                 key={program}
@@ -122,25 +108,23 @@ export function SearchPage({
               </button>
             ))}
           </div>
-          <div className="audience" role="group" aria-label="Do you have a shopping letter?">
+          <div className="audience audience-compact" role="group" aria-label={tx("Do you have a shopping letter?")}>
             <button
               type="button"
               className={intent === 'letter' ? 'is-on' : ''}
               aria-pressed={intent === 'letter'}
-              aria-label="I have a shopping letter from HRA and am looking for an apartment"
               onClick={() => onIntent('letter')}
             >
-              I have a shopping letter
-              <span>from HRA, looking for a place</span>
+              {tx("I have a shopping letter")}
+              <span>{tx("from HRA, looking for a place")}</span>
             </button>
             <button
               type="button"
               className={intent === 'apply' ? 'is-on' : ''}
               aria-pressed={intent === 'apply'}
-              aria-label="I need to apply for a housing voucher"
               onClick={() => onIntent('apply')}
             >
-              I need to apply
+              {tx("I need to apply")}
             </button>
           </div>
         </div>
@@ -157,8 +141,8 @@ export function SearchPage({
                 <input
                   value={filters.q}
                   onChange={(event) => onChange({ q: event.target.value })}
-                  placeholder="Try Crown Heights"
-                  aria-label="Neighborhood or ZIP"
+                  placeholder={tx("Try Crown Heights")}
+                  aria-label={tx("Neighborhood or ZIP")}
                 />
               </span>
             </label>
@@ -175,30 +159,30 @@ export function SearchPage({
             <label className={`search-field${filters.program !== 'All' ? ' is-set' : ''}`}>
               <span>{t("search.program")}</span>
               <select value={filters.program} onChange={(event) => onChange({ program: event.target.value })} aria-label={t("search.program")}>
-                <option value="All">All three</option>
+                <option value="All">{tx("All three")}</option>
                 {PROGRAMS.map((program) => (
                   <option key={program}>{program}</option>
                 ))}
               </select>
             </label>
             <label className={`search-field rent-field${filters.maxRent ? ' is-set' : ''}`}>
-              <span>Max monthly rent</span>
+              <span>{tx("Max monthly rent")}</span>
               <span className="rent-input">
                 <span>$</span>
                 <input
                   inputMode="numeric"
                   value={filters.maxRent}
                   onChange={(event) => onChange({ maxRent: event.target.value.replace(/[^\d]/g, '') })}
-                  placeholder="No limit"
-                  aria-label="Maximum monthly rent"
+                  placeholder={tx("No limit")}
+                  aria-label={tx("Maximum monthly rent")}
                 />
               </span>
             </label>
           </div>
           <div className="search-controls search-controls-extra">
             <label className={`search-field${filters.borough !== 'All' ? ' is-set' : ''}`}>
-              <span>Borough</span>
-              <select value={filters.borough} onChange={(event) => onChange({ borough: event.target.value })} aria-label="Borough">
+              <span>{tx("Borough")}</span>
+              <select value={filters.borough} onChange={(event) => onChange({ borough: event.target.value })} aria-label={tx("Borough")}>
                 <option value="All">{t("search.allBoroughs")}</option>
                 {BOROUGHS.map((borough) => (
                   <option key={borough}>{borough}</option>
@@ -206,7 +190,7 @@ export function SearchPage({
               </select>
             </label>
             <label className={`search-field${filters.sort !== 'rent-asc' ? ' is-set' : ''}`}>
-              <span>Sort</span>
+              <span>{tx("Sort")}</span>
               <select value={filters.sort} onChange={(event) => onChange({ sort: event.target.value })} aria-label={t("search.filters")}>
                 <option value="rent-asc">{t("search.sort.rentAsc")}</option>
                 <option value="rent-desc">{t("search.sort.rentDesc")}</option>
@@ -225,19 +209,19 @@ export function SearchPage({
           {chips.length > 0 && (
             <div className="filter-chips">
               {chips.map((chip) => (
-                <button key={chip.key} type="button" className="filter-chip" onClick={() => onChange(chip.patch)} aria-label={`Remove ${chip.label}`}>
+                <button key={chip.key} type="button" className="filter-chip" onClick={() => onChange(chip.patch)} aria-label={tx('Remove {label}', { label: chip.label })}>
                   {chip.label}
                   <span aria-hidden="true">×</span>
                 </button>
               ))}
               {chips.length > 1 && (
                 <button type="button" className="filter-chip filter-chip-clear" onClick={() => onChange({ q: '', program: 'All', borough: 'All', beds: 'Any', maxRent: '', savedOnly: false, sort: 'rent-asc' })}>
-                  Clear all
+                  {tx("Clear all")}
                 </button>
               )}
             </div>
           )}
-          <button className="show-apartments" type="submit">Show apartments</button>
+          <button className="show-apartments" type="submit">{tx("Show apartments")}</button>
         </form>
         )}
       </section>
@@ -245,8 +229,8 @@ export function SearchPage({
       <div id="search-results">
         <div className="results-bar">
           <p aria-live="polite">
-            <strong>{listings.length}</strong> practice {listings.length === 1 ? 'apartment' : 'apartments'}
-            {listings.length !== total ? ` of ${total}` : ''}
+            <strong>{listings.length}</strong> {tx("practice")} {listings.length === 1 ? tx('apartment') : tx('apartments')}
+            {listings.length !== total ? ` ${tx('of')} ${total}` : ''}
           </p>
           <button
             type="button"
@@ -255,16 +239,16 @@ export function SearchPage({
             onClick={() => onChange({ savedOnly: !filters.savedOnly })}
           >
             <Icon name={savedCount ? 'heartFill' : 'heart'} size={15} />
-            {savedCount} saved
+            {savedCount} {tx("saved")}
           </button>
-          <p className="fine">Practice listings. A worker still has to confirm a real unit.</p>
+          <p className="fine">{tx("Practice listings. A worker still has to confirm a real unit.")}</p>
         </div>
         {listings.length === 0 ? (
           <div className="empty">
-            <h2>Nothing matches these filters.</h2>
-            <p>Clear the rent ceiling or switch the voucher to all three.</p>
+            <h2>{tx("Nothing matches these filters.")}</h2>
+            <p>{tx("Clear the rent ceiling or switch the voucher to all three.")}</p>
             <button type="button" className="button" onClick={() => onChange({ q: '', program: 'All', borough: 'All', beds: 'Any', maxRent: '', savedOnly: false, sort: 'rent-asc' })}>
-              Reset filters
+              {tx("Reset filters")}
             </button>
           </div>
         ) : (
@@ -285,8 +269,8 @@ export function SearchPage({
                           </p>
                         ))}
                         <div className="card-top">
-                          <p className="rent">{money(listing.rent)}<span>/mo</span></p>
-                          <p className="size">{sizeLabel(listing)} · {listing.baths} bath</p>
+                          <p className="rent">{money(listing.rent)}<span>{tx("/mo")}</span></p>
+                          <p className="size">{sizeLabel(listing)} · {listing.baths} {tx("bath")}</p>
                         </div>
                         <h2>{listing.neighborhood}</h2>
                         <p className="where">
@@ -304,7 +288,7 @@ export function SearchPage({
                       type="button"
                       className={`save ${savedHere ? 'is-saved' : ''}`}
                       aria-pressed={savedHere}
-                      aria-label={savedHere ? 'Remove from saved apartments' : 'Save this apartment'}
+                      aria-label={savedHere ? tx('Remove from saved apartments') : tx('Save this apartment')}
                       onClick={() => onToggleSave(listing.id)}
                     >
                       <Icon name={savedHere ? 'heartFill' : 'heart'} size={18} />
@@ -316,6 +300,9 @@ export function SearchPage({
           </ul>
         )}
       </div>
+      {/* Landlord-submitted units and the sponsor slot sit after the practice listings. */}
+      <VoucherReadyUnits compact />
+      <SponsoredSlot placement="search" />
     </div>
   )
 }

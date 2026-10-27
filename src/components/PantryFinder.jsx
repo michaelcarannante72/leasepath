@@ -1,3 +1,4 @@
+import { tx } from '../i18nAuto.js'
 import { useState } from 'react'
 import { choosePantries, relation, whenLabel } from '../pantrySchedule.js'
 
@@ -38,8 +39,8 @@ function PantryCard({ eyebrow, place, now }) {
       {pantry.placeNote && <p>{pantry.placeNote}</p>}
       {pantry.note && <p>{pantry.note}</p>}
       <p className="pantry-actions">
-        {call && <a href={call}>Call {pantry.phone}</a>}
-        <a href={directions} target="_blank" rel="noreferrer">Directions</a>
+        {call && <a href={call}>{tx("Call")} {pantry.phone}</a>}
+        <a href={directions} target="_blank" rel="noreferrer">{tx("Directions")}</a>
       </p>
     </article>
   )
@@ -130,29 +131,29 @@ export function PantryFinder() {
 
   return (
     <section className="pantry-finder" aria-labelledby="pantry-finder-title">
-      <h2 id="pantry-finder-title">Pantries near you</h2>
-      <p className="lede">No sign-in. This uses the Food Help NYC list. A location you share stays on this phone and is used to measure distance. An address you type is sent to the NYC Planning Labs address search to find the spot. LeasePath does not save either one.</p>
+      <h2 id="pantry-finder-title">{tx("Pantries near you")}</h2>
+      <p className="lede">{tx("No sign-in. This uses the Food Help NYC list. A location you share stays on this phone and is used to measure distance. An address you type is sent to the NYC Planning Labs address search to find the spot. LeasePath does not save either one.")}</p>
       <form className="finder-form" onSubmit={searchAddress}>
         <label>
-          <span>Address or intersection</span>
+          <span>{tx("Address or intersection")}</span>
           <input
             value={address}
             onChange={(event) => setAddress(event.target.value)}
-            placeholder="Street and borough"
+            placeholder={tx("Street and borough")}
             autoComplete="street-address"
-            aria-label="Address or intersection"
+            aria-label={tx("Address or intersection")}
           />
         </label>
         <div className="finder-buttons">
-          <button type="submit" className="button" disabled={status === 'loading' || status === 'locating'}>Find pantries</button>
+          <button type="submit" className="button" disabled={status === 'loading' || status === 'locating'}>{tx("Find pantries")}</button>
           <button type="button" className="button button-quiet" onClick={useLocation} disabled={status === 'loading' || status === 'locating'}>
-            Use my location
+            {tx("Use my location")}
           </button>
         </div>
       </form>
       <div aria-live="polite">
-        {status === 'locating' && <p>Finding that spot…</p>}
-        {status === 'loading' && <p>Checking the Food Help NYC list…</p>}
+        {status === 'locating' && <p>{tx("Finding that spot…")}</p>}
+        {status === 'loading' && <p>{tx("Checking the Food Help NYC list…")}</p>}
         {error && <p className="form-error">{error}</p>}
         {result?.nearest && (
           <div className="pantry-results">
@@ -160,11 +161,11 @@ export function PantryFinder() {
             {result.next ? (
               <PantryCard eyebrow="Next one happening near you" place={result.next} now={now} />
             ) : (
-              <p>No other pantry with listed hours is near this spot.</p>
+              <p>{tx("No other pantry with listed hours is near this spot.")}</p>
             )}
             <p className="fine">
-              Hours come from {checkedLabel ? `Food Help NYC, checked ${checkedLabel}` : 'Food Help NYC'}. They can change. Call before you go.
-              {' '}Measured from {result.placeLabel}.
+              {tx("Hours come from")} {checkedLabel ? `Food Help NYC, checked ${checkedLabel}` : 'Food Help NYC'}{tx(". They can change. Call before you go.")}
+              {' '}{tx("Measured from")} {result.placeLabel}.
             </p>
           </div>
         )}

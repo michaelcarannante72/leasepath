@@ -1,14 +1,14 @@
+import { tx } from '../i18nAuto.js'
 import { ROADMAP_STEPS } from '../data/shelterRoadmap.js'
 import { Icon } from './Icon.jsx'
 
 export function ShelterRoadmapPage() {
   return (
     <article className="page shelter-roadmap">
-      <p className="eyebrow">Roadmap</p>
-      <h1>Shelter to housing</h1>
+      <p className="eyebrow">{tx("Roadmap")}</p>
+      <h1>{tx("Shelter to housing")}</h1>
       <p className="lede">
-        A plain timeline from shelter to keys. You may qualify for different paths — your caseworker and the program office decide.
-        Links open tools already in LeasePath. Nothing here is sent to a server.
+        {tx("A plain timeline from shelter to keys. You may qualify for different paths — your caseworker and the program office decide. Links open tools already in LeasePath. Nothing here is sent to a server.")}
       </p>
 
       <ol className="roadmap-timeline">
@@ -31,11 +31,11 @@ export function ShelterRoadmapPage() {
       </ol>
 
       <p className="fine">
-        Official shelter and voucher rules live on DHS, HRA, NYCHA, HPD, and HUD sites linked from Resources. This page is a practice guide, not an agency notice.
+        {tx("Official shelter and voucher rules live on DHS, HRA, NYCHA, HPD, and HUD sites linked from Resources. This page is a practice guide, not an agency notice.")}
       </p>
       <p className="card-actions">
-        <a className="button" href="#/steps">Open Steps</a>
-        <a className="button button-quiet" href="#/resources">Resources</a>
+        <a className="button" href="#/steps">{tx("Open Steps")}</a>
+        <a className="button button-quiet" href="#/resources">{tx("Resources")}</a>
       </p>
     </article>
   )

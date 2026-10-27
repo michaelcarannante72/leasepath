@@ -1,3 +1,4 @@
+import { tx } from '../i18nAuto.js'
 import { useState } from 'react'
 
 const CHOICE_KEY = 'leasepath.cookies'
@@ -24,12 +25,12 @@ export function CookiePrompt() {
   return (
     <aside className="cookie-prompt" aria-labelledby="cookie-title">
       <div>
-        <h2 id="cookie-title">Cookies on this phone</h2>
-        <p>LeasePath uses cookies to keep you signed in, to protect Google sign-in, and to count free questions to Ruby. They are not used to sell information. If you tap Allow on the analytics prompt, Google Analytics sets its own cookies (_ga) for analytics only. There are no advertising cookies and no sale of information. OK only hides this reminder.</p>
+        <h2 id="cookie-title">{tx("Cookies on this phone")}</h2>
+        <p>{tx("LeasePath uses cookies to keep you signed in, to protect Google sign-in, and to count free questions to Ruby. They are not used to sell information. If you tap Allow on the analytics prompt, Google Analytics sets its own cookies (_ga) for analytics only. There are no advertising cookies and no sale of information. OK only hides this reminder.")}</p>
       </div>
       <div className="cookie-actions">
-        <a href="/privacy">Privacy notice</a>
-        <a href="#/info/cookies">Cookie details</a>
+        <a href="/privacy">{tx("Privacy notice")}</a>
+        <a href="#/info/cookies">{tx("Cookie details")}</a>
         <button type="button" className="button" onClick={accept}>OK</button>
       </div>
     </aside>

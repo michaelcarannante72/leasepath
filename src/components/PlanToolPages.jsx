@@ -1,4 +1,4 @@
-import { useLanguage } from './LanguageProvider.jsx'
+import { useLanguage } from './languageContext.js'
 import { IncomePrescreen } from './IncomePrescreen.jsx'
 import { MatchAlertsCard } from './MatchAlertsCard.jsx'
 

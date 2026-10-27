@@ -1,3 +1,4 @@
+import { tx } from '../i18nAuto.js'
 import { slotsFor } from '../data/sponsors.js'
 import { Icon } from './Icon.jsx'
 
@@ -10,8 +11,8 @@ export function SponsoredSlot({ placement, config }) {
   if (!slots.length) return null
 
   return (
-    <aside className="sponsor-placement" aria-label="Sponsored">
-      <p className="sponsor-placement-label">Sponsored</p>
+    <aside className="sponsor-placement" aria-label={tx("Sponsored")}>
+      <p className="sponsor-placement-label">{tx("Sponsored")}</p>
       <ul className="sponsor-placement-list">
         {slots.map((slot) => (
           <li key={slot.id} className="sponsor-placement-card">
@@ -26,8 +27,8 @@ export function SponsoredSlot({ placement, config }) {
         ))}
       </ul>
       <p className="sponsor-placement-note">
-        Paid placement. Does not change Ruby’s answers or Search rankings.{' '}
-        <a href="#/sponsor">Sponsor LeasePath</a>
+        {tx("Paid placement. Does not change Ruby’s answers or Search rankings.")}{' '}
+        <a href="#/sponsor">{tx("Sponsor LeasePath")}</a>
       </p>
     </aside>
   )

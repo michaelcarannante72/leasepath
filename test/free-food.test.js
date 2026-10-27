@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { untx } from './source-text.js'
 import { readFileSync } from 'node:fs'
 import test from 'node:test'
 import {
@@ -7,7 +8,7 @@ import {
 } from '../src/freeFood.js'
 import { trackView } from '../src/analytics.js'
 
-const page = readFileSync(new URL('../src/components/ResourcesPage.jsx', import.meta.url), 'utf8')
+const page = untx(readFileSync(new URL('../src/components/ResourcesPage.jsx', import.meta.url), 'utf8'))
 const all = COMMUNITY_SECTIONS.flatMap((section) => section.items)
 const byName = Object.fromEntries(all.map((item) => [item.name, item]))
 

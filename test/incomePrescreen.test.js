@@ -1,3 +1,4 @@
+import { untx } from './source-text.js'
 import assert from 'node:assert/strict'
 import { existsSync, readFileSync } from 'node:fs'
 import test from 'node:test'
@@ -11,7 +12,7 @@ import { assessListing } from '../src/fit.js'
 import { LISTINGS } from '../src/data.js'
 import { normalizeHousehold, rentFlags, sourceText } from '../src/rentCheck.js'
 
-const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8')
+const read = (path) => untx(readFileSync(new URL(`../${path}`, import.meta.url), 'utf8'))
 
 // The figures the housing specialist stated in the request. The data file is the source of truth. This test
 // is the discrepancy check: if the file and these figures ever differ, it fails and someone must look.

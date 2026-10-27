@@ -1,3 +1,4 @@
+import { tx } from '../i18nAuto.js'
 import { useEffect, useMemo, useState } from 'react'
 import { VOUCHER_PROGRAMS } from '../fit.js'
 import {
@@ -102,26 +103,25 @@ export function DocsDeadlinePage() {
 
   return (
     <div className="page docs-page">
-      <p className="eyebrow">Steps</p>
-      <h1>Documents and deadlines</h1>
+      <p className="eyebrow">{tx("Steps")}</p>
+      <h1>{tx("Documents and deadlines")}</h1>
       <p className="lede">
-        Checklist for your shopping packet, plus dates for the letter, inspection, and lease signing.
-        You may qualify for help from your worker — this page does not decide that.
+        {tx("Checklist for your shopping packet, plus dates for the letter, inspection, and lease signing. You may qualify for help from your worker — this page does not decide that.")}
       </p>
       <aside className="docs-privacy" role="note">
         <p>{PRIVACY_NOTE}</p>
       </aside>
 
       <section className="panel" aria-labelledby="docs-program">
-        <h2 id="docs-program">Your voucher</h2>
+        <h2 id="docs-program">{tx("Your voucher")}</h2>
         <label className="docs-field">
-          <span>Program</span>
+          <span>{tx("Program")}</span>
           <select
             value={state.program}
             onChange={(event) => setProgram(event.target.value)}
-            aria-label="Voucher program"
+            aria-label={tx("Voucher program")}
           >
-            <option value="">Pick a program</option>
+            <option value="">{tx("Pick a program")}</option>
             {VOUCHER_PROGRAMS.map((program) => (
               <option key={program} value={program}>{program}</option>
             ))}
@@ -129,14 +129,14 @@ export function DocsDeadlinePage() {
         </label>
         {letterDays > 0 && (
           <p className="fine">
-            {state.program} shopping letters are often good for {letterDays} days from the issue date (confirm on your letter and with DSS/HRA or your worker).
+            {state.program} {tx("shopping letters are often good for")} {letterDays} {tx("days from the issue date (confirm on your letter and with DSS/HRA or your worker).")}
           </p>
         )}
       </section>
 
       <section className="panel docs-checklist" aria-labelledby="docs-check">
-        <h2 id="docs-check">Document checklist</h2>
-        <p className="fine">{done} of {total} ready. Check items as you gather them — checks stay on this phone.</p>
+        <h2 id="docs-check">{tx("Document checklist")}</h2>
+        <p className="fine">{done} {tx("of")} {total} {tx("ready. Check items as you gather them — checks stay on this phone.")}</p>
         <ul className="docs-check-items">
           {docs.map((doc) => {
             const on = !!state.checked[doc.id]
@@ -154,49 +154,49 @@ export function DocsDeadlinePage() {
       </section>
 
       <section className="panel" aria-labelledby="docs-deadlines">
-        <h2 id="docs-deadlines">Deadline tracker</h2>
+        <h2 id="docs-deadlines">{tx("Deadline tracker")}</h2>
         <div className="docs-deadline-grid">
           <label className="docs-field">
-            <span>Shopping letter issue date</span>
+            <span>{tx("Shopping letter issue date")}</span>
             <input type="date" value={state.deadlines.letterIssued} onChange={(event) => setDeadline('letterIssued', event.target.value)} />
           </label>
           <label className="docs-field">
-            <span>Shopping letter expires</span>
+            <span>{tx("Shopping letter expires")}</span>
             <input type="date" value={state.deadlines.letterExpires} onChange={(event) => setDeadline('letterExpires', event.target.value)} />
           </label>
           <label className="docs-field">
-            <span>Inspection / walkthrough</span>
+            <span>{tx("Inspection / walkthrough")}</span>
             <input type="date" value={state.deadlines.inspection} onChange={(event) => setDeadline('inspection', event.target.value)} />
           </label>
           <label className="docs-field">
-            <span>Lease signing</span>
+            <span>{tx("Lease signing")}</span>
             <input type="date" value={state.deadlines.leaseSigning} onChange={(event) => setDeadline('leaseSigning', event.target.value)} />
           </label>
         </div>
         <div className="docs-actions">
-          <button type="button" className="button" onClick={onExportIcs}>Export calendar (.ics)</button>
-          <button type="button" className="button button-quiet" onClick={onRemind}>Remind me on this phone</button>
+          <button type="button" className="button" onClick={onExportIcs}>{tx("Export calendar (.ics)")}</button>
+          <button type="button" className="button button-quiet" onClick={onRemind}>{tx("Remind me on this phone")}</button>
         </div>
-        <p className="fine">Calendar export works offline. Local notifications only fire while this browser still has the page’s timer — use .ics for a lasting reminder.</p>
+        <p className="fine">{tx("Calendar export works offline. Local notifications only fire while this browser still has the page’s timer — use .ics for a lasting reminder.")}</p>
       </section>
 
       <section className="panel" aria-labelledby="docs-notes">
-        <h2 id="docs-notes">Notes for you</h2>
+        <h2 id="docs-notes">{tx("Notes for you")}</h2>
         <label className="docs-field">
-          <span className="visually-hidden">Private notes</span>
+          <span className="visually-hidden">{tx("Private notes")}</span>
           <textarea
             rows={3}
             value={state.notes}
             onChange={(event) => setState((current) => ({ ...current, notes: event.target.value.slice(0, 2000) }))}
-            placeholder="Caseworker name, appointment times — stays on this phone"
+            placeholder={tx("Caseworker name, appointment times — stays on this phone")}
           />
         </label>
       </section>
 
       <div className="docs-footer-actions">
-        <button type="button" className="button button-quiet docs-delete" onClick={onDeleteAll}>Delete all on this phone</button>
-        <a className="button button-quiet" href="#/steps">Back to Steps</a>
-        <a className="button button-quiet" href="#/caseworker-pack">Caseworker pack</a>
+        <button type="button" className="button button-quiet docs-delete" onClick={onDeleteAll}>{tx("Delete all on this phone")}</button>
+        <a className="button button-quiet" href="#/steps">{tx("Back to Steps")}</a>
+        <a className="button button-quiet" href="#/caseworker-pack">{tx("Caseworker pack")}</a>
       </div>
       {status ? <p className="docs-status" role="status">{status}</p> : null}
     </div>

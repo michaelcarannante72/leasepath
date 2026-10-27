@@ -1,3 +1,4 @@
+import { tx } from '../i18nAuto.js'
 import { useEffect, useRef, useState } from 'react'
 import { FREE_COACH_QUESTIONS } from '../coachLimit.js'
 import {
@@ -179,11 +180,11 @@ export function AssistantSheet({
       <section ref={sheet} className="sheet ruby-theme" role="dialog" aria-modal="true" aria-labelledby="assistant-title">
         <header className="sheet-head">
           <div>
-            <p className="eyebrow">Resource Navigator</p>
-            <h2 id="assistant-title">Ask Ruby</h2>
-            <p className="sheet-sub">Short, straight answers on vouchers. Ruby is an AI assistant. Not affiliated with HRA, NYCHA, or any government agency.</p>
+            <p className="eyebrow">{tx("Resource Navigator")}</p>
+            <h2 id="assistant-title">{tx("Ask Ruby")}</h2>
+            <p className="sheet-sub">{tx("Short, straight answers on vouchers. Ruby is an AI assistant. Not affiliated with HRA, NYCHA, or any government agency.")}</p>
           </div>
-          <button ref={closeButton} type="button" className="icon-button" aria-label="Close Ruby" onClick={onClose}>
+          <button ref={closeButton} type="button" className="icon-button" aria-label={tx("Close Ruby")} onClick={onClose}>
             <Icon name="close" size={18} />
           </button>
         </header>
@@ -191,21 +192,21 @@ export function AssistantSheet({
           {messages.map((message, index) => (
             <p key={`${message.role}-${index}`} className={`bubble bubble-${message.role}`}>{message.content}</p>
           ))}
-          {pending && <p className="bubble bubble-assistant pending">Checking that…</p>}
+          {pending && <p className="bubble bubble-assistant pending">{tx("Checking that…")}</p>}
         </div>
         {paused ? (
           <div className="gate">
-            <h3>Ruby is paused</h3>
-            <p>Questions stay off until accounts are set up. Search and resources stay open.</p>
-            <button type="button" className="button button-quiet" onClick={onOpenResources}>See resources</button>
+            <h3>{tx("Ruby is paused")}</h3>
+            <p>{tx("Questions stay off until accounts are set up. Search and resources stay open.")}</p>
+            <button type="button" className="button button-quiet" onClick={onOpenResources}>{tx("See resources")}</button>
           </div>
         ) : locked ? (
           <div className="gate">
-            <h3>Sign in to ask another question</h3>
-            <p>{FREE_COACH_QUESTIONS} questions are free on this browser. Sign in with Google to ask more. Search and resources stay open.</p>
+            <h3>{tx("Sign in to ask another question")}</h3>
+            <p>{FREE_COACH_QUESTIONS} {tx("questions are free on this browser. Sign in with Google to ask more. Search and resources stay open.")}</p>
             <GoogleSignInButton clientId={access.googleClientId} nonce={access.googleNonce} onCredential={onGoogleCredential} active={locked} />
             {access.signInError && <p className="fine">{access.signInError}</p>}
-            <button type="button" className="button button-quiet" onClick={onOpenResources} disabled={access.signingIn}>See resources</button>
+            <button type="button" className="button button-quiet" onClick={onOpenResources} disabled={access.signingIn}>{tx("See resources")}</button>
           </div>
         ) : (
           <>
@@ -230,12 +231,12 @@ export function AssistantSheet({
               }}
             >
               {access?.signedIn && (
-                <p className="session-line">Signed in as {access.email}</p>
+                <p className="session-line">{tx("Signed in as")} {access.email}</p>
               )}
               <label className="check-line">
                 <input type="checkbox" role="switch" aria-checked={includePlan} checked={includePlan} onChange={(event) => onIncludePlan(event.target.checked)} />
                 <span>
-                  Share my voucher details with Ruby
+                  {tx("Share my voucher details with Ruby")}
                   <small className="share-detail">{includePlan ? 'On: program, household size, letter amount and utilities are sent with your questions.' : 'Off: nothing about your voucher leaves this phone.'}</small>
                 </span>
               </label>
@@ -243,8 +244,8 @@ export function AssistantSheet({
                 <label className="check-line">
                   <input type="checkbox" role="switch" aria-checked={speakReplies} checked={speakReplies} onChange={(event) => setSpeakPref(event.target.checked)} />
                   <span>
-                    Read Ruby’s replies aloud
-                    <small className="share-detail">Uses this phone’s speaker. Audio is not uploaded or stored.</small>
+                    {tx("Read Ruby’s replies aloud")}
+                    <small className="share-detail">{tx("Uses this phone’s speaker. Audio is not uploaded or stored.")}</small>
                   </span>
                 </label>
               )}
@@ -255,7 +256,7 @@ export function AssistantSheet({
                   placeholder={listening ? LISTENING_LABEL : 'Ask Ruby about a voucher'}
                   rows={3}
                   maxLength={2000}
-                  aria-label="Question for Ruby"
+                  aria-label={tx("Question for Ruby")}
                   onKeyDown={(event) => {
                     if (event.key === 'Enter' && !event.shiftKey) {
                       event.preventDefault()
@@ -277,7 +278,7 @@ export function AssistantSheet({
                     <Icon name="mic" size={18} />
                     <span className="ruby-mic-label">{listening ? 'Stop' : 'Mic'}</span>
                   </button>
-                  <button type="submit" className="button ruby-send" disabled={pending || !input.trim()}>Send</button>
+                  <button type="submit" className="button ruby-send" disabled={pending || !input.trim()}>{tx("Send")}</button>
                 </div>
               </div>
               {listening && <p className="voice-status" role="status">{LISTENING_LABEL}</p>}
@@ -285,7 +286,7 @@ export function AssistantSheet({
               {!support.recognition && !voiceError && (
                 <p className="voice-fallback" role="status">{UNSUPPORTED_HINT}</p>
               )}
-              <p className="fine">{finePrint(configured, access)} Voice stays on this device when available.</p>
+              <p className="fine">{finePrint(configured, access)} {tx("Voice stays on this device when available.")}</p>
             </form>
           </>
         )}

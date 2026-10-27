@@ -1,3 +1,4 @@
+import { tx } from '../i18nAuto.js'
 import { useMemo, useState } from 'react'
 import {
   BOROUGH_OPTIONS,
@@ -61,59 +62,59 @@ export function QuickStartQuizPage() {
 
   return (
     <article className="page quick-start-quiz">
-      <p className="eyebrow">Quick start</p>
-      <h1>Three questions. Right path.</h1>
+      <p className="eyebrow">{tx("Quick start")}</p>
+      <h1>{tx("Three questions. Right path.")}</h1>
       <p className="lede">
-        Answers stay on this device only. We never send them to a server. You may qualify for help — a caseworker or program office decides.
+        {tx("Answers stay on this device only. We never send them to a server. You may qualify for help — a caseworker or program office decides.")}
       </p>
 
       {done && result ? (
         <section className="quiz-result" aria-live="polite">
-          <h2>Your next stop</h2>
+          <h2>{tx("Your next stop")}</h2>
           <p className="quiz-result-title">{result.title}</p>
           <p>{result.reason}</p>
           <p className="card-actions">
-            <a className="button" href={result.href}>Open {result.title}</a>
+            <a className="button" href={result.href}>{tx("Open")} {result.title}</a>
             <button type="button" className="button button-quiet" onClick={reset}>
-              Retake quiz
+              {tx("Retake quiz")}
             </button>
           </p>
-          <p className="fine">Saved on this phone or computer. Clear it anytime with Retake quiz or your browser settings.</p>
+          <p className="fine">{tx("Saved on this phone or computer. Clear it anytime with Retake quiz or your browser settings.")}</p>
         </section>
       ) : (
         <>
-          <p className="fine" aria-live="polite">Question {step + 1} of 3</p>
+          <p className="fine" aria-live="polite">{tx("Question")} {step + 1} {tx("of 3")}</p>
           {step === 0 ? (
             <section>
-              <h2>What voucher or program are you working with?</h2>
+              <h2>{tx("What voucher or program are you working with?")}</h2>
               <OptionList name="voucher" options={VOUCHER_OPTIONS} value={voucher} onChange={setVoucher} />
               <p className="card-actions">
                 <button type="button" className="button" disabled={!voucher} onClick={() => setStep(1)}>
-                  Next
+                  {tx("Next")}
                 </button>
               </p>
             </section>
           ) : null}
           {step === 1 ? (
             <section>
-              <h2>What’s your situation right now?</h2>
+              <h2>{tx("What’s your situation right now?")}</h2>
               <OptionList name="situation" options={SITUATION_OPTIONS} value={situation} onChange={setSituation} />
               <p className="card-actions">
-                <button type="button" className="button button-quiet" onClick={() => setStep(0)}>Back</button>
+                <button type="button" className="button button-quiet" onClick={() => setStep(0)}>{tx("Back")}</button>
                 <button type="button" className="button" disabled={!situation} onClick={() => setStep(2)}>
-                  Next
+                  {tx("Next")}
                 </button>
               </p>
             </section>
           ) : null}
           {step === 2 ? (
             <section>
-              <h2>Which borough are you shopping or staying in?</h2>
+              <h2>{tx("Which borough are you shopping or staying in?")}</h2>
               <OptionList name="borough" options={BOROUGH_OPTIONS} value={borough} onChange={setBorough} />
               <p className="card-actions">
-                <button type="button" className="button button-quiet" onClick={() => setStep(1)}>Back</button>
+                <button type="button" className="button button-quiet" onClick={() => setStep(1)}>{tx("Back")}</button>
                 <button type="button" className="button" disabled={!borough} onClick={finish}>
-                  See my path
+                  {tx("See my path")}
                 </button>
               </p>
             </section>
@@ -122,8 +123,8 @@ export function QuickStartQuizPage() {
       )}
 
       <p className="quiz-nav">
-        <a className="button button-quiet" href="#/">Back home</a>
-        <a className="button button-quiet" href="#/resources">Resources</a>
+        <a className="button button-quiet" href="#/">{tx("Back home")}</a>
+        <a className="button button-quiet" href="#/resources">{tx("Resources")}</a>
       </p>
     </article>
   )

@@ -1,3 +1,4 @@
+import { tx } from '../i18nAuto.js'
 import { useEffect, useRef, useState } from 'react'
 import { GoogleSignInButton } from './GoogleSignInButton.jsx'
 import { Icon } from './Icon.jsx'
@@ -51,12 +52,12 @@ export function AccountDialog({ open, onClose, clientId, nonce, signingIn, signI
 
   return (
     <dialog className="account-dialog" ref={dialog} aria-labelledby="account-title">
-      <button type="button" className="icon-button modal-close" aria-label="Close" onClick={() => dialog.current?.close()}>
+      <button type="button" className="icon-button modal-close" aria-label={tx("Close")} onClick={() => dialog.current?.close()}>
         <Icon name="close" size={18} />
       </button>
-      <p className="eyebrow">Account</p>
+      <p className="eyebrow">{tx("Account")}</p>
       <h2 id="account-title">{emailMode === 'create' ? 'Sign up without Google' : emailMode === 'sign-in' ? 'Sign in with email' : 'Sign in'}</h2>
-      <p className="setup-intro">Search stays open either way. Signing in keeps your letter, saved apartments, and steps on this account, so another phone can open them.</p>
+      <p className="setup-intro">{tx("Search stays open either way. Signing in keeps your letter, saved apartments, and steps on this account, so another phone can open them.")}</p>
       {emailMode ? (
         <form
           className="setup-fields account-email-form"
@@ -82,8 +83,8 @@ export function AccountDialog({ open, onClose, clientId, nonce, signingIn, signI
               required
             />
           </label>
-          <p className="setup-note">This email is the name of the account, so another phone can open the same letter.</p>
-          <label htmlFor={emailMode === 'create' ? 'new-password' : 'current-password'}>Password
+          <p className="setup-note">{tx("This email is the name of the account, so another phone can open the same letter.")}</p>
+          <label htmlFor={emailMode === 'create' ? 'new-password' : 'current-password'}>{tx("Password")}
             <span className="password-line">
               <input
                 id={emailMode === 'create' ? 'new-password' : 'current-password'}
@@ -108,19 +109,19 @@ export function AccountDialog({ open, onClose, clientId, nonce, signingIn, signI
           >
             {emailMode === 'create' ? 'I already have an email account' : 'Create an email account'}
           </button>
-          {emailMode === 'create' && <p className="setup-note">Next you’ll enter what’s on your letter. If you forget the password, LeasePath cannot email a reset yet.</p>}
-          <p className="setup-note"><a href="/privacy">Privacy notice</a> · <a href="/terms">Terms of Service</a></p>
-          <button className="button button-quiet" type="button" onClick={() => setEmailMode(null)}>Back to Google</button>
+          {emailMode === 'create' && <p className="setup-note">{tx("Next you’ll enter what’s on your letter. If you forget the password, LeasePath cannot email a reset yet.")}</p>}
+          <p className="setup-note"><a href="/privacy">{tx("Privacy notice")}</a> · <a href="/terms">{tx("Terms of Service")}</a></p>
+          <button className="button button-quiet" type="button" onClick={() => setEmailMode(null)}>{tx("Back to Google")}</button>
         </form>
       ) : (
         <>
           <GoogleSignInButton clientId={clientId} nonce={nonce} onCredential={onGoogleCredential} active={open} />
           <button type="button" className="button button-quiet account-email-start" onClick={() => setEmailMode('create')}>
-            Sign up without Google
+            {tx("Sign up without Google")}
           </button>
         </>
       )}
-      {signingIn && <p className="setup-note">Signing in…</p>}
+      {signingIn && <p className="setup-note">{tx("Signing in…")}</p>}
       {signInError && <p className="account-empty" role="status">{signInError}</p>}
     </dialog>
   )

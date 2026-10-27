@@ -1,18 +1,19 @@
 import {
   APP_URL,
-  INSTALL_STEPS,
+  installSteps,
   QR_SRC,
-  SHARE_TEXT,
+  shareText,
   mailtoShareHref,
   smsShareHref,
   whatsappShareHref,
 } from '../data/installAndShare.js'
 import { Icon } from './Icon.jsx'
 import { promptInstall } from '../install.js'
-import { useLanguage } from './LanguageProvider.jsx'
+import { useLanguage } from './languageContext.js'
 
 export function InstallAndSharePage() {
-  const { t } = useLanguage()
+  const { t, lang } = useLanguage()
+  const share = shareText(lang)
   return (
     <article className="page install-share">
       <p className="eyebrow">{t('install.eyebrow')}</p>
@@ -24,7 +25,7 @@ export function InstallAndSharePage() {
         <p>
           <button type="button" className="button" onClick={() => promptInstall()}>{t('install.button')}</button>
         </p>
-        {Object.entries(INSTALL_STEPS).map(([key, guide]) => (
+        {Object.entries(installSteps(lang)).map(([key, guide]) => (
           <div key={key} className="install-guide">
             <h3>{guide.title}</h3>
             <ol>
@@ -39,13 +40,13 @@ export function InstallAndSharePage() {
       <section className="share-block" aria-labelledby="share-heading">
         <h2 id="share-heading">{t('install.shareTitle')}</h2>
         <p>{t('install.shareLede')}</p>
-        <p className="share-preview">{SHARE_TEXT}</p>
+        <p className="share-preview">{share}</p>
         <div className="card-actions">
-          <a className="button" href={smsShareHref()}>{t('install.text')}</a>
-          <a className="button button-quiet" href={whatsappShareHref()} target="_blank" rel="noreferrer">
+          <a className="button" href={smsShareHref(share)}>{t('install.text')}</a>
+          <a className="button button-quiet" href={whatsappShareHref(share)} target="_blank" rel="noreferrer">
             WhatsApp
           </a>
-          <a className="button button-quiet" href={mailtoShareHref()}>{t('install.email')}</a>
+          <a className="button button-quiet" href={mailtoShareHref(share)}>{t('install.email')}</a>
           <a className="button button-quiet" href={APP_URL} target="_blank" rel="noreferrer">
             {t('install.open')} <Icon name="external" size={14} />
           </a>

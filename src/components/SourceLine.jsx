@@ -1,3 +1,4 @@
+import { tx } from '../i18nAuto.js'
 import { cardLabel } from '../fit.js'
 import { sourceText } from '../rentCheck.js'
 
@@ -11,7 +12,7 @@ export function SourceLine({ source }) {
         <>
           {' · '}
           <a href={source.url} target="_blank" rel="noreferrer">
-            Source<span className="sr-only"> for {source.program}</span>
+            {tx("Source")}<span className="sr-only"> {tx("for")} {source.program}</span>
           </a>
         </>
       ) : null}

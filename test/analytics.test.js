@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict'
+import { untx } from './source-text.js'
 import { readFileSync } from 'node:fs'
 import test from 'node:test'
 import { ALLOWED_KEYS, CONSENT_KEY, GTM_ID, PAGE_EVENT, isSensitiveView, loadGtm, readConsent, safePush, sanitizedPage, trackView, writeConsent } from '../src/analytics.js'
 
-const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8')
+const read = (path) => untx(readFileSync(new URL(`../${path}`, import.meta.url), 'utf8'))
 
 function fakePage() {
   const appended = []

@@ -1,6 +1,7 @@
+import { tx } from '../i18nAuto.js'
 import { useEffect, useState } from 'react'
-import { HERO_PHOTO, LANDING_STEPS, landingSample, openAccount } from '../landing.js'
-import { useLanguage } from './LanguageProvider.jsx'
+import { HERO_PHOTO, landingSample, openAccount } from '../landing.js'
+import { useLanguage } from './languageContext.js'
 
 function PhoneMockup() {
   const { t } = useLanguage()
@@ -12,12 +13,12 @@ function PhoneMockup() {
         <p className="mock-title">{t('hero.mock.title')}</p>
         <p className="mock-line">{s.line}</p>
         <div className="mock-figure">
-          <span className="mock-label">Max rent</span>
+          <span className="mock-label">{tx("Max rent")}</span>
           <span className="mock-rent">{s.usd(s.limit)}</span>
           <span className="mock-effective">{s.program} · {s.effective}</span>
         </div>
-        <p className="mock-fit">✓ Fits · {s.usd(s.rent)}/mo asking</p>
-        <p className="mock-source">Source: DSS {s.sourceDocNumber}. Your worker still decides.</p>
+        <p className="mock-fit">{tx("✓ Fits ·")} {s.usd(s.rent)}{tx("/mo asking")}</p>
+        <p className="mock-source">{tx("Source: DSS")} {s.sourceDocNumber}{tx(". Your worker still decides.")}</p>
       </div>
     </figure>
   )
@@ -69,7 +70,7 @@ export function LandingHero({ onCheck }) {
         <button type="button" className="hero-cta" onClick={onCheck}>{t("hero.cta")}</button>
         <p className="hero-account"><a className="hero-account-link" href="#/" onClick={(event) => { event.preventDefault(); openAccount() }}>{t("hero.account")}</a></p>
         <p className="hero-any-phone">{t("hero.anyPhone")}</p>
-        <p className="hero-quiz"><a className="hero-quiz-link" href="#/quiz">Not sure where to start? Three questions →</a></p>
+        <p className="hero-quiz"><a className="hero-quiz-link" href="#/quiz">{tx("Not sure where to start? Three questions →")}</a></p>
         <p className="not-affiliated">{t("hero.notAffiliated")}</p>
       </div>
     </section>

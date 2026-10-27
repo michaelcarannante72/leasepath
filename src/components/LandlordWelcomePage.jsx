@@ -1,3 +1,4 @@
+import { tx } from '../i18nAuto.js'
 import {
   CAVEAT,
   INTRO,
@@ -13,7 +14,7 @@ import { Icon } from './Icon.jsx'
 function Sources({ ids }) {
   return (
     <p className="fine after-sources">
-      Source:{' '}
+      {tx("Source:")}{' '}
       {ids.map((id, i) => {
         const source = SOURCES[id]
         if (!source) return null
@@ -33,14 +34,14 @@ function Sources({ ids }) {
 export function LandlordWelcomePage() {
   return (
     <div className="page landlord-page">
-      <p className="eyebrow">Resources</p>
+      <p className="eyebrow">{tx("Resources")}</p>
       <h1>{LANDLORD_TITLE}</h1>
       <p className="lede">{INTRO}</p>
 
       <div className="button-row landlord-actions">
-        <a className="button" href={LIST_UNIT_HASH}>List a voucher-ready unit</a>
+        <a className="button" href={LIST_UNIT_HASH}>{tx("List a voucher-ready unit")}</a>
         <a className="button button-quiet" href={SOURCES.nychaOwners.href} target="_blank" rel="noreferrer">
-          NYCHA owners info <Icon name="external" size={14} />
+          {tx("NYCHA owners info")} <Icon name="external" size={14} />
         </a>
       </div>
 
@@ -53,18 +54,18 @@ export function LandlordWelcomePage() {
       ))}
 
       <aside className="notice-card" aria-labelledby="ll-next">
-        <h2 id="ll-next">Next step</h2>
+        <h2 id="ll-next">{tx("Next step")}</h2>
         <p>
-          Ready to reach voucher holders on LeasePath?{' '}
-          <a href={LIST_UNIT_HASH}>List a voucher-ready unit</a>
-          {' '}(form route <code>{LIST_UNIT_HASH}</code>). For NYCHA Section 8 questions, call{' '}
+          {tx("Ready to reach voucher holders on LeasePath?")}{' '}
+          <a href={LIST_UNIT_HASH}>{tx("List a voucher-ready unit")}</a>
+          {' '}{tx("(form route")} <code>{LIST_UNIT_HASH}</code>{tx("). For NYCHA Section 8 questions, call")}{' '}
           <a href={`tel:${NYCHA_CCC.phone.replace(/\D/g, '')}`}>{NYCHA_CCC.phone}</a>
           {' '}({NYCHA_CCC.label}).
         </p>
         <Sources ids={['nychaOwners', 'hpdOwners', 'cchr']} />
       </aside>
 
-      <p className="fine after-caveat">{CAVEAT} Last reviewed {LAST_REVIEWED}.</p>
+      <p className="fine after-caveat">{CAVEAT} {tx("Last reviewed")} {LAST_REVIEWED}.</p>
     </div>
   )
 }

@@ -1,3 +1,4 @@
+import { tx } from '../i18nAuto.js'
 import { useMemo, useState } from 'react'
 import {
   KINDS,
@@ -69,27 +70,26 @@ export function WaitlistTrackerPage() {
 
   return (
     <article className="page waitlist-tracker">
-      <p className="eyebrow">Tracker</p>
-      <h1>Waitlist and lottery tracker</h1>
+      <p className="eyebrow">{tx("Tracker")}</p>
+      <h1>{tx("Waitlist and lottery tracker")}</h1>
       <p className="lede">
-        Track NYCHA, Housing Connect lotteries, and other applications on this device only. Add a reminder date and export a .ics calendar file.
-        Nothing is sent to a server. You may qualify for openings — the agency decides.
+        {tx("Track NYCHA, Housing Connect lotteries, and other applications on this device only. Add a reminder date and export a .ics calendar file. Nothing is sent to a server. You may qualify for openings — the agency decides.")}
       </p>
 
       <form className="waitlist-form" onSubmit={save}>
         <h2>{editing ? 'Edit entry' : 'Add entry'}</h2>
         <label>
-          Name
+          {tx("Name")}
           <input
             required
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
-            placeholder="e.g. Bronx Housing Connect — 2BR"
+            placeholder={tx("e.g. Bronx Housing Connect — 2BR")}
             autoComplete="off"
           />
         </label>
         <label>
-          Type
+          {tx("Type")}
           <select value={form.kind} onChange={(e) => setForm({ ...form, kind: e.target.value })}>
             {KINDS.map((k) => (
               <option key={k.id} value={k.id}>{k.label}</option>
@@ -97,16 +97,16 @@ export function WaitlistTrackerPage() {
           </select>
         </label>
         <label>
-          Status
+          {tx("Status")}
           <input
             value={form.status}
             onChange={(e) => setForm({ ...form, status: e.target.value })}
-            placeholder="Applied, waiting, interview…"
+            placeholder={tx("Applied, waiting, interview…")}
             autoComplete="off"
           />
         </label>
         <label>
-          Reminder date
+          {tx("Reminder date")}
           <input
             type="date"
             value={form.remindOn}
@@ -114,19 +114,19 @@ export function WaitlistTrackerPage() {
           />
         </label>
         <label>
-          Notes (optional)
+          {tx("Notes (optional)")}
           <textarea
             rows={3}
             value={form.notes}
             onChange={(e) => setForm({ ...form, notes: e.target.value })}
-            placeholder="Log number, portal, caseworker name — keep PII only if you want it on this phone"
+            placeholder={tx("Log number, portal, caseworker name — keep PII only if you want it on this phone")}
           />
         </label>
         <p className="card-actions">
           <button type="submit" className="button">{editing ? 'Save changes' : 'Add to tracker'}</button>
           {editing ? (
             <button type="button" className="button button-quiet" onClick={() => { setForm(emptyForm()); setEditing(false) }}>
-              Cancel
+              {tx("Cancel")}
             </button>
           ) : null}
         </p>
@@ -134,15 +134,15 @@ export function WaitlistTrackerPage() {
 
       <section aria-labelledby="waitlist-list-title">
         <div className="waitlist-list-head">
-          <h2 id="waitlist-list-title">{sorted.length} on this device</h2>
+          <h2 id="waitlist-list-title">{sorted.length} {tx("on this device")}</h2>
           {sorted.length ? (
             <button type="button" className="button button-quiet" onClick={wipe}>
-              Delete all
+              {tx("Delete all")}
             </button>
           ) : null}
         </div>
         {!sorted.length ? (
-          <p className="empty-note">No entries yet. Add a lottery or waitlist above.</p>
+          <p className="empty-note">{tx("No entries yet. Add a lottery or waitlist above.")}</p>
         ) : (
           <ul className="waitlist-list">
             {sorted.map((entry) => (
@@ -155,14 +155,14 @@ export function WaitlistTrackerPage() {
                 </p>
                 {entry.notes ? <p>{entry.notes}</p> : null}
                 <div className="card-actions">
-                  <button type="button" className="button button-quiet" onClick={() => edit(entry)}>Edit</button>
+                  <button type="button" className="button button-quiet" onClick={() => edit(entry)}>{tx("Edit")}</button>
                   {entry.remindOn ? (
                     <button type="button" className="button button-quiet" onClick={() => downloadIcs(entry)}>
-                      Export .ics
+                      {tx("Export .ics")}
                     </button>
                   ) : null}
                   <button type="button" className="button button-quiet" onClick={() => remove(entry.id)}>
-                    Delete
+                    {tx("Delete")}
                   </button>
                 </div>
               </li>
@@ -172,11 +172,11 @@ export function WaitlistTrackerPage() {
       </section>
 
       <p className="fine">
-        Official portals: NYCHA and NYC Housing Connect (HPD). LeasePath does not submit applications.
+        {tx("Official portals: NYCHA and NYC Housing Connect (HPD). LeasePath does not submit applications.")}
       </p>
       <p className="card-actions">
-        <a className="button button-quiet" href="#/plan">My voucher</a>
-        <a className="button button-quiet" href="#/resources">Resources</a>
+        <a className="button button-quiet" href="#/plan">{tx("My voucher")}</a>
+        <a className="button button-quiet" href="#/resources">{tx("Resources")}</a>
       </p>
     </article>
   )

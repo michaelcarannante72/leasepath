@@ -1,3 +1,4 @@
+import { tx } from '../i18nAuto.js'
 import { useCallback, useState } from 'react'
 
 export function ListingsAdminPage() {
@@ -58,9 +59,9 @@ export function ListingsAdminPage() {
 
   return (
     <article className="page listings-admin-page">
-      <p className="eyebrow">LeasePath admin</p>
-      <h1>Review voucher-ready units</h1>
-      <p className="lede">Pending submissions stay off the public site until you approve them. Use the admin token from Wrangler secrets. Do not share it.</p>
+      <p className="eyebrow">{tx("LeasePath admin")}</p>
+      <h1>{tx("Review voucher-ready units")}</h1>
+      <p className="lede">{tx("Pending submissions stay off the public site until you approve them. Use the admin token from Wrangler secrets. Do not share it.")}</p>
       <form
         className="panel"
         onSubmit={(event) => {
@@ -69,7 +70,7 @@ export function ListingsAdminPage() {
         }}
       >
         <label>
-          Admin token
+          {tx("Admin token")}
           <input
             type="password"
             autoComplete="off"
@@ -82,20 +83,20 @@ export function ListingsAdminPage() {
       </form>
       {error && <p className="form-error" role="alert">{error}</p>}
       {message && <p className="ok-msg" role="status">{message}</p>}
-      {loaded && !listings.length && <p>No pending units right now.</p>}
+      {loaded && !listings.length && <p>{tx("No pending units right now.")}</p>}
       <ul className="cards">
         {listings.map((unit) => (
           <li key={unit.id} className="card">
             <div className="card-body">
               <h2>{unit.address}</h2>
-              <p>{unit.borough} · {unit.size} · ${Number(unit.rent).toLocaleString('en-US')}/mo</p>
-              <p>Vouchers: {(unit.voucherTypes || []).join(', ')}</p>
-              <p>Inspection-ready: {unit.inspectionReady ? 'Yes' : 'No'}</p>
+              <p>{unit.borough} · {unit.size} · ${Number(unit.rent).toLocaleString('en-US')}{tx("/mo")}</p>
+              <p>{tx("Vouchers:")} {(unit.voucherTypes || []).join(', ')}</p>
+              <p>{tx("Inspection-ready:")} {unit.inspectionReady ? 'Yes' : 'No'}</p>
               <p>{unit.contactName} · {unit.contactEmail} · {unit.contactPhone}</p>
-              <p className="fine">Submitted {unit.submittedAt}</p>
+              <p className="fine">{tx("Submitted")} {unit.submittedAt}</p>
               <div className="button-row">
-                <button type="button" className="button" disabled={busy} onClick={() => act(unit.id, 'approve')}>Approve</button>
-                <button type="button" className="button button-quiet" disabled={busy} onClick={() => act(unit.id, 'reject')}>Reject</button>
+                <button type="button" className="button" disabled={busy} onClick={() => act(unit.id, 'approve')}>{tx("Approve")}</button>
+                <button type="button" className="button button-quiet" disabled={busy} onClick={() => act(unit.id, 'reject')}>{tx("Reject")}</button>
               </div>
             </div>
           </li>

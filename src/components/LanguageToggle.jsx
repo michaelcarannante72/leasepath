@@ -1,4 +1,4 @@
-import { useLanguage } from './LanguageProvider.jsx'
+import { useLanguage } from './languageContext.js'
 
 export function LanguageToggle({ className = '' }) {
   const { lang, setLang, t } = useLanguage()

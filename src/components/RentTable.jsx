@@ -1,3 +1,4 @@
+import { tx } from '../i18nAuto.js'
 import { askFor, money } from '../rentCheck.js'
 import { isDisplayable, sourceFor } from '../data/sourced.js'
 import { SourceLine } from './SourceLine.jsx'
@@ -15,7 +16,7 @@ export function RentTable({ program, rows, columns, caption }) {
         <thead>
           <tr>
             {columns.map((column) => <th key={column.key} scope="col">{column.label}</th>)}
-            <th scope="col">{program} maximum</th>
+            <th scope="col">{program} {tx("maximum")}</th>
           </tr>
         </thead>
         <tbody>

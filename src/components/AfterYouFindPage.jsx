@@ -78,6 +78,9 @@ export function AfterYouFindPage() {
               <>
                 <h3>{step.checklistTitle}</h3>
                 <ul className="after-checklist">{step.checklist.map((item) => <li key={item}>{item}</li>)}</ul>
+                {step.id === 'inspection' && (
+                  <p className="after-link"><a href="#/inspection-prep">Full HQS inspection prep checklist →</a></p>
+                )}
               </>
             )}
             {step.id === 'ceiling' && <MovingNotice />}

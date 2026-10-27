@@ -113,6 +113,7 @@ export function PlanPage({ plan, onChange, checks, onChecks, onClearIncome, sign
         <h2 id="rent-share-callout-title">Estimate your rent share</h2>
         <p>Section 8 uses HUD’s ~30% rule (practice only). CityFHEPS share stays on your shopping letter. Nothing leaves this device.</p>
         <p><a className="button" href="#/rent-share">Open rent calculator</a></p>
+      </aside>
       <aside className="waitlist-callout" aria-labelledby="waitlist-callout-title">
         <h2 id="waitlist-callout-title">Waitlist and lottery tracker</h2>
         <p>Save NYCHA, Housing Connect, and other application statuses on this device. Export .ics reminders. Delete all anytime.</p>

@@ -1982,6 +1982,7 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   font-size: 0.875rem;
 }
 .rights-card-face p { margin: 0 0 6px; line-height: 1.35; color: var(--navy, #1C2D42); font-weight: 600; }
+.moving-page .moving-actions { margin: 0 0 10px; }
 @media print {
   .dock, .site-header, .pack-actions, .prep-actions, .rights-actions, .cookie-prompt, .analytics-consent, .no-print { display: none !important; }
   .pack-pre { max-height: none; border: none; }

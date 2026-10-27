@@ -32,6 +32,7 @@ import { ShelterRoadmapPage } from './components/ShelterRoadmapPage.jsx'
 import { TenantRightsAfterMoveinPage } from './components/TenantRightsAfterMoveinPage.jsx'
 import { UtilityHelpPage } from './components/UtilityHelpPage.jsx'
 import { ViewingChecklistPage } from './components/ViewingChecklistPage.jsx'
+import { WaitlistTrackerPage } from './components/WaitlistTrackerPage.jsx'
 import { RubyIntro } from './components/RubyIntro.jsx'
 import { SearchPage } from './components/SearchPage.jsx'
 import { ListUnitPage } from './components/ListUnitPage.jsx'
@@ -152,6 +153,7 @@ function parseHash() {
   if (hash === '/after-movein' || hash === '/tenant-rights') return { name: 'rights-movein' }
   if (hash === '/utility-help' || hash === '/heap') return { name: 'utility' }
   if (hash === '/viewing-checklist' || hash === '/viewing') return { name: 'viewing' }
+  if (hash === '/waitlist' || hash === '/waitlist-tracker') return { name: 'waitlist' }
   if (hash === '/steps' || hash === '/resources' || hash === '/plan' || hash === '/blog') {
     return { name: hash.slice(1) }
   }
@@ -757,7 +759,7 @@ export default function App() {
             ? 'steps'
             : route.name === 'scam' || route.name === 'moving' || route.name === 'rights' || route.name === 'landlord' || route.name === 'housing-connect' || route.name === 'sponsor' || route.name === 'listing-check' || route.name === 'guides' || route.name === 'guide' || route.name === 'partners' || route.name === 'rights-movein' || route.name === 'utility'
               ? 'resources'
-              : route.name === 'rent'
+              : route.name === 'rent' || route.name === 'waitlist'
                 ? 'plan'
               : route.name === 'list-unit' || route.name === 'voucher-ready' || route.name === 'listings-admin' || route.name === 'quiz' || route.name === 'viewing'
                 ? 'search'
@@ -847,6 +849,7 @@ export default function App() {
         {route.name === 'roadmap' && <ShelterRoadmapPage />}
         {route.name === 'utility' && <UtilityHelpPage />}
         {route.name === 'viewing' && <ViewingChecklistPage />}
+        {route.name === 'waitlist' && <WaitlistTrackerPage />}
         {route.name === 'scam' && <ScamAlertsPage />}
         {route.name === 'moving' && <MovingHelpPage />}
         {route.name === 'rights' && <KnowYourRightsPage />}

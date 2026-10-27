@@ -28,6 +28,8 @@ export function NychaScamWarning() {
   return (
     <p className="scam-warning">
       {NYCHA_SCAM_WARNING} <a href={NYCHA_ELIGIBILITY.href} target="_blank" rel="noreferrer">{NYCHA_ELIGIBILITY.label} <Icon name="external" size={12} /></a>
+      {' '}
+      <a href="#/scam-alerts">More voucher scam red flags →</a>
     </p>
   )
 }

@@ -2445,3 +2445,99 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   .flyer-block, .flyer { display: block !important; border: none; }
   .page.install-share { padding: 0; }
 }
+
+/* ===== layout-cleanup: one page frame, one button system, brand colors =====
+   Navy = main buttons. Brick = links and destructive actions. Gold and ruby stay inside the Ruby UI (.ruby-theme, Ruby dock button). */
+.page {
+  box-sizing: border-box;
+  max-width: 960px;
+  margin-inline: auto;
+  min-width: 0;
+}
+.page > .lede, .page > p { max-width: 68ch; }
+.page-back { margin: 0 0 8px; font-weight: 700; }
+
+.page a:not(.button):not(.chip):not(.popular-search-chip),
+.site-footer a:not(.popular-search-chip),
+.after-link a, .fit-note a, .consent-links a { color: var(--terracotta); }
+
+.button:not(.ruby-theme .button):not(.button-quiet) { background: var(--navy); color: white; }
+.button:not(.ruby-theme .button):not(.button-quiet):hover { background: #13202f; }
+.button-quiet:not(.ruby-theme .button) { background: white; color: var(--navy); border: 1px solid var(--line); }
+.delete-open, .delete-go, .danger-zone .button { background: var(--terracotta) !important; color: white !important; }
+.install-button { background: white; color: var(--navy); border: 1.5px solid var(--navy); }
+.skip-link { background: var(--navy); color: white; }
+.program-chip.is-on { background: white; color: var(--navy); border-color: white; }
+.step-progress span, .sample-label > span { background: var(--navy); }
+.mock-tag { background: var(--navy-soft); color: var(--navy); }
+
+/* One card style for the new pages' callouts and panels. */
+.page .panel, .page aside[class$="-callout"], .plan-tools, .install-guide, .hc-scam-note {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--card);
+  box-shadow: none;
+  padding: 16px;
+  margin: 0 0 14px;
+}
+
+/* Wrapping chip links replace the run-on link lines that overflowed on phones. */
+.guide-links { margin: 4px 0 16px; }
+.guide-links-title { margin: 0 0 8px; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.chip-links, .tool-links { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.chip-links a {
+  display: inline-block; box-sizing: border-box; min-height: 36px; padding: 6px 12px;
+  border: 1px solid var(--line); border-radius: 999px; background: white;
+  color: var(--terracotta); font-size: 0.875rem; font-weight: 700; text-decoration: none;
+  max-width: 100%; overflow-wrap: anywhere;
+}
+.tool-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.tool-links a {
+  display: grid; gap: 4px; height: 100%; padding: 12px 14px;
+  border: 1px solid var(--line); border-radius: 12px; background: var(--bg);
+  color: var(--navy) !important; text-decoration: none;
+}
+.tool-links strong { color: var(--terracotta); }
+.tool-links span { color: var(--muted); font-size: 0.88rem; line-height: 1.4; }
+.plan-tools h2 { margin: 0 0 10px; font-size: 1.15rem; }
+
+/* Collapsed SEO band: about a dozen chips plus See all, same on every size. */
+.popular-searches h2 { display: block; }
+.popular-search-chips { max-width: 100%; }
+
+/* The sticky Resources jump bar was 106px tall on desktop and sat on top of cards. */
+@media (min-width: 800px) {
+  .community-jump { position: static; box-shadow: none; padding-block: 6px; margin-inline: 0; }
+}
+
+/* Single consent bar sits above the dock in the app grid. */
+.consent-bar { grid-template-columns: minmax(0, 1fr); }
+.consent-links { margin-top: 6px !important; font-size: 0.875rem !important; }
+@media (min-width: 720px) {
+  .consent-bar { grid-template-columns: minmax(0, 1fr) auto; width: min(960px, calc(100% - 16px)); }
+}
+
+/* Mobile header: My voucher is already in the dock, so the heart pill goes. */
+@media (max-width: 799px) {
+  .plan-pill { display: none; }
+  .brand-name { white-space: nowrap; }
+}
+
+/* Home: the search block is a panel, not a second dark hero. */
+.landing-hero.search-band { background: var(--card); color: var(--navy); border: 1px solid var(--line); border-radius: 18px; }
+.search-band h2, .search-band .search-title { color: var(--navy); }
+.search-band .pitch, .search-band p, .search-band legend, .search-band label { color: var(--muted); }
+.search-band .program-chip { color: var(--navy); border-color: var(--line); background: white; }
+.search-band .program-chip.is-on { background: var(--navy); color: white; border-color: var(--navy); }
+.search-band .eyebrow { color: var(--terracotta); }
+
+/* Guard: nothing inside the scroll stage may push it wider than the viewport. */
+.stage .view > * { max-width: 100%; min-width: 0; }
+
+.page input, .page select, .page textarea { box-sizing: border-box; max-width: 100%; }
+.choice input { margin: 0; }
+.resources-page { grid-template-columns: minmax(0, 1fr); }
+/* Main actions outside Ruby: navy. */
+.hero-cta, .show-apartments, .text-button:not(.ruby-theme .text-button) { background: var(--navy); color: white; }
+.how-num { background: var(--navy); color: white; }
+.hero-split .hero-cta { background: white; color: var(--navy); }

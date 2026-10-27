@@ -358,7 +358,10 @@ test('the plan page shows HASA and CityFHEPS checks apart, and none for other pr
   assert.match(screen, /isPrescreenProgram\(program\) \? \[program\] : program === '' \? PRESCREEN_ORDER : \[\]/)
   assert.match(screen, /HASA check \(income only\)/)
   assert.match(screen, /CityFHEPS check \(income only\)/)
-  assert.match(read('src/components/PlanPage.jsx'), /<IncomePrescreen plan=\{plan\} checks=\{checks\} onChecks=\{onChecks\} onClear=\{onClearIncome\} \/>/)
+  // The pre-screen moved from My voucher to its own page (#/income-check); My voucher links to it.
+  assert.match(read('src/components/PlanToolPages.jsx'), /<IncomePrescreen plan=\{plan\} checks=\{checks\} onChecks=\{onChecks\} onClear=\{onClear\} \/>/)
+  assert.match(read('src/components/PlanPage.jsx'), /href="#\/income-check"/)
+  assert.match(read('src/App.jsx'), /<IncomeCheckPage plan=\{plan\} checks=\{checks\} onChecks=\{updateChecks\} onClear=\{clearIncome\} \/>/)
 })
 
 test('the assistant pack gives the lines with program, year, effective date, source, and the January 2027 re-check', () => {
@@ -476,7 +479,7 @@ test('income is cleared by a Clear income button, on sign-out, and on account de
   assert.match(read('src/components/DeleteAccountDialog.jsx'), /<li>Income you typed in the pre-screen<\/li>/)
   const screen = read('src/components/IncomePrescreen.jsx')
   assert.match(screen, /onClick=\{onClear\}>Clear income</)
-  assert.match(app, /onClearIncome=\{clearIncome\}/)
+  assert.match(app, /<IncomeCheckPage [^>]*onClear=\{clearIncome\}/)
 })
 
 test('screen readers hear one short line after typing stops, not both result blocks on every keystroke', () => {

@@ -7,8 +7,10 @@ import {
   filterByBorough,
 } from '../data/housingConnect.js'
 import { Icon } from './Icon.jsx'
+import { useLanguage } from './LanguageProvider.jsx'
 
 function LotteryCard({ lottery }) {
+  const { t } = useLanguage()
   return (
     <li className="hc-card">
       <div className="hc-card-main">
@@ -23,7 +25,7 @@ function LotteryCard({ lottery }) {
           <p className="hc-card-address">{lottery.addresses.slice(0, 3).join(' · ')}{lottery.addresses.length > 3 ? ' · …' : ''}</p>
         )}
         {lottery.amiTiers.length > 0 && (
-          <ul className="hc-ami" aria-label="AMI tiers">
+          <ul className="hc-ami" aria-label={t('hc.amiTiers')}>
             {lottery.amiTiers.map((tier) => (
               <li key={tier.label}>
                 <span className="hc-ami-label">{tier.label}</span>
@@ -40,13 +42,13 @@ function LotteryCard({ lottery }) {
         )}
         {lottery.deadlineLabel && (
           <p className="hc-deadline">
-            Apply by <strong>{lottery.deadlineLabel}</strong>
+            {t('hc.applyBy')} <strong>{lottery.deadlineLabel}</strong>
           </p>
         )}
       </div>
       <div className="card-actions">
         <a className="card-link" href={lottery.applyUrl} target="_blank" rel="noopener noreferrer">
-          Apply on Housing Connect <Icon name="external" size={14} />
+          {t('hc.applyOn')} <Icon name="external" size={14} />
         </a>
       </div>
     </li>
@@ -54,6 +56,7 @@ function LotteryCard({ lottery }) {
 }
 
 export function HousingConnectPage() {
+  const { t } = useLanguage()
   const [lotteries, setLotteries] = useState([])
   const [borough, setBorough] = useState('All')
   const [status, setStatus] = useState('loading')
@@ -71,7 +74,7 @@ export function HousingConnectPage() {
       })
       .catch(() => {
         if (cancelled) return
-        setError('Could not load lotteries from NYC Open Data. Open Housing Connect directly, or try again in a moment.')
+        setError('hc.error')
         setStatus('error')
       })
     return () => {
@@ -83,24 +86,18 @@ export function HousingConnectPage() {
 
   return (
     <div className="page housing-connect-page">
-      <p className="eyebrow">Official HPD lotteries</p>
-      <h1>Housing Connect lotteries</h1>
-      <p className="lede">
-        Active rental lotteries from NYC Housing Connect. You may qualify for openings in your borough.
-        LeasePath shows the official list; HPD still runs the lottery.
-      </p>
+      <p className="eyebrow">{t('hc.eyebrow')}</p>
+      <h1>{t('hc.title')}</h1>
+      <p className="lede">{t('hc.lede')}</p>
 
       <aside className="hc-scam-note" role="note">
         <p>
-          <strong>Applying is always free. Anyone who asks for a fee is a scam.</strong> Apply only on Housing Connect.
-          Never send money, a deposit, or personal papers to someone claiming to “guarantee” a lottery spot.
+          <strong>{t('hc.scamStrong')}</strong> {t('hc.scamRest')}
         </p>
       </aside>
 
-      <div className="borough-chips" role="group" aria-label="Filter by borough">
-        <button type="button" className="chip" aria-pressed={borough === 'All'} onClick={() => setBorough('All')}>
-          All boroughs
-        </button>
+      <div className="borough-chips" role="group" aria-label={t('hc.filter')}>
+        <button type="button" className="chip" aria-pressed={borough === 'All'} onClick={() => setBorough('All')}>{t('hc.all')}</button>
         {BOROUGH_CODES.map((b) => (
           <button
             key={b.code}
@@ -115,15 +112,15 @@ export function HousingConnectPage() {
       </div>
 
       <p className="resource-status" role="status" aria-live="polite">
-        {status === 'loading' && 'Loading active lotteries…'}
-        {status === 'error' && error}
+        {status === 'loading' && t('hc.loading')}
+        {status === 'error' && t(error)}
         {status === 'ready' && (
           <>
             {shown.length === 0
               ? borough === 'All'
-                ? 'No rental lotteries with a future deadline right now.'
-                : `No open rental lotteries in ${BOROUGH_CODES.find((b) => b.code === borough)?.name || borough} right now.`
-              : `${shown.length} open ${shown.length === 1 ? 'lottery' : 'lotteries'}${borough !== 'All' ? ` in ${BOROUGH_CODES.find((b) => b.code === borough)?.name}` : ''}.`}
+                ? t('hc.none')
+                : t('hc.noneIn', { borough: BOROUGH_CODES.find((b) => b.code === borough)?.name || borough })
+              : `${shown.length === 1 ? t('hc.count1') : t('hc.countN', { n: shown.length })}${borough !== 'All' ? t('hc.in', { borough: BOROUGH_CODES.find((b) => b.code === borough)?.name }) : ''}.`}
           </>
         )}
       </p>
@@ -138,10 +135,10 @@ export function HousingConnectPage() {
 
       <p className="hc-actions">
         <a className="button" href={HOUSING_CONNECT_HOME} target="_blank" rel="noopener noreferrer">
-          Open NYC Housing Connect
+          {t('hc.openHc')}
         </a>
         <a className="button button-quiet" href="#/resources">
-          Back to Resources
+          {t('hc.back')}
         </a>
       </p>
 

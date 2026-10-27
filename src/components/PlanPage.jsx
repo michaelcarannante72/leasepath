@@ -1,9 +1,8 @@
+import { useLanguage } from './LanguageProvider.jsx'
 import { ACCESS_HRA_URL, HOMEBASE_URL } from '../data.js'
 import { VOUCHER_PROGRAMS } from '../fit.js'
 import { HOUSEHOLD_CHOICES, LARGE_HOUSEHOLD } from '../rentCheck.js'
-import { IncomePrescreen } from './IncomePrescreen.jsx'
 import { CityfhepsPanel, HasaPanel, Section8Panel } from './ProgramPanels.jsx'
-import { MatchAlertsCard } from './MatchAlertsCard.jsx'
 
 const SITUATIONS = [
   'Shelter or transitional housing',
@@ -13,7 +12,8 @@ const SITUATIONS = [
   'Unsure',
 ]
 
-export function PlanPage({ plan, onChange, checks, onChecks, onClearIncome, signedIn, onDeleteAccount, matchPrefs, onMatchPrefs, matchSeed }) {
+export function PlanPage({ plan, onChange, checks, onChecks, signedIn, onDeleteAccount }) {
+  const { t } = useLanguage()
   return (
     <div className="page">
       <p className="eyebrow">My voucher</p>
@@ -106,20 +106,15 @@ export function PlanPage({ plan, onChange, checks, onChecks, onClearIncome, sign
         </label>
       </form>
 
-      {matchPrefs && onMatchPrefs ? (
-        <MatchAlertsCard prefs={matchPrefs} onPrefs={onMatchPrefs} seed={matchSeed} />
-      ) : null}
-      <aside className="rent-share-callout" aria-labelledby="rent-share-callout-title">
-        <h2 id="rent-share-callout-title">Estimate your rent share</h2>
-        <p>Section 8 uses HUD’s ~30% rule (practice only). CityFHEPS share stays on your shopping letter. Nothing leaves this device.</p>
-        <p><a className="button" href="#/rent-share">Open rent calculator</a></p>
-      </aside>
-      <aside className="waitlist-callout" aria-labelledby="waitlist-callout-title">
-        <h2 id="waitlist-callout-title">Waitlist and lottery tracker</h2>
-        <p>Save NYCHA, Housing Connect, and other application statuses on this device. Export .ics reminders. Delete all anytime.</p>
-        <p><a className="button" href="#/waitlist">Open tracker</a></p>
-      </aside>
-      <IncomePrescreen plan={plan} checks={checks} onChecks={onChecks} onClear={onClearIncome} />
+      <nav className="plan-tools" aria-labelledby="plan-tools-title">
+        <h2 id="plan-tools-title">{t('plan.tools')}</h2>
+        <ul className="tool-links">
+          <li><a href="#/match-alerts"><strong>{t('plan.tool.match')}</strong><span>{t('plan.tool.match.d')}</span></a></li>
+          <li><a href="#/rent-share"><strong>{t('plan.tool.rent')}</strong><span>{t('plan.tool.rent.d')}</span></a></li>
+          <li><a href="#/waitlist"><strong>{t('plan.tool.waitlist')}</strong><span>{t('plan.tool.waitlist.d')}</span></a></li>
+          <li><a href="#/income-check"><strong>{t('plan.tool.income')}</strong><span>{t('plan.tool.income.d')}</span></a></li>
+        </ul>
+      </nav>
 
       {plan.program === 'CityFHEPS' && <CityfhepsPanel checks={checks} onChecks={onChecks} />}
 

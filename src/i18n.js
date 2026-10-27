@@ -1,6 +1,8 @@
 // Lightweight en/es strings for core UI. Language preference stays on the device.
 // Spanish is natural NYC Spanish aimed at Dominican and Puerto Rican readers (tú form).
 
+import { PAGE_EN, PAGE_ES } from './i18nPages.js'
+
 export const LANG_KEY = 'leasepath.lang'
 export const LANGS = ['en', 'es']
 
@@ -93,6 +95,8 @@ const EN = {
     "Hi, I'm Ruby. I'm designed to assist you in your housing search and help you navigate the complex and fiercely competitive NYC rental market.\n\nI help you stay focused on finding that apartment with a housing voucher.\n\nI know it can be difficult, even exhausting, to search for an apartment with a voucher.\n\nFrom here on out, you don't have to do it alone. I will walk you through every step: from homeless to shelter, to SRO, to navigating the complexities of HRA's bureaucracy. I'll help you keep track of your documents and deadlines for your landlord, broker and caseworker.\n\nWelcome to LeasePath. Let's get you into an apartment.\n\nHave you been given a shopping letter yet by your caseworker?",
 }
 
+Object.assign(EN, PAGE_EN)
+
 const ES = {
   'nav.search': 'Buscar',
   'nav.steps': 'Pasos',
@@ -181,6 +185,7 @@ const ES = {
   'ruby.welcome':
     'Hola, soy Ruby. Estoy aquí para ayudarte en tu búsqueda de vivienda y a navegar el mercado de renta en NYC, que está bien difícil y competitivo.\n\nTe ayudo a mantener el foco en conseguir ese apartamento con un cupón de vivienda.\n\nSé que buscar con cupón puede ser agotador.\n\nDe aquí en adelante no tienes que hacerlo solo/a. Te acompaño en cada paso: de la calle al refugio, al SRO, y por la burocracia de HRA. Te ayudo a llevar la cuenta de tus documentos y fechas con el landlord, el broker y tu trabajador de caso.\n\nBienvenido/a a LeasePath. Vamos a conseguirte un apartamento.\n\n¿Ya te dieron la shopping letter tu trabajador de caso?',
 }
+Object.assign(ES, PAGE_ES)
 
 const TABLES = { en: EN, es: ES }
 

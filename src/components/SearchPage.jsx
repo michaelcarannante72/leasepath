@@ -105,7 +105,7 @@ export function SearchPage({
       <LandingSteps onFind={scrollToSearch} onAsk={onAsk} />
       <VoucherReadyUnits compact />
       <SponsoredSlot placement="search" />
-      <section className="landing-hero" aria-labelledby="search-title">
+      <section className="landing-hero search-band" aria-labelledby="search-title">
         <div className="hero-copy">
           <h2 id="search-title" className="search-title">{t("nav.search")}</h2>
           <p className="pitch">Brokers who say “I’ll call you back” and then transfer you are the reason this exists.</p>

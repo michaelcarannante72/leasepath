@@ -128,8 +128,9 @@ test('UI and service worker only notify after explicit permission wiring', () =>
   assert.match(app, /matchPrefs/)
 })
 
-test('Plan page hosts the match alerts card', () => {
-  const plan = read('src/components/PlanPage.jsx')
-  assert.match(plan, /MatchAlertsCard/)
-  assert.match(plan, /matchPrefs/)
+test('Match alerts page hosts the card and My voucher links to it', () => {
+  const page = read('src/components/PlanToolPages.jsx')
+  assert.match(page, /<MatchAlertsCard prefs=\{prefs\} onPrefs=\{onPrefs\} seed=\{seed\} \/>/)
+  assert.match(read('src/components/PlanPage.jsx'), /href="#\/match-alerts"/)
+  assert.match(read('src/App.jsx'), /<MatchAlertsPage prefs=\{matchPrefs\}/)
 })

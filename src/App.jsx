@@ -10,11 +10,12 @@ import { looksLikeSpanish, readLang, t as i18nT } from './i18n.js'
 import { Footer, InfoPage } from './components/Footer.jsx'
 import { Header } from './components/Header.jsx'
 import { OfflineBanner } from './components/OfflineBanner.jsx'
-import { CookiePrompt } from './components/CookiePrompt.jsx'
-import { AnalyticsConsent } from './components/AnalyticsConsent.jsx'
+import { ConsentBar } from './components/ConsentBar.jsx'
+import { consentSettled } from './consent.js'
 import { readConsent, trackView } from './analytics.js'
 import { Onboarding } from './components/Onboarding.jsx'
 import { Paywall } from './components/Paywall.jsx'
+import { IncomeCheckPage, MatchAlertsPage } from './components/PlanToolPages.jsx'
 import { PlanPage } from './components/PlanPage.jsx'
 import { MatchAlertBanner } from './components/MatchAlertsCard.jsx'
 import { loadMatchPrefs, runMatchCheck } from './matchAlerts.js'
@@ -150,6 +151,10 @@ function parseHash() {
   if (hash === '/voucher-ready') return { name: 'voucher-ready' }
   if (hash === '/partners') return { name: 'partners' }
   if (hash === '/quiz' || hash === '/start') return { name: 'quiz' }
+  if (hash === '/match-alerts') return { name: 'match-alerts' }
+  if (hash === '/income-check' || hash === '/income-prescreen') return { name: 'income-check' }
+  if (hash === '/borough-guides') return { name: 'guides' }
+  if (hash === '/search') return { name: 'search' }
   if (hash === '/rent-share' || hash === '/rent-calculator') return { name: 'rent' }
   if (hash === '/roadmap' || hash === '/shelter-roadmap') return { name: 'roadmap' }
   if (hash === '/after-movein' || hash === '/tenant-rights') return { name: 'rights-movein' }
@@ -161,11 +166,12 @@ function parseHash() {
   if (hash === '/steps' || hash === '/resources' || hash === '/plan' || hash === '/blog') {
     return { name: hash.slice(1) }
   }
-  return { name: 'search' }
+  if (hash === '/') return { name: 'search' }
+  return { name: 'notfound' }
 }
 
 export default function App() {
-  const { lang } = useLanguage()
+  const { lang, t } = useLanguage()
   const [route, setRoute] = useState(parseHash)
   const [plan, setPlan] = useState(loadPlan)
   const [checks, setChecks] = useState(loadChecks)
@@ -198,6 +204,8 @@ export default function App() {
   const [paywall, setPaywall] = useState(null)
   const [assistantOpen, setAssistantOpen] = useState(false)
   const [rubyIntroOpen, setRubyIntroOpen] = useState(() => readItem(RUBY_INTRO_KEY) !== '1')
+  // Consent first, as one bar; Ruby's intro only after it is settled.
+  const [consentDone, setConsentDone] = useState(() => consentSettled())
   const [analyticsConsent, setAnalyticsConsent] = useState(readConsent)
   const [matchPrefs, setMatchPrefs] = useState(loadMatchPrefs)
   const [matchHits, setMatchHits] = useState([])
@@ -751,7 +759,7 @@ export default function App() {
   const listing = route.name === 'detail' ? LISTINGS.find((item) => item.id === route.id) : null
   const post = route.name === 'post' ? POSTS.find((item) => item.slug === route.id) : null
   const infoPage = route.name === 'info' ? SITE_PAGES.find((item) => item.slug === route.id) : null
-  const dockActive = assistantOpen || rubyIntroOpen
+  const dockActive = assistantOpen || (rubyIntroOpen && consentDone)
     ? 'assistant'
     : route.name === 'detail'
       ? 'search'
@@ -763,7 +771,7 @@ export default function App() {
             ? 'steps'
             : route.name === 'scam' || route.name === 'moving' || route.name === 'rights' || route.name === 'landlord' || route.name === 'housing-connect' || route.name === 'sponsor' || route.name === 'listing-check' || route.name === 'guides' || route.name === 'guide' || route.name === 'partners' || route.name === 'rights-movein' || route.name === 'utility' || route.name === 'youth' || route.name === 'install'
               ? 'resources'
-              : route.name === 'rent' || route.name === 'waitlist'
+              : route.name === 'rent' || route.name === 'waitlist' || route.name === 'match-alerts' || route.name === 'income-check'
                 ? 'plan'
               : route.name === 'list-unit' || route.name === 'voucher-ready' || route.name === 'listings-admin' || route.name === 'quiz' || route.name === 'viewing'
                 ? 'search'
@@ -870,7 +878,16 @@ export default function App() {
         {route.name === 'partners' && <PartnerDirectoryPage />}
         {route.name === 'quiz' && <QuickStartQuizPage />}
         {route.name === 'rent' && <RentCalculatorPage />}
-        {route.name === 'plan' && <PlanPage plan={plan} onChange={updatePlan} checks={checks} onChecks={updateChecks} onClearIncome={clearIncome} signedIn={session.signedIn} onDeleteAccount={openDelete} matchPrefs={matchPrefs} onMatchPrefs={setMatchPrefs} matchSeed={{ borough: filters.borough && filters.borough !== 'All' ? filters.borough : '', bedrooms: checks.voucherBedrooms || '', program: plan.program || '' }} />}
+        {route.name === 'plan' && <PlanPage plan={plan} onChange={updatePlan} checks={checks} onChecks={updateChecks} signedIn={session.signedIn} onDeleteAccount={openDelete} />}
+        {route.name === 'match-alerts' && <MatchAlertsPage prefs={matchPrefs} onPrefs={setMatchPrefs} seed={{ borough: filters.borough && filters.borough !== 'All' ? filters.borough : '', bedrooms: checks.voucherBedrooms || '', program: plan.program || '' }} />}
+        {route.name === 'income-check' && <IncomeCheckPage plan={plan} checks={checks} onChecks={updateChecks} onClear={clearIncome} />}
+        {route.name === 'notfound' && (
+          <article className="page empty">
+            <h1>{t('notFound.title')}</h1>
+            <p>{t('notFound.body')}</p>
+            <a className="button" href="#/">{t('notFound.cta')}</a>
+          </article>
+        )}
         {route.name === 'blog' && <BlogList />}
         {route.name === 'post' && <BlogPost post={post} />}
         {route.name === 'list-unit' && <ListUnitPage />}
@@ -884,8 +901,7 @@ export default function App() {
         </div>
         <Footer compact={route.name === 'search'} />
       </main>
-      <CookiePrompt />
-      <AnalyticsConsent onChange={setAnalyticsConsent} />
+      <ConsentBar onChange={setAnalyticsConsent} onSettled={() => setConsentDone(true)} />
       <DeleteAccountDialog
         open={deleteOpen}
         signedIn={session.signedIn}
@@ -894,7 +910,7 @@ export default function App() {
         onDone={finishDelete}
       />
       <Dock active={dockActive} onSelect={navSelect} />
-      <RubyIntro open={rubyIntroOpen} onTalk={talkToRuby} onLater={dismissRubyIntro} />
+      <RubyIntro open={rubyIntroOpen && consentDone} onTalk={talkToRuby} onLater={dismissRubyIntro} />
       {assistantOpen && (
         <AssistantSheet
           messages={messages}

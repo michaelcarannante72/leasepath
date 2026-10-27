@@ -184,10 +184,30 @@ export function ResourcesPage() {
 
   return (
     <div className="page resources-page">
-      <p className="eyebrow">{t("resources.eyebrow")} · <a href="#/after-movein">Tenant rights after move-in</a> · <a href="#/utility-help">Utility help (HEAP)</a> · <a href="#/viewing-checklist">Apartment viewing checklist</a> · <a href="#/youth">Youth and LGBTQ+ housing resources</a> · <a href="#/install">Install and share LeasePath</a></p>
+      <p className="eyebrow">{t("resources.eyebrow")}</p>
       <h1>{t("resources.title")}</h1>
       <p className="lede">{t("resources.lede")}</p>
-      <p className="after-link"><a href="#/housing-connect">Housing Connect lotteries</a> · <a href="#/listing-check">Check a listing</a> · <a href="#/after-you-find#chap">{t("resources.chap")}</a> · <a href="#/after-you-find">{t("resources.afterFind")}</a> · <a href="#/inspection-prep">HQS inspection prep</a> · <a href="#/scam-alerts">Voucher scam alerts</a> · <a href="#/moving-help">Moving help</a> · <a href="#/know-your-rights">Know your rights</a> · <a href="#/landlord-welcome">Landlords: why take vouchers</a> · <a href="#/docs-tracker">Documents and deadlines</a> · <a href="#/roadmap">Shelter to housing roadmap</a></p>
+      <nav className="guide-links" aria-label={t("resources.jump")}>
+        <h2 className="guide-links-title">{t("resources.jump")}</h2>
+        <ul className="chip-links">
+          <li><a href="#/housing-connect">{t("resources.link.hc")}</a></li>
+          <li><a href="#/listing-check">{t("resources.link.check")}</a></li>
+          <li><a href="#/after-you-find#chap">{t("resources.chap")}</a></li>
+          <li><a href="#/after-you-find">{t("resources.afterFind")}</a></li>
+          <li><a href="#/inspection-prep">{t("resources.link.hqs")}</a></li>
+          <li><a href="#/scam-alerts">{t("resources.link.scam")}</a></li>
+          <li><a href="#/moving-help">{t("resources.link.moving")}</a></li>
+          <li><a href="#/know-your-rights">{t("resources.link.rights")}</a></li>
+          <li><a href="#/landlord-welcome">{t("resources.link.landlord")}</a></li>
+          <li><a href="#/docs-tracker">{t("resources.link.docs")}</a></li>
+          <li><a href="#/roadmap">{t("resources.link.roadmap")}</a></li>
+          <li><a href="#/after-movein">{t("resources.link.movein")}</a></li>
+          <li><a href="#/utility-help">{t("resources.link.heap")}</a></li>
+          <li><a href="#/viewing-checklist">{t("resources.link.viewing")}</a></li>
+          <li><a href="#/youth">{t("resources.link.youth")}</a></li>
+          <li><a href="#/install">{t("resources.link.install")}</a></li>
+        </ul>
+      </nav>
 
       <aside className="borough-guides-callout" aria-labelledby="borough-guides-title">
         <h2 id="borough-guides-title">Borough voucher-renter guides</h2>

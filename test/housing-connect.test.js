@@ -123,7 +123,8 @@ test('loadActiveLotteries joins addresses through the injected fetcher', async (
 })
 
 test('page voice: free apply scam line, you may qualify, Resources link, no medical/HIV', () => {
-  const page = read('src/components/HousingConnectPage.jsx')
+  // Page copy moved into i18nPages.js (en + es); the component renders it through t().
+  const page = read('src/components/HousingConnectPage.jsx') + read('src/i18nPages.js')
   assert.match(page, /Applying is always free\. Anyone who asks for a fee is a scam\./)
   assert.match(page, /You may qualify/)
   assert.match(page, /#\/resources/)

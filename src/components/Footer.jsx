@@ -1,3 +1,4 @@
+import { useLanguage } from './LanguageProvider.jsx'
 import { FOOTER_GROUPS, SITE_PAGES } from '../sitePages.js'
 import { SEARCH_PAGES } from '../data/voucherSearches.js'
 import { OPEN_ANALYTICS_CHOICE } from './AnalyticsConsent.jsx'
@@ -14,27 +15,21 @@ function pageHref(slug) {
   return `#/info/${slug}`
 }
 
+/** About a dozen chips; the full list lives on /search (See all). */
+export const POPULAR_CHIP_LIMIT = 12
+
 function PopularSearchChips() {
+  const { t } = useLanguage()
+  const chips = SEARCH_PAGES.slice(0, POPULAR_CHIP_LIMIT)
   return (
     <section className="popular-searches" aria-labelledby="popular-searches-heading">
-      <details className="popular-searches-mobile">
-        <summary id="popular-searches-heading">Popular voucher searches</summary>
-        <div className="popular-search-chips">
-          {SEARCH_PAGES.map((page) => (
-            <a key={page.path} className="popular-search-chip" href={page.path}>{page.chipLabel}</a>
-          ))}
-        </div>
-        <p className="popular-searches-more"><a href="/search">See all popular voucher searches</a></p>
-      </details>
-      <div className="popular-searches-desktop">
-        <h2>Popular voucher searches</h2>
-        <div className="popular-search-chips">
-          {SEARCH_PAGES.map((page) => (
-            <a key={page.path} className="popular-search-chip" href={page.path}>{page.chipLabel}</a>
-          ))}
-        </div>
-        <p className="popular-searches-more"><a href="/search">See all popular voucher searches</a></p>
+      <h2 id="popular-searches-heading">{t('popular.title')}</h2>
+      <div className="popular-search-chips">
+        {chips.map((page) => (
+          <a key={page.path} className="popular-search-chip" href={page.path}>{page.chipLabel}</a>
+        ))}
       </div>
+      <p className="popular-searches-more"><a href="/search">{t('popular.more')}</a></p>
     </section>
   )
 }

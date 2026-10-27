@@ -7,6 +7,7 @@ import { BlogList, BlogPost } from './components/BlogPage.jsx'
 import { Dock } from './components/Dock.jsx'
 import { Footer, InfoPage } from './components/Footer.jsx'
 import { Header } from './components/Header.jsx'
+import { OfflineBanner } from './components/OfflineBanner.jsx'
 import { CookiePrompt } from './components/CookiePrompt.jsx'
 import { AnalyticsConsent } from './components/AnalyticsConsent.jsx'
 import { readConsent, trackView } from './analytics.js'
@@ -712,6 +713,7 @@ export default function App() {
         onSignOut={signOut}
       />
       <main className="stage" ref={stageRef}>
+        <OfflineBanner />
         <div className="view" key={route.id ? `${route.name}-${route.id}` : route.name}>
         {route.name === 'search' && (
             <SearchPage

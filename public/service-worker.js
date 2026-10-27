@@ -1,9 +1,11 @@
 // Bump CACHE_VERSION when this file's caching rules change. Hashed files under /assets/
 // are refreshed on every install, and old ones are pruned on activate.
 const CACHE_PREFIX = 'leasepath-shell-'
-const CACHE_VERSION = 'v3'
+const CACHE_VERSION = 'v4'
 const CACHE_NAME = `${CACHE_PREFIX}${CACHE_VERSION}`
 
+// App shell + icons. Hash routes (#/resources, #/steps, #/plan, …) load from '/' once cached,
+// so Resources, the docs checklist (Steps), and My voucher work offline after the first visit.
 const SHELL = [
   '/',
   '/manifest.webmanifest',
@@ -58,7 +60,7 @@ self.addEventListener('activate', (event) => {
   )
 })
 
-// Never cache the API or anything signed in. Everything else is network first.
+// Never cache the API or anything signed in. Everything else is network first with cache fallback (offline).
 function bypass(url) {
   return url.pathname === '/api' || url.pathname.startsWith('/api/')
 }

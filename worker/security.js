@@ -38,7 +38,7 @@ export const SECURITY_HEADERS = {
   'x-frame-options': 'DENY',
   'cross-origin-opener-policy': 'same-origin-allow-popups',
   'permissions-policy':
-    'geolocation=(self), camera=(), microphone=(), payment=(), usb=(), bluetooth=(), serial=(), hid=(), magnetometer=(), gyroscope=(), accelerometer=(), display-capture=(), browsing-topics=()',
+    'geolocation=(self), camera=(), microphone=(self), payment=(), usb=(), bluetooth=(), serial=(), hid=(), magnetometer=(), gyroscope=(), accelerometer=(), display-capture=(), browsing-topics=()',
 }
 
 export function headersFile() {

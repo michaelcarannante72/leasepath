@@ -1,5 +1,17 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { FREE_COACH_QUESTIONS } from '../coachLimit.js'
+import {
+  LISTENING_LABEL,
+  MIC_LABEL,
+  MIC_STOP_LABEL,
+  UNSUPPORTED_HINT,
+  readSpeakReplies,
+  speechSupport,
+  speak,
+  startListening,
+  stopSpeaking,
+  writeSpeakReplies,
+} from '../rubyVoice.js'
 import { GoogleSignInButton } from './GoogleSignInButton.jsx'
 import { Icon } from './Icon.jsx'
 
@@ -48,6 +60,13 @@ export function AssistantSheet({
   const closeButton = useRef(null)
   const sheet = useRef(null)
   const thread = useRef(null)
+  const listenHandle = useRef(null)
+  const cancelSpeak = useRef(null)
+  const spokenCount = useRef(0)
+  const support = speechSupport(typeof window !== 'undefined' ? window : undefined)
+  const [listening, setListening] = useState(false)
+  const [voiceError, setVoiceError] = useState('')
+  const [speakReplies, setSpeakReplies] = useState(() => readSpeakReplies())
 
   const locked = Boolean(access && !access.signedIn && access.anonymousRemaining <= 0)
   const paused = Boolean(access?.loaded && access.secretReady === false)
@@ -83,6 +102,77 @@ export function AssistantSheet({
     const node = thread.current
     if (node) node.scrollTop = node.scrollHeight
   }, [messages, pending, locked])
+
+  // Stop mic and speech when the sheet closes.
+  useEffect(() => () => {
+    listenHandle.current?.stop()
+    listenHandle.current = null
+    cancelSpeak.current?.()
+    cancelSpeak.current = null
+    stopSpeaking()
+  }, [])
+
+  // Read new assistant replies aloud when the person opted in. Welcome stays silent.
+  useEffect(() => {
+    if (!speakReplies || !support.synthesis || pending) return undefined
+    const assistants = messages.filter((m) => m.role === 'assistant' && !m.local)
+    if (assistants.length <= spokenCount.current) return undefined
+    const latest = assistants[assistants.length - 1]
+    spokenCount.current = assistants.length
+    cancelSpeak.current?.()
+    cancelSpeak.current = speak(latest.content)
+    return undefined
+  }, [messages, pending, speakReplies, support.synthesis])
+
+  const setSpeakPref = (on) => {
+    setSpeakReplies(on)
+    writeSpeakReplies(on)
+    if (!on) {
+      cancelSpeak.current?.()
+      cancelSpeak.current = null
+      stopSpeaking()
+    }
+  }
+
+  const stopMic = () => {
+    listenHandle.current?.stop()
+    listenHandle.current = null
+    setListening(false)
+  }
+
+  const toggleMic = () => {
+    setVoiceError('')
+    if (!support.recognition) {
+      setVoiceError(UNSUPPORTED_HINT)
+      return
+    }
+    if (listening) {
+      stopMic()
+      return
+    }
+    stopSpeaking()
+    const handle = startListening({
+      onPartial: (text) => onInput(text),
+      onFinal: (text) => {
+        if (text) onInput(text)
+      },
+      onError: (code) => {
+        setVoiceError(typeof code === 'string' ? `Mic: ${code}. You can still type.` : 'Mic failed. You can still type.')
+        setListening(false)
+        listenHandle.current = null
+      },
+      onEnd: () => {
+        setListening(false)
+        listenHandle.current = null
+      },
+    })
+    if (!handle) {
+      setVoiceError(UNSUPPORTED_HINT)
+      return
+    }
+    listenHandle.current = handle
+    setListening(true)
+  }
 
   return (
     <div className="sheet-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose() }}>
@@ -135,6 +225,7 @@ export function AssistantSheet({
               className="composer"
               onSubmit={(event) => {
                 event.preventDefault()
+                stopMic()
                 onSend(input)
               }}
             >
@@ -148,24 +239,53 @@ export function AssistantSheet({
                   <small className="share-detail">{includePlan ? 'On: program, household size, letter amount and utilities are sent with your questions.' : 'Off: nothing about your voucher leaves this phone.'}</small>
                 </span>
               </label>
-              <div className="composer-row">
+              {support.synthesis && (
+                <label className="check-line">
+                  <input type="checkbox" role="switch" aria-checked={speakReplies} checked={speakReplies} onChange={(event) => setSpeakPref(event.target.checked)} />
+                  <span>
+                    Read Ruby’s replies aloud
+                    <small className="share-detail">Uses this phone’s speaker. Audio is not uploaded or stored.</small>
+                  </span>
+                </label>
+              )}
+              <div className="composer-row composer-row-voice">
                 <textarea
                   value={input}
                   onChange={(event) => onInput(event.target.value)}
-                  placeholder="Ask Ruby about a voucher"
+                  placeholder={listening ? LISTENING_LABEL : 'Ask Ruby about a voucher'}
                   rows={3}
                   maxLength={2000}
                   aria-label="Question for Ruby"
                   onKeyDown={(event) => {
                     if (event.key === 'Enter' && !event.shiftKey) {
                       event.preventDefault()
+                      stopMic()
                       onSend(input)
                     }
                   }}
                 />
-                <button type="submit" className="button ruby-send" disabled={pending || !input.trim()}>Send</button>
+                <div className="composer-actions">
+                  <button
+                    type="button"
+                    className={listening ? 'button ruby-mic is-listening' : 'button ruby-mic'}
+                    aria-pressed={listening}
+                    aria-label={support.recognition ? (listening ? MIC_STOP_LABEL : MIC_LABEL) : 'Voice not supported in this browser'}
+                    title={support.recognition ? (listening ? MIC_STOP_LABEL : MIC_LABEL) : UNSUPPORTED_HINT}
+                    onClick={toggleMic}
+                    disabled={pending}
+                  >
+                    <Icon name="mic" size={18} />
+                    <span className="ruby-mic-label">{listening ? 'Stop' : 'Mic'}</span>
+                  </button>
+                  <button type="submit" className="button ruby-send" disabled={pending || !input.trim()}>Send</button>
+                </div>
               </div>
-              <p className="fine">{finePrint(configured, access)}</p>
+              {listening && <p className="voice-status" role="status">{LISTENING_LABEL}</p>}
+              {voiceError && <p className="voice-fallback" role="status">{voiceError}</p>}
+              {!support.recognition && !voiceError && (
+                <p className="voice-fallback" role="status">{UNSUPPORTED_HINT}</p>
+              )}
+              <p className="fine">{finePrint(configured, access)} Voice stays on this device when available.</p>
             </form>
           </>
         )}

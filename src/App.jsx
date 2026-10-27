@@ -18,6 +18,7 @@ import { clearDeviceData } from './deviceData.js'
 import { ResourcesPage } from './components/ResourcesPage.jsx'
 import { HousingConnectPage } from './components/HousingConnectPage.jsx'
 import { SponsorPage } from './components/SponsorPage.jsx'
+import { ListingCheckerPage } from './components/ListingCheckerPage.jsx'
 import { RubyIntro } from './components/RubyIntro.jsx'
 import { SearchPage } from './components/SearchPage.jsx'
 import { ListUnitPage } from './components/ListUnitPage.jsx'
@@ -112,6 +113,7 @@ function parseHash() {
   if (post) return { name: 'post', id: post[1] }
   const info = hash.match(/^\/info\/([a-z0-9-]+)$/)
   if (info) return { name: 'info', id: info[1] }
+  if (hash === '/listing-check') return { name: 'listing-check' }
   if (hash === '/after-you-find' || hash === '/after-you-find#chap') return { name: 'after' }
   if (hash === '/caseworker-pack') return { name: 'pack' }
   if (hash === '/inspection-prep') return { name: 'prep' }
@@ -702,7 +704,7 @@ export default function App() {
           ? 'steps'
           : route.name === 'pack' || route.name === 'prep'
             ? 'steps'
-            : route.name === 'scam' || route.name === 'moving' || route.name === 'rights' || route.name === 'landlord' || route.name === 'housing-connect' || route.name === 'sponsor'
+            : route.name === 'scam' || route.name === 'moving' || route.name === 'rights' || route.name === 'landlord' || route.name === 'housing-connect' || route.name === 'sponsor' || route.name === 'listing-check'
               ? 'resources'
               : route.name === 'list-unit' || route.name === 'voucher-ready' || route.name === 'listings-admin'
                 ? 'search'
@@ -786,6 +788,7 @@ export default function App() {
         {route.name === 'landlord' && <LandlordWelcomePage />}
         {route.name === 'housing-connect' && <HousingConnectPage />}
         {route.name === 'sponsor' && <SponsorPage />}
+        {route.name === 'listing-check' && <ListingCheckerPage />}
         {route.name === 'plan' && <PlanPage plan={plan} onChange={updatePlan} checks={checks} onChecks={updateChecks} onClearIncome={clearIncome} signedIn={session.signedIn} onDeleteAccount={openDelete} />}
         {route.name === 'blog' && <BlogList />}
         {route.name === 'post' && <BlogPost post={post} />}

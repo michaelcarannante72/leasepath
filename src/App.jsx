@@ -25,6 +25,7 @@ import { HousingConnectPage } from './components/HousingConnectPage.jsx'
 import { SponsorPage } from './components/SponsorPage.jsx'
 import { ListingCheckerPage } from './components/ListingCheckerPage.jsx'
 import { BoroughGuidesIndex, BoroughGuidePage } from './components/BoroughGuidesPage.jsx'
+import { PartnerDirectoryPage } from './components/PartnerDirectoryPage.jsx'
 import { RubyIntro } from './components/RubyIntro.jsx'
 import { SearchPage } from './components/SearchPage.jsx'
 import { ListUnitPage } from './components/ListUnitPage.jsx'
@@ -138,6 +139,7 @@ function parseHash() {
   if (hash === '/list-unit') return { name: 'list-unit' }
   if (hash === '/listings-admin') return { name: 'listings-admin' }
   if (hash === '/voucher-ready') return { name: 'voucher-ready' }
+  if (hash === '/partners') return { name: 'partners' }
   if (hash === '/steps' || hash === '/resources' || hash === '/plan' || hash === '/blog') {
     return { name: hash.slice(1) }
   }
@@ -741,7 +743,7 @@ export default function App() {
           ? 'steps'
           : route.name === 'pack' || route.name === 'prep' || route.name === 'docs'
             ? 'steps'
-            : route.name === 'scam' || route.name === 'moving' || route.name === 'rights' || route.name === 'landlord' || route.name === 'housing-connect' || route.name === 'sponsor' || route.name === 'listing-check' || route.name === 'guides' || route.name === 'guide'
+            : route.name === 'scam' || route.name === 'moving' || route.name === 'rights' || route.name === 'landlord' || route.name === 'housing-connect' || route.name === 'sponsor' || route.name === 'listing-check' || route.name === 'guides' || route.name === 'guide' || route.name === 'partners'
               ? 'resources'
               : route.name === 'list-unit' || route.name === 'voucher-ready' || route.name === 'listings-admin'
                 ? 'search'
@@ -838,6 +840,7 @@ export default function App() {
         {route.name === 'docs' && <DocsDeadlinePage />}
         {route.name === 'guides' && <BoroughGuidesIndex />}
         {route.name === 'guide' && <BoroughGuidePage slug={route.id} />}
+        {route.name === 'partners' && <PartnerDirectoryPage />}
         {route.name === 'plan' && <PlanPage plan={plan} onChange={updatePlan} checks={checks} onChecks={updateChecks} onClearIncome={clearIncome} signedIn={session.signedIn} onDeleteAccount={openDelete} matchPrefs={matchPrefs} onMatchPrefs={setMatchPrefs} matchSeed={{ borough: filters.borough && filters.borough !== 'All' ? filters.borough : '', bedrooms: checks.voucherBedrooms || '', program: plan.program || '' }} />}
         {route.name === 'blog' && <BlogList />}
         {route.name === 'post' && <BlogPost post={post} />}

@@ -195,6 +195,12 @@ export function ResourcesPage() {
         <p><a className="button" href="#/guides">Open borough guides</a></p>
       </aside>
 
+      <aside className="partners-callout" aria-labelledby="partners-callout-title">
+        <h2 id="partners-callout-title">Legal aid and nonprofit partners</h2>
+        <p>Legal Aid Society, Housing Court Answers, the NYC Tenant Helpline, Office of Civil Justice, and more — filterable by borough.</p>
+        <p><a className="button" href="#/partners">Open partner directory</a></p>
+      </aside>
+
       <aside className="help-now" aria-labelledby="help-now-title">
         <h2 id="help-now-title">{t("resources.helpNow")}</h2>
         <ul>

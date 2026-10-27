@@ -188,7 +188,8 @@ export function searchHtmlForPath(pathname) {
 }
 
 export function sitemapXml(origin = 'https://leasepath.app') {
-  const urls = [`${origin}/search`, ...SEARCH_PAGES.map((page) => `${origin}${page.path}`)]
+  // The home page and the policy pages are real crawlable URLs too.
+  const urls = [`${origin}/`, `${origin}/privacy`, `${origin}/terms`, `${origin}/search`, ...SEARCH_PAGES.map((page) => `${origin}${page.path}`)]
   const body = urls.map((loc) => `  <url><loc>${escapeHtml(loc)}</loc></url>`).join('\n')
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

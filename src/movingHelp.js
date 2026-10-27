@@ -8,7 +8,7 @@ export const ACCESS_HRA_URL = 'https://a069-access.nyc.gov/accesshra/'
 export const ACCESS_NYC_ONE_SHOT = 'https://access.nyc.gov/programs/one-shot-deal/'
 export const HRA_SPECIAL_GRANT_GUIDE = 'https://www.nyc.gov/site/hra/help/special-grant-document-guide.page'
 export const HRA_HOMEBASE = 'https://www.nyc.gov/site/hra/help/homebase.page'
-export const ACCESS_HRA_INFO = 'https://www.nyc.gov/site/hra/help/access-hra.page'
+export const ACCESS_HRA_INFO = 'https://www.nyc.gov/accesshra'
 
 export const HRA_INFOLINE = {
   phone: '718-557-1399',

@@ -11,7 +11,7 @@ export const SOURCES = {
   },
   accessNyc: {
     label: 'ACCESS HRA',
-    href: 'https://www.nyc.gov/site/hra/help/access-hra.page',
+    href: 'https://www.nyc.gov/accesshra',
   },
   hraEmergency: {
     label: 'ACCESS NYC — One Shot Deal',

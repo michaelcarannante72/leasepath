@@ -1,3 +1,4 @@
+import { tx } from './i18nAuto.js'
 /**
  * On-device document checklist and deadline tracker.
  * Everything stays in localStorage on this phone. Nothing is uploaded.
@@ -204,18 +205,18 @@ export function buildDeadlineIcs(state, now = new Date()) {
 
   push(
     state.deadlines?.letterExpires,
-    'LeasePath: shopping letter expires',
-    'Your shopping letter or voucher paperwork may expire on this date. Confirm with your worker. Dates stay on your phone in LeasePath.',
+    tx('LeasePath: shopping letter expires'),
+    tx('Your shopping letter or voucher paperwork may expire on this date. Confirm with your worker. Dates stay on your phone in LeasePath.'),
   )
   push(
     state.deadlines?.inspection,
-    'LeasePath: apartment inspection',
-    'Inspection or walkthrough date you saved in LeasePath. Confirm with the landlord and your worker.',
+    tx('LeasePath: apartment inspection'),
+    tx('Inspection or walkthrough date you saved in LeasePath. Confirm with the landlord and your worker.'),
   )
   push(
     state.deadlines?.leaseSigning,
-    'LeasePath: lease signing',
-    'Lease-signing date you saved in LeasePath. Bring your checklist documents. Confirm with your worker.',
+    tx('LeasePath: lease signing'),
+    tx('Lease-signing date you saved in LeasePath. Bring your checklist documents. Confirm with your worker.'),
   )
 
   if (events.length === 0) return null
@@ -227,7 +228,29 @@ export function buildDeadlineIcs(state, now = new Date()) {
     'METHOD:PUBLISH',
     ...events,
     'END:VCALENDAR',
-  ].join('\r\n')
+  ].join('\r\n').split('\r\n').map(icsFold).join('\r\n')
+}
+
+// RFC 5545 3.1: content lines longer than 75 octets are folded with CRLF + one space.
+export function icsFold(line) {
+  const bytes = new TextEncoder().encode(line)
+  if (bytes.length <= 75) return line
+  const parts = []
+  let current = ''
+  let size = 0
+  for (const char of line) {
+    const charSize = new TextEncoder().encode(char).length
+    const limit = parts.length === 0 ? 75 : 74
+    if (size + charSize > limit) {
+      parts.push(current)
+      current = ''
+      size = 0
+    }
+    current += char
+    size += charSize
+  }
+  parts.push(current)
+  return parts.join('\r\n ')
 }
 
 export function downloadIcs(icsText, filename = 'leasepath-deadlines.ics') {

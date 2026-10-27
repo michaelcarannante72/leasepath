@@ -18,7 +18,7 @@ export const GUIDE_SOURCES = {
   },
   accessHra: {
     label: 'ACCESS HRA',
-    href: 'https://www.nyc.gov/site/hra/accesshra/accesshra.page',
+    href: 'https://www.nyc.gov/accesshra',
   },
   mta: {
     label: 'MTA',

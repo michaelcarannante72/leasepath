@@ -471,7 +471,7 @@ test('income is cleared by a Clear income button, on sign-out, and on account de
   assert.match(app, /const clearIncome = useCallback\(\(\) => \{[\s\S]*?incomeAmount: '', incomePeriod: 'month'[\s\S]*?writeItem\(CHECKS_KEY, JSON\.stringify\(next\)\)/)
   const signOut = app.slice(app.indexOf('const signOut = useCallback'), app.indexOf('const openResources'))
   assert.match(signOut, /clearIncome\(\)/)
-  assert.match(signOut, /\[accountLive, applyAccess, checked, clearIncome, filters\.q, plan, saved\]/)
+  assert.match(signOut, /\[accountLive, applyAccess, checked, clearIncome, filters\.q, lang, plan, saved\]/)
   const del = app.slice(app.indexOf('const deleteAccount = useCallback'), app.indexOf('const signOut = useCallback'))
   assert.match(del, /clearIncome\(\)/)
   // Cleared right after the person confirms, before the network call, so a failed call still clears it.

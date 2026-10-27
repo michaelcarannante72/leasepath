@@ -2611,3 +2611,10 @@ body { overflow: visible; overflow-x: clip; }
   user-select: text;
   -webkit-user-select: text;
 }
+
+/* ---- debug-sweep: print. The header is .topbar and the footer is .site-footer; earlier print rules
+   named .site-header/.header, so the nav bar and the whole footer printed on every page. */
+@media print {
+  .topbar, .site-footer, .dock, .consent-bar, .cookie-prompt, .offline-banner, .skip-link { display: none !important; }
+  .app { padding-bottom: 0 !important; min-height: 0 !important; }
+}

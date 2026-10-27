@@ -65,11 +65,11 @@ export function DocsDeadlinePage() {
   const onExportIcs = () => {
     const ics = buildDeadlineIcs(state)
     if (!ics) {
-      setStatus('Add at least one deadline date first.')
+      setStatus(tx('Add at least one deadline date first.'))
       return
     }
     downloadIcs(ics)
-    setStatus('Calendar file downloaded. Open it to add reminders on this phone.')
+    setStatus(tx('Calendar file downloaded. Open it to add reminders on this phone.'))
   }
 
   const onRemind = async () => {
@@ -85,10 +85,10 @@ export function DocsDeadlinePage() {
       if (result.ok) any = true
     }
     if (!any) {
-      setStatus('Turn on notifications for this site, or export a calendar file instead. Reminders stay on this phone.')
+      setStatus(tx('Turn on notifications for this site, or export a calendar file instead. Reminders stay on this phone.'))
       return
     }
-    setStatus('Reminder set on this phone when the browser allows it. Export a calendar file for a lasting alert.')
+    setStatus(tx('Reminder set on this phone when the browser allows it. Export a calendar file for a lasting alert.'))
   }
 
   const onDeleteAll = () => {
@@ -96,7 +96,7 @@ export function DocsDeadlinePage() {
     if (!ok) return
     clearDocs()
     setState(loadDocs())
-    setStatus('Cleared. Nothing left on this phone for this page.')
+    setStatus(tx('Cleared. Nothing left on this phone for this page.'))
   }
 
   const letterDays = SHOPPING_LETTER_DAYS_BY_PROGRAM[state.program] || 0

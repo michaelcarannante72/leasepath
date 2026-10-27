@@ -1,7 +1,7 @@
 // Bump CACHE_VERSION when this file's caching rules change. Hashed files under /assets/
 // are refreshed on every install, and old ones are pruned on activate.
 const CACHE_PREFIX = 'leasepath-shell-'
-const CACHE_VERSION = 'v5' // install-and-share + prior offline/match-alert handlers
+const CACHE_VERSION = 'v6' // navigations keyed by path: /search pages no longer overwrite the '/' shell
 const CACHE_NAME = `${CACHE_PREFIX}${CACHE_VERSION}`
 
 // App shell + icons. Hash routes (#/resources, #/steps, #/plan, …) load from '/' once cached,
@@ -17,8 +17,6 @@ const SHELL = [
   '/icons/apple-touch-icon.png',
 ]
 
-// Pages the Worker renders itself. They are not the app shell and must never be stored under '/'.
-const SERVER_PAGES = ['/privacy', '/terms']
 
 function assetsIn(html) {
   return [...html.matchAll(/(?:src|href)="(\/assets\/[^"]+)"/g)].map((match) => match[1])
@@ -62,12 +60,15 @@ self.addEventListener('activate', (event) => {
 
 // Never cache the API or anything signed in. Everything else is network first with cache fallback (offline).
 function bypass(url) {
-  return url.pathname === '/api' || url.pathname.startsWith('/api/')
+  return url.pathname === '/api' || url.pathname.startsWith('/api/') || url.pathname.startsWith('/cdn-cgi/')
 }
 
+// Only '/' (the app shell) is stored under '/'. Server-rendered pages (/privacy, /terms, /search/...)
+// are stored under their own path, so visiting one never replaces the shell that hash routes need offline.
 function cacheKeyFor(request, url) {
   if (request.mode !== 'navigate') return request
-  return SERVER_PAGES.includes(url.pathname.replace(/\/+$/, '')) ? url.pathname.replace(/\/+$/, '') : '/'
+  const path = url.pathname.replace(/\/+$/, '') || '/'
+  return path === '/index.html' ? '/' : path
 }
 
 self.addEventListener('fetch', (event) => {
@@ -82,7 +83,7 @@ self.addEventListener('fetch', (event) => {
       try {
         const response = await fetch(request)
         // Only a real page or file is stored. A 404 for a navigation must not replace the app shell.
-        if (response.ok && response.type === 'basic') {
+        if (response.ok && response.type === 'basic' && !response.redirected) {
           const cache = await caches.open(CACHE_NAME)
           await cache.put(key, response.clone())
         }

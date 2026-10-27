@@ -13,7 +13,7 @@ const axeSource = readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8')
 
 export const MAIN_ROUTES = ['#/', '#/steps', '#/resources', '#/plan', '#/blog', '#/after-you-find']
 
-export async function auditRoutes(baseUrl = 'http://127.0.0.1:5183', { viewport = { width: 390, height: 844, deviceScaleFactor: 2 } } = {}) {
+export async function auditRoutes(baseUrl = 'http://127.0.0.1:5183', { viewport = { width: 390, height: 844, deviceScaleFactor: 2 }, routes = MAIN_ROUTES } = {}) {
   const browser = await puppeteer.launch({
     headless: true,
     executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/google-chrome-stable',
@@ -23,7 +23,7 @@ export async function auditRoutes(baseUrl = 'http://127.0.0.1:5183', { viewport 
     const page = await browser.newPage()
     await page.setViewport(viewport)
     const report = []
-    for (const hash of MAIN_ROUTES) {
+    for (const hash of routes) {
       await page.goto(`${baseUrl}/${hash}`, { waitUntil: 'networkidle0', timeout: 45000 })
       await page.evaluate(() => {
         for (const btn of document.querySelectorAll('button')) {

@@ -95,10 +95,11 @@ test('sitemap.xml lists the index and every search page; robots.txt points at it
   const robots = readFileSync(new URL('../public/robots.txt', import.meta.url), 'utf8')
   assert.match(robots, /Sitemap:\s*https:\/\/leasepath\.app\/sitemap\.xml/)
   assert.match(xml, /<loc>https:\/\/leasepath\.app\/search<\/loc>/)
+  assert.match(xml, /<loc>https:\/\/leasepath\.app\/<\/loc>/)
   for (const page of SEARCH_PAGES) {
     assert.match(xml, new RegExp(`<loc>https://leasepath\\.app${page.path.replaceAll('/', '\\/')}</loc>`))
   }
-  assert.equal(sitemapXml().split('<url>').length - 1, 81)
+  assert.equal(sitemapXml().split('<url>').length - 1, 84)
   assert.ok(parseSearchPath('/search'))
   assert.ok(searchHtmlForPath('/search/fheps/brooklyn/2br').includes('$3,058'))
 })

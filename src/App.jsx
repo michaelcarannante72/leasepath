@@ -617,7 +617,7 @@ export default function App() {
     setChecked([])
     setMessages([welcomeMessage(lang)])
     return { ok: true }
-  }, [applyAccess, clearIncome, session.signedIn])
+  }, [applyAccess, clearIncome, lang, session.signedIn])
 
   const finishDelete = useCallback(async () => {
     setDeleteOpen(false)
@@ -677,7 +677,7 @@ export default function App() {
     if (!savedToAccount) {
       window.alert('You are signed out and this phone is cleared, but your latest voucher details could not be saved to your account. When you sign in again, check them in My voucher.')
     }
-  }, [accountLive, applyAccess, checked, clearIncome, filters.q, plan, saved])
+  }, [accountLive, applyAccess, checked, clearIncome, filters.q, lang, plan, saved])
 
   const openResources = useCallback(() => {
     setAssistantOpen(false)

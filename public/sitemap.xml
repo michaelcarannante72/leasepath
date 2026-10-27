@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://leasepath.app/</loc></url>
+  <url><loc>https://leasepath.app/privacy</loc></url>
+  <url><loc>https://leasepath.app/terms</loc></url>
   <url><loc>https://leasepath.app/search</loc></url>
   <url><loc>https://leasepath.app/search/cityfheps/bronx/sro</loc></url>
   <url><loc>https://leasepath.app/search/cityfheps/brooklyn/sro</loc></url>

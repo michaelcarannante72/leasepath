@@ -28,7 +28,7 @@ export const BOROUGH_OPTIONS = [
 const VOUCHER_TO_SEARCH = {
   cityfheps: 'cityfheps',
   fheps: 'fheps',
-  section8: 'section-8',
+  section8: 'nycha-section-8',
   hasa: null,
   none: null,
 }
@@ -75,8 +75,8 @@ export function routeQuizAnswers({ voucher, situation, borough } = {}) {
 
   if (searchProg && b) {
     return {
-      href: `#/search/${searchProg}/${b.searchSlug}/1br`,
-      title: `${b.label} ${searchProg === 'section-8' ? 'Section 8' : searchProg.toUpperCase()} rent search`,
+      href: `/search/${searchProg}/${b.searchSlug}/1br`,
+      title: `${b.label} ${searchProg === 'nycha-section-8' ? 'Section 8' : searchProg.toUpperCase()} rent search`,
       reason: 'Opens the verified rent-limit search for that voucher and borough. Limits come from the official charts linked on the page.',
     }
   }

@@ -52,7 +52,7 @@ test('OfflineBanner and App wire the status banner', () => {
 
 test('service worker precaches the shell and falls back offline for app pages', () => {
   const sw = read('public/service-worker.js')
-  assert.match(sw, /CACHE_VERSION = 'v8'/)
+  assert.match(sw, /CACHE_VERSION = 'v9'/)
   assert.match(sw, /Resources, the docs checklist/)
   assert.match(sw, /network first with cache fallback/)
   assert.match(sw, /cache\.addAll\(SHELL/)

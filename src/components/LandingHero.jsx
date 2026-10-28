@@ -39,6 +39,19 @@ function useWide() {
   return wide
 }
 
+/** A light inline brownstone-and-skyline silhouette for the phone hero (no image download). */
+function HeroSkyline() {
+  return (
+    <svg className="hero-skyline" viewBox="0 0 390 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+      <path className="sky-far" d="M0 120V70h18V52h14v18h10V40h8v-8h6v8h8v30h12V58h22v62zM120 120V46h10V30h4V14h4v16h4v16h10v74zM200 120V60h16V44h20v16h14V36h8V24h6v12h8v84zM290 120V54h12V40h18v14h10V64h20V48h12v72z" />
+      <path className="sky-near" d="M0 120V88l16-10 16 10v32zM40 120V84h34v36zM82 120V80l18-12 18 12v40zM126 120V86h40v34zM174 120V82l20-12 20 12v38zM222 120V84h38v36zM268 120V80l18-12 18 12v40zM312 120V86h36v34zM356 120V82l17-10 17 10v38z" />
+      <g className="sky-windows">
+        <rect x="48" y="92" width="6" height="8" /><rect x="60" y="92" width="6" height="8" /><rect x="94" y="90" width="5" height="8" /><rect x="134" y="94" width="6" height="8" /><rect x="150" y="94" width="6" height="8" /><rect x="188" y="90" width="5" height="8" /><rect x="232" y="94" width="6" height="8" /><rect x="282" y="90" width="5" height="8" /><rect x="322" y="94" width="6" height="8" />
+      </g>
+    </svg>
+  )
+}
+
 /** One headline and one short line. The search sits right under it (SearchPage). */
 export function LandingHero() {
   const wide = useWide()
@@ -64,6 +77,7 @@ export function LandingHero() {
         <a className="photo-by" href={HERO_PHOTO.sourceUrl} target="_blank" rel="noreferrer">{HERO_PHOTO.credit}</a>
       </div>
       )}
+      {!wide && <HeroSkyline />}
       <div className="hero-text">
         <p className="eyebrow">{t("hero.eyebrow")}</p>
         <h1 id="hero-title">{t("hero.title")}</h1>

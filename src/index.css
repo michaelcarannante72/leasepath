@@ -3064,3 +3064,69 @@ body { background: var(--bg); color: var(--navy); font-size: var(--fs-body); lin
 }
 .home-search .search-field { background: transparent; border: 0; box-shadow: none; padding: 0; }
 .home-search .search-field input, .home-search .search-field select { width: 100%; }
+
+/* ---- Landing v3: a bold navy hero with a skyline silhouette, confident type and a gentle gold glow. ---- */
+@keyframes lp-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@media (max-width: 899px) {
+  .hero-split {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    padding: var(--s5) var(--s3) 112px;
+    background: radial-gradient(120% 80% at 100% 0%, #2c4767 0%, rgba(44, 71, 103, 0) 60%), linear-gradient(165deg, #22364f 0%, #1C2D42 55%, #142233 100%);
+    color: #fff;
+  }
+  .hero-split::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: -60px;
+    right: -50px;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(242, 169, 0, 0.30) 0%, rgba(242, 169, 0, 0) 68%);
+  }
+  .hero-text { position: relative; z-index: 1; color: #fff; }
+  .hero-text .eyebrow { display: inline-block; color: #F2A900; font-size: 0.8125rem; font-weight: 750; letter-spacing: 0.12em; text-transform: uppercase; }
+  .hero-split .eyebrow { display: inline-block; }
+  .hero-text h1, #hero-title { color: #fff; font-size: clamp(2.125rem, 1.5rem + 3vw, 2.75rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.035em; text-wrap: balance; }
+  .hero-value { color: #d5dfea; font-size: 1.0625rem; max-width: 30ch; }
+  .hero-skyline { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 104px; z-index: 0; }
+  .hero-skyline .sky-far { fill: #2a405b; }
+  .hero-skyline .sky-near { fill: #faf7f2; }
+  .hero-skyline .sky-windows rect { fill: #F2A900; opacity: 0.55; }
+  .hero-text > * { animation: lp-rise 0.6s var(--ease) both; }
+  .hero-text > :nth-child(2) { animation-delay: 0.08s; }
+  .hero-text > :nth-child(3) { animation-delay: 0.16s; }
+  .home-search { padding-top: var(--s2); animation: lp-rise 0.6s 0.22s var(--ease) both; }
+}
+/* Lively voucher chips: a soft lift on press, navy when chosen, a gold dot as the one accent. */
+.home-search .program-chips button {
+  min-height: var(--tap);
+  border: 1px solid var(--line-strong);
+  background: #fff;
+  font-weight: 700;
+  transition: transform 0.15s var(--ease), background-color 0.15s var(--ease), color 0.15s var(--ease), box-shadow 0.15s var(--ease);
+}
+.home-search .program-chips button:active { transform: scale(0.97); }
+.home-search .program-chips button[aria-pressed="true"] { background: var(--navy); border-color: var(--navy); color: #fff; box-shadow: 0 6px 16px rgba(28, 45, 66, 0.22); }
+.home-search .program-chips button[aria-pressed="true"]::before { content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 8px; border-radius: 50%; background: #F2A900; vertical-align: middle; }
+/* Section rhythm below the hero: clear headings with a short gold rule. */
+.sheet-listings > h2, .results-bar + * h2, .voucher-ready > h2 { font-size: var(--fs-h2); letter-spacing: -0.015em; }
+.sheet-listings > h2::after, .voucher-ready > h2::after { content: ""; display: block; width: 32px; height: 3px; margin-top: var(--s1); border-radius: 3px; background: #F2A900; }
+
+/* ---- Tighter listing cards: notice and fit lines in compact small type. ---- */
+.sheet-card .card-body { gap: 6px; }
+.sheet-card h3 { font-size: 1rem; margin: 0; }
+.sheet-card .sheet-label { margin: 4px 0 0; padding: 0; background: none; border: 0; font-size: 0.8125rem; font-weight: 600; color: var(--muted); }
+.sheet-card .sheet-fit { margin: 2px 0 0; padding: 0; display: grid; gap: 2px; }
+.sheet-card .sheet-fit li { margin: 0; font-size: 0.875rem; line-height: 1.35; }
+.sheet-card .fine { margin: 2px 0 0; font-size: 0.8125rem; line-height: 1.35; }
+.sheet-card .card-actions { margin-top: var(--s1); }
+.sheet-card .card-call { min-height: 48px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-text > *, .home-search { animation: none; }
+  .home-search .program-chips button { transition: none; }
+}

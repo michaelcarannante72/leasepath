@@ -6,6 +6,7 @@ export const UI_ES = {
   "Saved only covers practice listings, which are hidden for now.": "Guardados solo incluye anuncios de práctica, que están ocultos por ahora.",
   "No HRA-list apartment matches these filters.": "Ningún apartamento de la lista de HRA coincide con estos filtros.",
   "Try another borough, any bedroom size, or a higher rent ceiling.": "Pruebe otro condado, cualquier tamaño o un alquiler máximo más alto.",
+  "Find apartments": "Buscar apartamentos",
   "Install the app": "Instale la app",
   "You may qualify": "Puede que califique",
   "Over the limits": "Sobre los límites",

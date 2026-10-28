@@ -83,6 +83,9 @@ export function ListingsAdminPage() {
       </form>
       {error && <p className="form-error" role="alert">{error}</p>}
       {message && <p className="ok-msg" role="status">{message}</p>}
+      <p className="fine">
+        {tx("Contact details come straight from the submission. Email or call the lister before you reject a unit so they know why.")}
+      </p>
       {loaded && !listings.length && <p>{tx("No pending units right now.")}</p>}
       <ul className="cards">
         {listings.map((unit) => (
@@ -92,7 +95,11 @@ export function ListingsAdminPage() {
               <p>{unit.borough} · {unit.size} · ${Number(unit.rent).toLocaleString('en-US')}{tx("/mo")}</p>
               <p>{tx("Vouchers:")} {(unit.voucherTypes || []).join(', ')}</p>
               <p>{tx("Inspection-ready:")} {unit.inspectionReady ? 'Yes' : 'No'}</p>
-              <p>{unit.contactName} · {unit.contactEmail} · {unit.contactPhone}</p>
+              <p className="admin-contact">
+                <span>{unit.contactName}</span>
+                <a href={`mailto:${unit.contactEmail}?subject=${encodeURIComponent(`LeasePath: your unit at ${unit.address}`)}`}>{unit.contactEmail}</a>
+                <a href={`tel:${String(unit.contactPhone || '').replace(/[^\d+]/g, '')}`}>{unit.contactPhone}</a>
+              </p>
               <p className="fine">{tx("Submitted")} {unit.submittedAt}</p>
               <div className="button-row">
                 <button type="button" className="button" disabled={busy} onClick={() => act(unit.id, 'approve')}>{tx("Approve")}</button>

@@ -2160,11 +2160,22 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 .list-unit-form .check-grid { display: grid; gap: 8px; margin-top: 8px; }
 .list-unit-form .attestation { font-weight: 600; align-items: start; }
 .list-unit-form .fine, .voucher-ready .fine { color: var(--muted); font-size: 0.875rem; }
+
+/* "Free to list" line under the landlord form's intro copy. */
+.list-unit-page .list-unit-free { margin: 12px 0 0; line-height: 1.5; }
+.list-unit-page .list-unit-free strong { color: var(--navy); }
+
+/* What happens next, on the 'Listing received' screen. */
+.list-unit-next { margin: 4px 0 0; padding-left: 22px; display: grid; gap: 8px; line-height: 1.5; }
+.list-unit-next li { padding-left: 2px; }
+.list-unit-next li::marker { color: var(--gold); font-weight: 800; }
 .voucher-ready { margin: 18px 0; }
 .voucher-ready-cards { margin-top: 12px; }
 .voucher-ready-cards h3 { margin: 4px 0; font-size: 1.05rem; }
 .ok-msg { color: var(--ok); font-weight: 700; }
 .listings-admin-page .panel { display: grid; gap: 12px; margin: 16px 0; }
+.listings-admin-page .admin-contact { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+.listings-admin-page .admin-contact a { font-weight: 700; overflow-wrap: anywhere; }
 .landlord-page .landlord-actions { margin: 0 0 14px; }
 .landlord-page code { font-size: 0.9em; background: #f0ebe3; padding: 1px 6px; border-radius: 6px; }
 /* Housing Connect lotteries page */

@@ -21,6 +21,7 @@ export function ListUnitPage() {
   const [error, setError] = useState('')
   const [done, setDone] = useState(false)
   const [busy, setBusy] = useState(false)
+  const [checking, setChecking] = useState(false)
 
   const set = (patch) => setForm((current) => ({ ...current, ...patch }))
 
@@ -41,11 +42,14 @@ export function ListUnitPage() {
     setBusy(true)
     try {
       let turnstileToken = ''
+      setChecking(true)
       try {
         turnstileToken = await getTurnstileToken()
       } catch {
         setError('The human check did not finish. Refresh and try again.')
         return
+      } finally {
+        setChecking(false)
       }
       const response = await fetch('/api/listings', {
         method: 'POST',
@@ -86,6 +90,14 @@ export function ListUnitPage() {
         <p className="lede">
           {tx("Thanks. Your unit is in the pending-review queue. It is never shown publicly until LeasePath approves it.")}
         </p>
+        <ol className="list-unit-next">
+          <li>{tx("LeasePath reviews the unit, usually within a few business days.")}</li>
+          <li>{tx("If it is approved, it shows on the voucher-ready units page with the contact details you gave, so renters or their workers can reach you directly.")}</li>
+          <li>{tx("If we have a question or cannot approve it, we email the contact address you gave.")}</li>
+        </ol>
+        <p className="fine">
+          {tx("Need to correct something? Submit the unit again with the right details and mention it in your next reply from the contact email.")}
+        </p>
         <div className="button-row">
           <button type="button" className="button" onClick={() => setDone(false)}>{tx("List another unit")}</button>
           <a className="button button-quiet" href="#/voucher-ready">{tx("See approved units")}</a>
@@ -100,6 +112,10 @@ export function ListUnitPage() {
       <h1>{tx("List a voucher-ready unit")}</h1>
       <p className="lede">
         {tx("Tell LeasePath about a unit that accepts housing vouchers. Submissions go to a pending-review queue and are never shown publicly until approved.")}
+      </p>
+      <p className="list-unit-free panel">
+        <strong>{tx("Free to list.")}</strong>{' '}
+        {tx("There is no charge to submit a unit and no listing fee. LeasePath never asks a voucher holder for an application fee.")}
       </p>
       <p className="notice-card panel soi-note">
         {tx("In New York City, source-of-income discrimination is illegal. A landlord or broker may not refuse a renter because they pay with Section 8, CityFHEPS, FHEPS, HASA, or another lawful housing subsidy. Report it to the")}{' '}
@@ -175,8 +191,11 @@ export function ListUnitPage() {
         </label>
 
         {error && <p className="form-error" role="alert">{error}</p>}
+        <p className="fine list-unit-status" role="status" aria-live="polite">
+          {checking ? tx("Checking that you are a person. This can take a few seconds — keep this tab open.") : ''}
+        </p>
         <div className="button-row">
-          <button type="submit" className="button" disabled={busy}>{busy ? 'Sending…' : 'Submit for review'}</button>
+          <button type="submit" className="button" disabled={busy}>{busy ? tx("Sending…") : tx("Submit for review")}</button>
           <a className="button button-quiet" href="#/voucher-ready">{tx("Voucher-ready units")}</a>
         </div>
         <p className="fine">{tx("LeasePath does not sell listing data. Pending units stay off the public site until approved.")}</p>

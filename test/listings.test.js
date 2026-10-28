@@ -167,3 +167,36 @@ test('wrangler binds LISTINGS_KV and LISTINGS_LIMITER', () => {
   assert.match(config, /LISTINGS_LIMITER/)
   assert.match(config, /list-unit/)
 })
+
+test('list-unit page is ready to hand to a stranger: free to list, review, no application fees', () => {
+  const root = new URL('..', import.meta.url).pathname
+  const page = readFileSync(join(root, 'src/components/ListUnitPage.jsx'), 'utf8')
+  // The three promises a landlord or broker needs before they fill in the form.
+  assert.match(page, /tx\("Free to list\."\)/)
+  assert.match(page, /no listing fee/)
+  assert.match(page, /never asks a voucher holder for an application fee/)
+  assert.match(page, /Submissions go to a pending-review queue and are never shown publicly until approved/)
+  // The success screen says what happens next instead of stopping at "received".
+  assert.match(page, /className="list-unit-next"/)
+  assert.match(page, /LeasePath reviews the unit/)
+  assert.match(page, /we email the contact address you gave/)
+  // The slow invisible human check is announced instead of looking frozen.
+  assert.match(page, /Checking that you are a person/)
+  assert.match(page, /aria-live="polite"/)
+})
+
+test('Ruby first-visit intro never covers the landlord form or the admin screen', () => {
+  const root = new URL('..', import.meta.url).pathname
+  const app = readFileSync(join(root, 'src/App.jsx'), 'utf8')
+  assert.match(app, /const landlordRoute = route\.name === 'list-unit' \|\| route\.name === 'listings-admin'/)
+  assert.match(app, /const rubyIntroShown = rubyIntroOpen && consentDone && !landlordRoute/)
+  assert.match(app, /<RubyIntro open=\{rubyIntroShown\}/)
+})
+
+test('admin review screen shows a lister email and phone that can be replied to', () => {
+  const root = new URL('..', import.meta.url).pathname
+  const admin = readFileSync(join(root, 'src/components/ListingsAdminPage.jsx'), 'utf8')
+  assert.match(admin, /mailto:\$\{unit\.contactEmail\}/)
+  assert.match(admin, /`tel:\$\{String\(unit\.contactPhone/)
+  assert.match(admin, /Email or call the lister before you reject a unit/)
+})

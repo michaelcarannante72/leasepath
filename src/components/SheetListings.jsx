@@ -7,13 +7,15 @@ function money(value) {
 
 /** One listing from the HRA apartment list, in the voucher-ready card format. No photo, amenities or dates: the list has none. */
 export function SheetListingCard({ unit }) {
+  const fits = unit.fit.filter((row) => !row.over).length
   return (
     <li className="card sheet-card" id={unit.id}>
       <div className="card-body">
         <div className="card-top">
-          <strong>{unit.borough} · {tx(unit.sizeLabel)}</strong>
-          <span>{money(unit.rent)}{tx("/mo")}</span>
+          <p className="sheet-rent">{money(unit.rent)}<span>{tx("/mo")}</span></p>
+          <span className={`qualify-pill${fits ? '' : ' is-over'}`}>{fits ? tx("You may qualify") : tx("Over the limits")}</span>
         </div>
+        <p className="sheet-meta"><strong>{tx(unit.sizeLabel)}</strong> · {unit.borough}</p>
         <h3>{unit.street}{unit.unit ? <span className="sheet-unit"> · {tx("Unit")} {unit.unit}</span> : null}</h3>
         {unit.neighborhood && <p className="card-area">{tx("Neighborhood:")} {unit.neighborhood}</p>}
         <p className="sheet-label">{tx(SHEET_LABEL)}</p>

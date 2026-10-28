@@ -39,7 +39,8 @@ function useWide() {
   return wide
 }
 
-export function LandingHero({ onCheck }) {
+/** One headline and one short line. The search sits right under it (SearchPage). */
+export function LandingHero() {
   const wide = useWide()
   const { t } = useLanguage()
   return (
@@ -67,12 +68,19 @@ export function LandingHero({ onCheck }) {
         <p className="eyebrow">{t("hero.eyebrow")}</p>
         <h1 id="hero-title">{t("hero.title")}</h1>
         <p className="hero-value">{t("hero.value")}</p>
-        <button type="button" className="hero-cta" onClick={onCheck}>{t("hero.cta")}</button>
-        <p className="hero-account"><a className="hero-account-link" href="#/" onClick={(event) => { event.preventDefault(); openAccount() }}>{t("hero.account")}</a></p>
-        <p className="hero-any-phone">{t("hero.anyPhone")}</p>
-        <p className="hero-quiz"><a className="hero-quiz-link" href="#/quiz">{tx("Not sure where to start? Three questions →")}</a></p>
-        <p className="not-affiliated">{t("hero.notAffiliated")}</p>
       </div>
+    </section>
+  )
+}
+
+/** Account creation, the any-phone note and the quiz: moved out of the hero, shown after the listings. */
+export function LandingExtras() {
+  const { t } = useLanguage()
+  return (
+    <section className="landing-extras" aria-label={tx("Get more from LeasePath")}>
+      <p className="hero-account"><a className="hero-account-link" href="#/" onClick={(event) => { event.preventDefault(); openAccount() }}>{t("hero.account")}</a></p>
+      <p className="hero-any-phone">{t("hero.anyPhone")}</p>
+      <p className="hero-quiz"><a className="hero-quiz-link" href="#/quiz">{tx("Not sure where to start? Three questions →")}</a></p>
     </section>
   )
 }

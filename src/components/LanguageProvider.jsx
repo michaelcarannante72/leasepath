@@ -2,17 +2,18 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { LanguageContext } from './languageContext.js'
 import { applyDocumentLang, readLang, t as translate, writeLang } from '../i18n.js'
 import { setTxLang } from '../i18nAuto.js'
+import { SPANISH_UI_ENABLED } from '../features.js'
 
 
 export function LanguageProvider({ children }) {
-  const [lang, setLangState] = useState(() => readLang())
+  const [lang, setLangState] = useState(() => (SPANISH_UI_ENABLED ? readLang() : 'en'))
 
   useEffect(() => {
     applyDocumentLang(lang)
   }, [lang])
 
   const setLang = useCallback((next) => {
-    const value = writeLang(next)
+    const value = writeLang(SPANISH_UI_ENABLED ? next : 'en')
     setLangState(value)
     applyDocumentLang(value)
   }, [])

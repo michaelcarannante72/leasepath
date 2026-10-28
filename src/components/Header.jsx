@@ -5,6 +5,7 @@ import { NAV_TABS } from '../navTabs.js'
 import { Icon } from './Icon.jsx'
 import { LanguageToggle } from './LanguageToggle.jsx'
 import { useLanguage } from './languageContext.js'
+import { SPANISH_UI_ENABLED } from '../features.js'
 
 export function Header({ canInstall, onInstall, planCurrent, session, signingIn, signInError, onGoogleCredential, onEmailAuth, onSignOut, navActive, onNav }) {
   const { t } = useLanguage()
@@ -40,7 +41,7 @@ export function Header({ canInstall, onInstall, planCurrent, session, signingIn,
         </nav>
       )}
       <div className="topbar-actions">
-        <LanguageToggle />
+        {SPANISH_UI_ENABLED && <LanguageToggle />}
         {canInstall && (
           <button type="button" className="install-button" onClick={onInstall}>
             <span className="install-long">{t("install.long")}</span>

@@ -2629,3 +2629,438 @@ body { overflow: visible; overflow-x: clip; }
 .sheet-fit li.sheet-fit-over::before { content: '!'; font-weight: 800; color: var(--muted); }
 .sheet-phone-flag { margin: 0; font-size: 0.9rem; color: var(--muted); overflow-wrap: anywhere; }
 .sheet-card .card-call { overflow-wrap: anywhere; }
+
+/* =====================================================================================
+   LeasePath design system v2 (mobile-first redesign).
+   Everything below sits on top of the older rules and is the source of truth for:
+   spacing (8px scale), type scale, radii, two elevations, ONE card, ONE primary button,
+   ONE secondary (outline) button, and the text link. Gold is an accent only.
+   ===================================================================================== */
+:root {
+  /* Color */
+  --navy: #1c2d42;
+  --brick: #a04a2c;
+  --terracotta: #a04a2c;
+  --gold: #f2a900;
+  --bg: #faf7f2;            /* warm off-white */
+  --surface: #ffffff;
+  --card: #ffffff;
+  --line: #ebe5da;
+  --line-strong: #d9d1c3;
+  --muted: #56616d;         /* 5.9:1 on --bg */
+  --navy-soft: #eef1f5;
+  --gold-soft: #fdf3d8;
+  /* Spacing: 8px scale (s-half is for hairline gaps only) */
+  --s-half: 4px;
+  --s1: 8px;
+  --s2: 16px;
+  --s3: 24px;
+  --s4: 32px;
+  --s5: 40px;
+  --s6: 48px;
+  --s8: 64px;
+  /* Type: 1 display, 3 headings, body, small */
+  --fs-display: clamp(2rem, 1.55rem + 2.2vw, 2.875rem);
+  --fs-h1: clamp(1.625rem, 1.45rem + 0.9vw, 2rem);
+  --fs-h2: 1.3125rem;
+  --fs-h3: 1.0625rem;
+  --fs-body: 1.0625rem;     /* 17px */
+  --fs-small: 0.875rem;     /* 14px */
+  --lh-tight: 1.15;
+  --lh-head: 1.25;
+  --lh-body: 1.55;
+  --measure: 68ch;
+  /* Shape */
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 22px;
+  --r-pill: 999px;
+  /* Elevation: two levels only */
+  --e1: 0 1px 2px rgba(28, 45, 66, 0.05), 0 2px 8px rgba(28, 45, 66, 0.05);
+  --e2: 0 4px 12px rgba(28, 45, 66, 0.08), 0 16px 36px rgba(28, 45, 66, 0.12);
+  --shadow: var(--e1);
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --tap: 44px;
+  background: var(--bg);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 100%;
+  line-height: var(--lh-body);
+}
+body { background: var(--bg); color: var(--navy); font-size: var(--fs-body); line-height: var(--lh-body); }
+
+/* ---- Type ---- */
+.stage h1, .page h1 { font-size: var(--fs-h1); line-height: var(--lh-tight); letter-spacing: -0.02em; font-weight: 750; margin: 0 0 var(--s2); }
+.stage h2 { font-size: var(--fs-h2); line-height: var(--lh-head); letter-spacing: -0.01em; font-weight: 700; margin: 0 0 var(--s1); }
+.stage h3 { font-size: var(--fs-h3); line-height: var(--lh-head); font-weight: 700; margin: 0 0 var(--s-half); }
+.stage p, .stage li { line-height: var(--lh-body); }
+.eyebrow { font-size: var(--fs-small); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--brick); margin: 0 0 var(--s1); }
+.lede { font-size: var(--fs-body); color: var(--muted); max-width: var(--measure); margin: 0 0 var(--s3); }
+.fine, .source-line { font-size: var(--fs-small); color: var(--muted); }
+.page > p, .page li, .page section > p, .page aside > p { max-width: var(--measure); }
+
+/* ---- Layout ---- */
+.stage { padding-top: var(--s2); }
+.page { padding: var(--s1) var(--s2) var(--s4); max-width: 760px; margin-inline: auto; }
+.page > * + section, .page > * + aside, .page > * + nav { margin-top: var(--s3); }
+
+/* ---- Links: brick ---- */
+.stage a:not([class]), .after-link a, .hero-account-link, .hero-quiz-link, .page-back a {
+  color: var(--brick);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+/* ---- ONE card ---- */
+.card, .sheet-card, .resource-card, .free-food-card, .apply-card, .panel, .page .panel,
+.page aside[class$="-callout"], .borough-guides-callout, .partners-callout, .help-now, .roadmap-callout,
+.install-guide, .plan-tools, .step, .next-action, .post-card, .youth-card, .utility-card, .heat-card,
+.rights-movein-card, .waitlist-card, .pantry-card, .borough-guide-card, .partner-directory .partner-card,
+.landing-steps a, .viewing-section, .docs-check, .prep-check-item, .scam-flag, .quick-start-quiz .quiz-result,
+.empty {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  box-shadow: none;
+}
+/* Flat sections, not cards on cards: page-level panels and callouts are separated by whitespace and a hairline. */
+.panel, .page .panel, .page aside[class$="-callout"], .borough-guides-callout, .partners-callout, .help-now,
+.roadmap-callout, .install-guide, .plan-tools, .voucher-ready, .apply-panel {
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  box-shadow: none;
+}
+.panel .card, .panel .resource-card, .voucher-ready .card { box-shadow: none; }
+.panel, .page .panel, .page aside[class$="-callout"], .borough-guides-callout, .partners-callout, .help-now,
+.roadmap-callout, .install-guide, .plan-tools { padding: var(--s3) 0; }
+.next-action { padding: var(--s2); }
+.next-action { border-left: 4px solid var(--gold); }
+
+/* ---- Buttons: ONE primary (navy), ONE secondary (outline) ---- */
+.button, .hero-cta, .show-apartments, .card-call, .help-call, .text-button:not(.ruby-theme .text-button) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s1);
+  min-height: 48px;
+  padding: 12px var(--s3);
+  border: 1.5px solid var(--navy);
+  border-radius: var(--r-pill);
+  background: var(--navy);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 650;
+  text-decoration: none;
+  box-shadow: none;
+  transition: transform 0.15s var(--ease), background-color 0.15s var(--ease), box-shadow 0.15s var(--ease);
+}
+.button:hover, .hero-cta:hover, .show-apartments:hover, .card-call:hover, .help-call:hover { background: #142233; box-shadow: var(--e1); }
+.button:active, .hero-cta:active, .show-apartments:active, .card-call:active, .help-call:active,
+.button-secondary:active, .button-quiet:active, .card-link:active, .chip:active { transform: scale(0.98); }
+.button-quiet, .button-secondary, .card-link, .install-button, .hero-split .hero-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s1);
+  min-height: 48px;
+  padding: 12px var(--s3);
+  border: 1.5px solid var(--navy);
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--navy);
+  font-size: 1rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+.button-quiet:hover, .card-link:hover, .install-button:hover { background: var(--navy-soft); }
+.card-actions { display: flex; flex-wrap: wrap; gap: var(--s1); margin-top: var(--s2); }
+.card-actions .card-call { flex: 1 1 auto; }
+
+/* ---- Chips: one quiet style; selected = navy ---- */
+.chip, .program-chip, .filter-chip, .audience.audience-compact button, .borough-chips .chip, .chip-category {
+  min-height: var(--tap);
+  padding: 8px var(--s2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--navy);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  transition: background-color 0.15s var(--ease), color 0.15s var(--ease), border-color 0.15s var(--ease);
+}
+.chip[aria-pressed="true"], .program-chip.is-on, .audience.audience-compact button.is-on { background: var(--navy); border-color: var(--navy); color: #fff; }
+
+ /* ---- Header: slim. Logo + Sign in/out only on phones; desktop keeps its nav and actions. ---- */
+.topbar {
+  min-height: 56px;
+  padding: var(--s1) var(--s2);
+  padding-top: max(var(--s1), env(safe-area-inset-top));
+  gap: var(--s2);
+  flex-wrap: nowrap;
+  background: rgba(250, 247, 242, 0.94);
+  border-bottom: 1px solid var(--line);
+}
+.brand-mark { width: 30px; height: 30px; }
+.brand-name { font-size: 1.1875rem; }
+.topbar-note, .plan-pill { display: none; }
+.account-button {
+  min-height: var(--tap);
+  padding: 8px var(--s2);
+  border-radius: var(--r-pill);
+  font-size: 0.9375rem;
+  font-weight: 650;
+}
+@media (max-width: 1023px) {
+  .topbar-actions .install-button, .account-email { display: none; }
+  .topbar-actions { margin-left: auto; }
+}
+@media (min-width: 1024px) {
+  .topbar { min-height: 68px; padding: var(--s1) max(var(--s3), calc((100vw - 1160px) / 2)); }
+  .topnav button { min-height: var(--tap); border-radius: var(--r-pill); font-weight: 600; }
+}
+
+/* ---- Dock: a slim, solid, full-width bar fixed to the bottom. Five items, Ruby a modest raised circle. ---- */
+@media (max-width: 1023px) {
+  .app { padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
+  .dock {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transform: none;
+    width: 100%;
+    margin: 0;
+    padding: 0 var(--s1) env(safe-area-inset-bottom);
+    border: 0;
+    border-top: 1px solid var(--line);
+    border-radius: 0;
+    background: #fff;
+    backdrop-filter: none;
+    box-shadow: 0 -1px 0 rgba(28, 45, 66, 0.02);
+    z-index: 45;
+  }
+  .consent-bar, .cookie-prompt { bottom: calc(72px + env(safe-area-inset-bottom)); }
+}
+.dock {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) 76px repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 0;
+}
+.dock-tab, .dock-center { min-height: 56px; gap: 2px; padding: 6px 0; color: var(--muted); align-content: center; transition: color 0.15s var(--ease); }
+.dock-tab .dock-icon { width: 28px; height: 24px; background: none; }
+.dock-tab .dock-label, .dock-center.ruby-dock .dock-label { font-size: 0.6875rem; font-weight: 600; letter-spacing: 0; }
+.dock-tab.is-active { color: var(--navy); }
+.dock-tab.is-active .dock-icon { background: none; color: var(--navy); }
+.dock-tab.is-active .dock-label { font-weight: 750; }
+.dock-tab.is-active::before { content: ""; position: absolute; top: 0; width: 20px; height: 2px; border-radius: 2px; background: var(--navy); }
+.dock-tab { position: relative; }
+.dock-center.ruby-dock { transform: none; }
+.dock-center.ruby-dock .dock-icon {
+  width: 44px;
+  height: 44px;
+  margin-top: -18px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--ruby-gold), 0 4px 10px rgba(155, 27, 48, 0.28);
+}
+.dock-center.ruby-dock.is-active .dock-icon { box-shadow: 0 0 0 2px var(--ruby-gold), 0 4px 10px rgba(155, 27, 48, 0.3); }
+@media (max-width: 430px) {
+  .dock { grid-template-columns: repeat(2, minmax(0, 1fr)) 68px repeat(2, minmax(0, 1fr)); }
+}
+
+ /* ---- Home: one headline, one short line, the search right there. Flat, no nested cards. ---- */
+@media (max-width: 899px) {
+  .hero-split { padding: var(--s3) var(--s2) 0; margin: 0; background: transparent; border: 0; border-radius: 0; box-shadow: none; }
+  .hero-text { padding: 0; background: transparent; border: 0; box-shadow: none; color: var(--navy); text-align: left; }
+  .hero-text .eyebrow { margin-bottom: var(--s1); }
+  .hero-text h1, #hero-title { font-size: clamp(1.875rem, 1.4rem + 2.4vw, 2.5rem); line-height: 1.1; letter-spacing: -0.03em; margin: 0 0 var(--s1); color: var(--navy); }
+  .hero-value { font-size: var(--fs-body); color: var(--muted); margin: 0; max-width: 34ch; }
+  .home-search { margin: 0; padding: var(--s3) var(--s2) var(--s2); }
+  .home-search-head .search-title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
+.home-search, .home-search .search-panel { background: transparent; border: 0; border-radius: 0; box-shadow: none; }
+.home-search-head .search-title { font-size: var(--fs-h2); }
+.home-search .program-chips { display: flex; flex-wrap: wrap; gap: var(--s1); margin-bottom: var(--s2); }
+.search-panel { background: transparent; border: 0; box-shadow: none; padding: 0; }
+.search-field > span:first-child, .search-field legend { font-size: var(--fs-small); font-weight: 650; letter-spacing: 0; text-transform: none; color: var(--muted); }
+.search-field select, .search-field input, .resource-search input {
+  min-height: 48px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  font-size: 1rem;
+}
+.show-apartments { width: 100%; margin-top: var(--s2); }
+.results-bar { margin: var(--s2) var(--s2) var(--s1); padding-top: var(--s2); border-top: 1px solid var(--line); }
+.landing-extras { padding: var(--s3) var(--s2); border-top: 1px solid var(--line); display: grid; gap: var(--s1); }
+.landing-extras p { margin: 0; }
+.landing-extras .hero-account-link { min-height: 48px; display: inline-flex; align-items: center; }
+.landing-extras .hero-any-phone { font-size: var(--fs-small); color: var(--muted); }
+.site-footer .not-affiliated { margin: var(--s2) 0 0; font-size: var(--fs-small); color: var(--muted); }
+
+/* ---- Listing cards: big rent, size + borough, qualify pill, call button ---- */
+.cards { display: grid; gap: var(--s2); padding: 0; margin: 0; list-style: none; }
+@media (min-width: 720px) { .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1100px) { .cards:not(.voucher-ready-cards) { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.card { overflow: hidden; transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease); }
+@media (hover: hover) { .card:hover { box-shadow: var(--e2); transform: translateY(-2px); } }
+.card .card-body { padding: var(--s2); }
+.card .rent, .sheet-rent { margin: 0; font-size: 1.625rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; color: var(--navy); }
+.card .rent span, .sheet-rent span { font-size: var(--fs-small); font-weight: 600; color: var(--muted); margin-left: 2px; }
+.card .size, .sheet-meta { margin: 0; font-size: 0.9375rem; color: var(--muted); }
+.sheet-meta strong { color: var(--navy); font-weight: 700; }
+.sheet-card .card-top { display: flex; align-items: center; justify-content: space-between; gap: var(--s1); flex-wrap: wrap; }
+.sheet-card h3 { font-size: var(--fs-h3); margin-top: var(--s1); }
+.sheet-card .card-body { gap: var(--s1); }
+.qualify-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 2px 12px;
+  border-radius: var(--r-pill);
+  background: #e7f3ec;
+  color: #17543a;
+  font-size: var(--fs-small);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.qualify-pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.qualify-pill.is-over { background: var(--gold-soft); color: #7a4706; }
+.sheet-label { font-size: var(--fs-small); font-weight: 600; color: var(--navy); padding: var(--s1) 12px; border-radius: var(--r-sm); background: var(--navy-soft); }
+.sheet-fit { font-size: 0.9375rem; }
+.sheet-card .card-actions { margin-top: var(--s1); }
+.sheet-card .card-call { width: 100%; }
+.sheet-listings > h2 { margin-top: var(--s1); }
+.voucher-ready.sheet-listings { padding: var(--s3) var(--s2); background: transparent; border: 0; box-shadow: none; }
+.voucher-ready.sheet-listings > p { color: var(--muted); max-width: var(--measure); }
+.pills { display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: var(--s1) 0 0; list-style: none; }
+.pill { padding: 2px 10px; border-radius: var(--r-pill); font-size: 0.8125rem; font-weight: 650; }
+
+/* ---- Resources: tidy category grid, then lists ---- */
+.community-jump ul, .chip-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s1); list-style: none; padding: 0; margin: 0; }
+@media (min-width: 720px) { .community-jump ul, .chip-links { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.community-jump .chip-category, .chip-links a {
+  width: 100%;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s1);
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  color: var(--navy);
+  font-size: 0.9375rem;
+  font-weight: 650;
+  line-height: 1.3;
+  text-align: left;
+  text-decoration: none;
+  box-shadow: none;
+}
+.chip-links a { color: var(--navy); }
+.chip-count { min-width: 24px; padding: 0 8px; border-radius: var(--r-pill); background: var(--navy-soft); color: var(--navy); font-size: 0.8125rem; text-align: center; }
+.community-jump .chip-category[aria-pressed="true"] { background: var(--navy); color: #fff; border-color: var(--navy); }
+.community-jump .chip-category[aria-pressed="true"] .chip-count { background: rgba(255, 255, 255, 0.18); color: #fff; }
+.guide-links-title, .community-jump h2 { font-size: var(--fs-small); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 var(--s1); }
+.resource-card { padding: var(--s2); }
+.resource-card-name { font-size: var(--fs-h3); }
+.resource-card-what { color: var(--muted); }
+.section-toggle { min-height: 56px; border-radius: var(--r-md); border: 1px solid var(--line); background: var(--surface); box-shadow: none; }
+
+/* ---- Steps + related links: one grouped list, not a wall of links ---- */
+.after-link { margin: 0; max-width: none; }
+.after-link a {
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+  padding: 12px var(--s2);
+  border: 1px solid var(--line);
+  border-top-width: 0;
+  background: var(--surface);
+  color: var(--brick);
+  text-decoration: none;
+}
+.after-link a:hover { text-decoration: underline; }
+:not(.after-link) + .after-link a { border-top-width: 1px; border-radius: var(--r-md) var(--r-md) 0 0; margin-top: var(--s3); }
+.after-link:has(+ :not(.after-link)) a { border-radius: 0 0 var(--r-md) var(--r-md); }
+:not(.after-link) + .after-link:has(+ :not(.after-link)) a { border-radius: var(--r-md); }
+.steps { display: grid; gap: var(--s1); padding: 0; list-style: none; margin-top: var(--s3); }
+.step { padding: var(--s2); min-height: 64px; transition: border-color 0.15s var(--ease), background-color 0.15s var(--ease); }
+.step.is-on { border-color: #b9d8c6; background: #f3faf6; }
+.step-mark { background: var(--navy); color: #fff; }
+
+/* ---- Plan and tools: clean tool tiles ---- */
+.tool-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s1); list-style: none; padding: 0; margin: var(--s2) 0 0; }
+@media (min-width: 720px) { .tool-links { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.tool-links a {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--s1);
+  min-height: 88px;
+  height: 100%;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--bg);
+  color: var(--navy);
+  font-weight: 650;
+  line-height: 1.3;
+  text-decoration: none;
+  transition: background-color 0.15s var(--ease), border-color 0.15s var(--ease);
+}
+.tool-links a:hover { background: var(--surface); border-color: var(--line-strong); }
+.choice { min-height: 52px; border-radius: var(--r-sm); border: 1px solid var(--line-strong); background: var(--surface); }
+.choice.is-on { border-color: var(--navy); box-shadow: inset 0 0 0 1px var(--navy); background: var(--navy-soft); }
+.plan-form input, .plan-form select, .stack input, .stack select, textarea { min-height: 48px; border-radius: var(--r-sm); border: 1px solid var(--line-strong); font-size: 1rem; }
+
+/* ---- Long pages: collapsible sections read as one tidy list ---- */
+.card-more summary, .page details > summary {
+  min-height: var(--tap);
+  display: flex;
+  align-items: center;
+  gap: var(--s1);
+  cursor: pointer;
+  font-weight: 650;
+  color: var(--navy);
+}
+.page details:not(.card-more) {
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  padding: 0 var(--s2);
+  margin: var(--s1) 0;
+}
+.page details:not(.card-more) > summary { padding: 12px 0; }
+.page details[open]:not(.card-more) { padding-bottom: var(--s2); }
+
+/* ---- Ruby chat: ruby + gold bubbles only ---- */
+.ruby-theme.sheet { border-radius: var(--r-lg) var(--r-lg) 0 0; box-shadow: var(--e2); }
+.ruby-theme .bubble { max-width: 86%; padding: 12px var(--s2); border-radius: 18px; font-size: 1rem; line-height: 1.5; box-shadow: none; }
+.ruby-theme .bubble-assistant { justify-self: start; background: var(--ruby-soft); color: #3b1d24; border: 1px solid #f0dde1; border-left: 3px solid var(--ruby-gold); border-bottom-left-radius: 6px; }
+.ruby-theme .bubble-user { justify-self: end; background: var(--ruby); color: #fff; border: 0; border-bottom-right-radius: 6px; }
+.ruby-theme .bubble-assistant.pending { color: var(--ruby-deep); }
+
+/* ---- Footer ---- */
+.site-footer { background: transparent; border-top: 1px solid var(--line); }
+
+/* ---- Motion: gentle, and none when the person asks for less ---- */
+.view { animation: lp-fade 0.24s var(--ease); }
+@keyframes lp-fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .view, .topbar.menu-open .topbar-actions { animation: none; }
+  .card, .button, .hero-cta, .show-apartments, .card-call, .help-call, .chip, .dock-tab, .menu-bars span, .step, .tool-links a { transition: none; }
+  .card:hover { transform: none; }
+}
+
+/* ---- Home polish: the one short line shows on phones; search fields are flat labels over inputs. ---- */
+@media (max-width: 899px) {
+  .hero-split .hero-value { display: block; }
+}
+.home-search .search-field { background: transparent; border: 0; box-shadow: none; padding: 0; }
+.home-search .search-field input, .home-search .search-field select { width: 100%; }

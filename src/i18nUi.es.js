@@ -2,6 +2,10 @@
 // Brand and program names stay as-is.
 export const UI_ES = {
   "Close": "Cerrar",
+  "Get more from LeasePath": "Saque más de LeasePath",
+  "Install the app": "Instale la app",
+  "You may qualify": "Puede que califique",
+  "Over the limits": "Sobre los límites",
   "Account": "Cuenta",
   "Search stays open either way. Signing in keeps your letter, saved apartments, and steps on this account, so another phone can open them.": "La búsqueda sigue abierta de cualquier forma. Iniciar sesión guarda su carta, apartamentos guardados y pasos en esta cuenta, para que otro teléfono pueda abrirlos.",
   "This email is the name of the account, so another phone can open the same letter.": "Este correo es el nombre de la cuenta, para que otro teléfono pueda abrir la misma carta.",

@@ -5,25 +5,30 @@ import test from 'node:test'
 import { HERO_PHOTO, NOT_AFFILIATED, landingSample } from '../src/landing.js'
 
 const hero = untx(readFileSync(new URL('../src/components/LandingHero.jsx', import.meta.url), 'utf8'))
+const extras2 = () => hero.slice(hero.indexOf('export function LandingExtras'), hero.indexOf('export function LandingSteps'))
 const css = readFileSync(new URL('../src/index.css', import.meta.url), 'utf8')
 
-test('the not-affiliated line is rendered in the hero text and never hidden on either layout', () => {
+test('the not-affiliated line moved from the hero to the footer and is never hidden', () => {
   assert.equal(NOT_AFFILIATED, 'Not affiliated with HRA, NYCHA, or any government agency.')
   const i18n = readFileSync(new URL('../src/i18n.js', import.meta.url), 'utf8')
   assert.match(i18n, /'hero\.notAffiliated': 'Not affiliated with HRA, NYCHA, or any government agency\.'/)
-  assert.match(hero, /className="not-affiliated">\{t\(["']hero\.notAffiliated["']\)\}<\/p>/)
-  // Lives in .hero-text, which shows on mobile and desktop.
-  const text = hero.slice(hero.indexOf('className="hero-text"'), hero.indexOf('</section>'))
-  assert.ok(text.includes('not-affiliated'), 'line sits inside .hero-text')
+  const footer = readFileSync(new URL('../src/components/Footer.jsx', import.meta.url), 'utf8')
+  assert.match(footer, /className="not-affiliated">\{t\(["']hero\.notAffiliated["']\)\}<\/p>/)
+  // Rendered by both the compact and the full footer.
+  assert.equal((footer.match(/<NotAffiliated \/>/g) || []).length, 2)
+  assert.doesNotMatch(hero, /not-affiliated/, 'the hero stays one headline and one line')
   for (const block of css.split('@media')) {
-    assert.doesNotMatch(block, /\.(not-affiliated|hero-text)[^{]*\{[^}]*display:\s*none/, 'never display:none')
+    assert.doesNotMatch(block, /\.not-affiliated[^{]*\{[^}]*display:\s*none/, 'never display:none')
   }
 })
 
 test('mobile has no sticky Get started bar, and the hero links to account creation', () => {
   const page = readFileSync(new URL('../src/components/SearchPage.jsx', import.meta.url), 'utf8')
   for (const src of [hero, page, css]) assert.doesNotMatch(src, /get-started|GetStartedBar|Get started/)
-  assert.match(hero, /onClick=\{onCheck\}>\{t\(["']hero\.cta["']\)\}<\/button>\s*<p className="hero-account"><a className="hero-account-link" href="#\/" onClick=\{\(event\) => \{ event\.preventDefault\(\); openAccount\(\) \}\}>\{t\(["']hero\.account["']\)\}<\/a>/)
+  // Account creation moved out of the hero into LandingExtras, rendered on the home page after the listings.
+  assert.match(page, /<LandingExtras \/>/)
+  const extras = hero.slice(hero.indexOf('export function LandingExtras'), hero.indexOf('export function LandingSteps'))
+  assert.match(extras, /<p className="hero-account"><a className="hero-account-link" href="#\/" onClick=\{\(event\) => \{ event\.preventDefault\(\); openAccount\(\) \}\}>\{t\(["']hero\.account["']\)\}<\/a>/)
   const i18nEn = readFileSync(new URL('../src/i18n.js', import.meta.url), 'utf8')
   assert.match(i18nEn, /'hero\.cta': 'Check a listing'/)
   assert.match(i18nEn, /'hero\.account': 'Create a free account'/)
@@ -37,8 +42,8 @@ test('phones get no photo; desktop moves the nav into the header and drops the d
   assert.doesNotMatch(hero, /brownstone-mobile/)
   assert.match(css, /@media \(max-width: 899px\) \{[^]*?\.hero-photo \{ display: none; \}/)
   // Mobile keeps the two big buttons, the any-phone line, and the not-affiliated line.
-  assert.match(css, /@media \(max-width: 899px\) \{[^]*?\.hero-account-link \{[^}]*min-height: 52px/)
-  assert.match(hero, /t\(["']hero\.anyPhone["']\)/)
+  assert.match(css, /\.landing-extras \.hero-account-link \{[^}]*min-height: 48px/)
+  assert.match(extras2(), /t\(["']hero\.anyPhone["']\)/)
   assert.match(readFileSync(new URL('../src/i18n.js', import.meta.url), 'utf8'), /'hero\.anyPhone': 'Works on any phone, no download needed\.'/)
   // Desktop: dock hidden, header nav shown, both from the same tabs.
   assert.match(css, /@media \(min-width: 1024px\) \{\n {2}\.dock \{ display: none; \}/)
@@ -46,7 +51,8 @@ test('phones get no photo; desktop moves the nav into the header and drops the d
   const header = readFileSync(new URL('../src/components/Header.jsx', import.meta.url), 'utf8')
   assert.match(header, /<nav className="topnav" aria-label=\{t\(["']nav\.main["']\)\}>\s*\{NAV_TABS\.map/)
   const dock = readFileSync(new URL('../src/components/Dock.jsx', import.meta.url), 'utf8')
-  assert.match(dock, /import \{ NAV_TABS \} from '..\/navTabs.js'/)
+  assert.match(dock, /import \{ DOCK_TABS \} from '..\/navTabs.js'/)
+  assert.match(readFileSync(new URL('../src/navTabs.js', import.meta.url), 'utf8'), /DOCK_TABS = DOCK_IDS\.map\(\(id\) => NAV_TABS\.find/)
 })
 
 test('the mockup rent figure sits next to "effective April 1, 2026" and is a CityFHEPS example', () => {
@@ -108,9 +114,18 @@ test('Ruby sits in the center of the dock and the middle of the header nav, from
   const i = NAV_TABS.findIndex((tab) => tab.id === 'assistant')
   assert.equal(NAV_TABS[i].label, 'Ruby')
   assert.equal(NAV_TABS[i].center, true)
-  assert.equal(i, 3, 'three tabs before Ruby, two after')
-  // Left 3 x 2fr = right 2 x 3fr, so the Ruby column is centered.
-  assert.match(css, /grid-template-columns: repeat\(3, minmax\(0, 2fr\)\) 72px repeat\(2, minmax\(0, 3fr\)\);/)
+  assert.equal(i, 3, 'header nav: three tabs before Ruby, two after')
+  // Phone dock: five items max, Ruby exactly in the middle (two equal columns on each side).
+  const { DOCK_TABS } = await import('../src/navTabs.js')
+  assert.equal(DOCK_TABS.length, 5)
+  assert.equal(DOCK_TABS[2].id, 'assistant')
+  assert.ok(DOCK_TABS.every(Boolean), 'every dock id is a real nav tab')
+  const dropped = NAV_TABS.filter((tab) => !DOCK_TABS.includes(tab)).map((tab) => tab.id)
+  assert.deepEqual(dropped, ['blog'])
+  const footer = readFileSync(new URL('../src/components/Footer.jsx', import.meta.url), 'utf8')
+  assert.match(footer, /<a href="#\/blog">/, 'Blog stays reachable on phones from the footer')
+  assert.match(footer, /<a href="#\/install">/, 'Install stays reachable on phones from the footer')
+  assert.match(css, /\.dock \{\n {2}grid-template-columns: repeat\(2, minmax\(0, 1fr\)\) 76px repeat\(2, minmax\(0, 1fr\)\);/)
 })
 
 test('the Ruby theme is scoped to the assistant sheet and dock button, and respects reduced motion', () => {

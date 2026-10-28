@@ -7,3 +7,7 @@ export const NAV_TABS = [
   { id: 'blog', label: 'Blog', icon: 'blog' },
   { id: 'plan', label: 'My voucher', icon: 'card' },
 ]
+
+/** The phone dock holds five: two tabs, Ruby in the center, two tabs. Blog moves to the header menu on phones (still in the desktop header nav). */
+export const DOCK_IDS = ['search', 'steps', 'assistant', 'resources', 'plan']
+export const DOCK_TABS = DOCK_IDS.map((id) => NAV_TABS.find((tab) => tab.id === id))

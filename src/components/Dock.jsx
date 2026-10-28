@@ -1,12 +1,12 @@
 import { Icon } from './Icon.jsx'
-import { NAV_TABS } from '../navTabs.js'
+import { DOCK_TABS } from '../navTabs.js'
 import { useLanguage } from './languageContext.js'
 
 export function Dock({ active, onSelect }) {
   const { t } = useLanguage()
   return (
     <nav className="dock" aria-label={t('nav.primary')}>
-      {NAV_TABS.map((tab) => (
+      {DOCK_TABS.map((tab) => (
         <button
           key={tab.id}
           type="button"

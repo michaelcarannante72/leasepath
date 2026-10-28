@@ -1,7 +1,7 @@
 import { tx } from '../i18nAuto.js'
 import { Building } from './Building.jsx'
 import { Icon } from './Icon.jsx'
-import { LandingHero } from './LandingHero.jsx'
+import { LandingExtras, LandingHero } from './LandingHero.jsx'
 import { ACCESS_HRA_URL, BOROUGHS, HOMEBASE_URL } from '../data.js'
 import { VoucherReadyUnits } from './VoucherReadyUnits.jsx'
 import { SheetListings } from './SheetListings.jsx'
@@ -82,16 +82,10 @@ export function SearchPage({
     document.getElementById('search-results')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
-  const scrollToSearch = () => {
-    const panel = document.querySelector('.home-search')
-    if (!panel) return
-    panel.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    panel.querySelector('input')?.focus({ preventScroll: true })
-  }
 
   return (
     <div className="landing">
-      <LandingHero onCheck={scrollToSearch} />
+      <LandingHero />
       {/* One compact search panel. The pitch and the 3-step strip now open the Steps page. */}
       <section className="home-search" aria-labelledby="search-title">
         <div className="home-search-head">
@@ -304,6 +298,7 @@ export function SearchPage({
       {/* Landlord-submitted units and the sponsor slot sit after the practice listings. */}
       <SheetListings filters={filters} />
       <VoucherReadyUnits compact />
+      <LandingExtras />
       <SponsoredSlot placement="search" />
     </div>
   )

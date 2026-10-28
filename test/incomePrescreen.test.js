@@ -346,7 +346,10 @@ test('the screen is calm and accessible: no error styling, an icon plus text, a 
   assert.match(screen, /<span aria-hidden="true">\{tag\.icon\}<\/span> \{tag\.label\}/)
   assert.match(screen, /May not qualify/)
   const css = read('src/index.css')
-  const block = css.slice(css.indexOf('/* Income pre-screen.'))
+  const start = css.indexOf('/* Income pre-screen.')
+  const next = css.indexOf('\n/* ', start + 1)
+  const block = css.slice(start, next === -1 ? undefined : next)
+  assert.match(block, /\.prescreen-result \{/)
   assert.doesNotMatch(block, /var\(--watch|red|#f00|#c00|error/i)
   for (const [, size] of block.matchAll(/font-size: ([\d.]+)rem/g)) assert.ok(Number(size) * 16 >= 14, `${size}rem is under 14px`)
   // The pre-screen never feeds the listing search, so no program or listing can be hidden by income.

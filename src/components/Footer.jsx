@@ -35,6 +35,11 @@ function PopularSearchChips() {
   )
 }
 
+function NotAffiliated() {
+  const { t } = useLanguage()
+  return <p className="not-affiliated">{t("hero.notAffiliated")}</p>
+}
+
 export function Footer({ compact = false }) {
   if (compact) {
     return (
@@ -47,9 +52,12 @@ export function Footer({ compact = false }) {
               <a key={page.slug} href={pageHref(page.slug)}>{page.title}</a>
             ) : null
           })}
+          <a href="#/blog">{tx("Blog")}</a>
+          <a href="#/install">{tx("Install the app")}</a>
           <a href="#/sponsor">{tx("Sponsor LeasePath")}</a>
           <AnalyticsChoiceLink />
         </nav>
+        <NotAffiliated />
       </footer>
     )
   }
@@ -72,6 +80,7 @@ export function Footer({ compact = false }) {
         ))}
       </div>
       <p className="footer-analytics-row"><a href="#/sponsor">{tx("Sponsor LeasePath")}</a> · <AnalyticsChoiceLink /></p>
+      <NotAffiliated />
     </footer>
   )
 }

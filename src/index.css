@@ -3196,3 +3196,17 @@ body { background: var(--bg); color: var(--navy); font-size: var(--fs-body); lin
   .hero-text > *, .hero-photo .phone-mock { animation: none; }
   .hero-search-cta, .hero-search-cta span { transition: none; }
 }
+
+/* Card layout at laptop widths: never squeeze cards below a readable width.
+   Image stacks on top so text gets the full card width; price never wraps. */
+.cards, .cards:not(.voucher-ready-cards) { grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
+.card-open { display: flex; flex-direction: column; min-height: 0; }
+.card { position: relative; }
+.card .facade { width: 100%; height: auto; min-height: 0; aspect-ratio: 16 / 9; }
+.card-body, .sheet-card .card-body { padding: var(--s2); padding-right: var(--s2); min-width: 0; }
+.card-top { flex-wrap: wrap; row-gap: 4px; }
+.card .rent, .sheet-rent { white-space: nowrap; flex: 0 0 auto; }
+.card .beds, .card .card-size, .sheet-meta { flex-basis: 100%; overflow-wrap: anywhere; }
+.card h2, .card h3, .card-area { overflow-wrap: break-word; hyphens: auto; }
+.card .pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.save { top: 10px; right: 10px; z-index: 2; }

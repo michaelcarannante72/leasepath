@@ -105,7 +105,7 @@ const SHELL_ROUTES = {
 test('install precaches the shell and the hashed assets named in index.html', async () => {
   const worker = makeWorker({ routes: SHELL_ROUTES })
   await worker.wait('install')
-  const store = worker.stores.get('leasepath-shell-v11')
+  const store = worker.stores.get('leasepath-shell-v12')
   assert.ok(store.has('/'))
   assert.ok(store.has('/assets/index-NEW.js'))
   assert.ok(store.has('/assets/index-NEW.css'))
@@ -120,7 +120,7 @@ test('activate removes old shell caches and stale hashed files, and leaves other
     },
   })
   await worker.wait('install')
-  const store = worker.stores.get('leasepath-shell-v11')
+  const store = worker.stores.get('leasepath-shell-v12')
   store.set('/assets/index-OLD.js', { body: 'stale' })
   await worker.wait('activate')
   assert.equal(worker.stores.has('leasepath-shell-v2'), false)
@@ -135,7 +135,7 @@ test('the API is never intercepted or cached', async () => {
   assert.equal((await worker.fire(worker.request('/api/guide'))).passedThrough, true)
   assert.equal((await worker.fire(worker.request('/api/account'))).passedThrough, true)
   assert.equal((await worker.fire(worker.request('/api/pantries?x=1'))).passedThrough, true)
-  assert.equal(worker.stores.get('leasepath-shell-v11').has('/api/guide'), false)
+  assert.equal(worker.stores.get('leasepath-shell-v12').has('/api/guide'), false)
   assert.equal((await worker.fire(worker.request('/anything', 'cors', 'POST'))).passedThrough, true)
 })
 
@@ -143,11 +143,11 @@ test('visiting a server-rendered policy page does not replace the offline app sh
   const online = makeWorker({ routes: SHELL_ROUTES })
   await online.wait('install')
   await online.fire(online.request('/privacy', 'navigate'))
-  const store = online.stores.get('leasepath-shell-v11')
+  const store = online.stores.get('leasepath-shell-v12')
   assert.match(store.get('/').body, /<title>LeasePath<\/title>/)
   assert.match(store.get('/privacy').body, /Privacy Notice/)
   // Same stores, now offline.
-  const offline = makeWorker({ routes: SHELL_ROUTES, offline: true, existingCaches: { 'leasepath-shell-v11': Object.fromEntries(store) } })
+  const offline = makeWorker({ routes: SHELL_ROUTES, offline: true, existingCaches: { 'leasepath-shell-v12': Object.fromEntries(store) } })
   assert.match((await offline.fire(offline.request('/', 'navigate'))).body, /<title>LeasePath<\/title>/)
   assert.match((await offline.fire(offline.request('/privacy', 'navigate'))).body, /Privacy Notice/)
   // A policy page that was never opened falls back to the shell instead of the browser error page.
@@ -159,11 +159,11 @@ test('a 404 is passed through and never stored over the app shell', async () => 
   await worker.wait('install')
   const response = await worker.fire(worker.request('/cookies', 'navigate'))
   assert.equal(response.status, 404)
-  assert.match(worker.stores.get('leasepath-shell-v11').get('/').body, /<title>LeasePath<\/title>/)
+  assert.match(worker.stores.get('leasepath-shell-v12').get('/').body, /<title>LeasePath<\/title>/)
 })
 
 test('offline, a missing non-page request still errors instead of returning HTML', async () => {
-  const worker = makeWorker({ routes: SHELL_ROUTES, offline: true, existingCaches: { 'leasepath-shell-v11': { '/': { body: 'shell' } } } })
+  const worker = makeWorker({ routes: SHELL_ROUTES, offline: true, existingCaches: { 'leasepath-shell-v12': { '/': { body: 'shell' } } } })
   await assert.rejects(worker.fire(worker.request('/icons/never-cached.png', 'no-cors')))
 })
 
@@ -172,9 +172,9 @@ test('a server-rendered /search page is cached under its own path and never repl
   const online = makeWorker({ routes })
   await online.wait('install')
   await online.fire(online.request('/search/fheps/bronx/1br', 'navigate'))
-  const store = online.stores.get('leasepath-shell-v11')
+  const store = online.stores.get('leasepath-shell-v12')
   assert.match(store.get('/').body, /<title>LeasePath<\/title>/)
-  const offline = makeWorker({ routes: {}, offline: true, existingCaches: { 'leasepath-shell-v11': Object.fromEntries(store) } })
+  const offline = makeWorker({ routes: {}, offline: true, existingCaches: { 'leasepath-shell-v12': Object.fromEntries(store) } })
   assert.match((await offline.fire(offline.request('/', 'navigate'))).body, /<title>LeasePath<\/title>/)
   assert.match((await offline.fire(offline.request('/search/fheps/bronx/1br', 'navigate'))).body, /FHEPS Bronx 1BR/)
 })
@@ -188,10 +188,10 @@ test('install precaches the lazy route chunks from /asset-manifest.json, and the
   const online = makeWorker({ routes })
   await online.wait('install')
   await online.wait('activate')
-  const store = online.stores.get('leasepath-shell-v11')
+  const store = online.stores.get('leasepath-shell-v12')
   assert.equal(store.get('/assets/ResourcesPage-LAZY.js').body, 'lazy chunk')
   assert.equal(store.has('/etc/not-an-asset'), false)
-  const offline = makeWorker({ routes, offline: true, existingCaches: { 'leasepath-shell-v11': Object.fromEntries(store) } })
+  const offline = makeWorker({ routes, offline: true, existingCaches: { 'leasepath-shell-v12': Object.fromEntries(store) } })
   await offline.wait('activate')
   const chunk = await offline.fire(offline.request('/assets/ResourcesPage-LAZY.js'))
   assert.equal(chunk.body, 'lazy chunk')
@@ -202,5 +202,5 @@ test('install precaches the lazy route chunks from /asset-manifest.json, and the
 test('install still works when there is no asset manifest (dev)', async () => {
   const worker = makeWorker({ routes: SHELL_ROUTES })
   await worker.wait('install')
-  assert.ok(worker.stores.get('leasepath-shell-v11').has('/assets/index-NEW.js'))
+  assert.ok(worker.stores.get('leasepath-shell-v12').has('/assets/index-NEW.js'))
 })

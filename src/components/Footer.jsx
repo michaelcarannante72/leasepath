@@ -79,7 +79,7 @@ export function Footer({ compact = false }) {
           </section>
         ))}
       </div>
-      <p className="footer-analytics-row"><a href="#/sponsor">{tx("Sponsor LeasePath")}</a> · <AnalyticsChoiceLink /></p>
+      <p className="footer-analytics-row"><a href="#/sponsor">{tx("Sponsor LeasePath")}</a> · <a href="/terms">{tx("Copyright / DMCA")}</a> · <AnalyticsChoiceLink /></p>
       <NotAffiliated />
     </footer>
   )

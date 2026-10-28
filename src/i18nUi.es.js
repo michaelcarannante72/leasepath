@@ -625,4 +625,8 @@ export const UI_ES = {
   "Over the {voucher} limit ({limit}) by {over}. Ask your worker before you apply.": "Por encima del límite de {voucher} ({limit}) por {over}. Pregunte a su trabajador antes de solicitar.",
   "You may qualify with {voucher}: the limit is {limit}.": "Podría calificar con {voucher}: el límite es {limit}.",
   "Loading…": "Cargando…",
+  "I am 18 or older.": "Tengo 18 años o más.",
+  "Confirm you are 18 or older before signing up with Google.": "Confirme que tiene 18 años o más antes de registrarse con Google.",
+  "Confirm you are 18 or older to continue with Google.": "Confirme que tiene 18 años o más para continuar con Google.",
+  "Copyright / DMCA": "Derechos de autor / DMCA",
 }

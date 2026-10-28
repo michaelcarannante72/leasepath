@@ -1,5 +1,6 @@
 import { tx } from '../i18nAuto.js'
 import { useEffect, useRef, useState } from 'react'
+import { AgeConfirm } from './AgeConfirm.jsx'
 import { GoogleSignInButton } from './GoogleSignInButton.jsx'
 import { Icon } from './Icon.jsx'
 
@@ -7,12 +8,15 @@ export function AccountDialog({ open, onClose, clientId, nonce, signingIn, signI
   const dialog = useRef(null)
   const [emailMode, setEmailMode] = useState(null)
   const [showPassword, setShowPassword] = useState(false)
+  // Off whenever the dialog opens: confirming age is a deliberate tap at every sign-up.
+  const [adultConfirmed, setAdultConfirmed] = useState(false)
   const [wasOpen, setWasOpen] = useState(open)
   if (open !== wasOpen) {
     setWasOpen(open)
     if (!open) {
       setEmailMode(null)
       setShowPassword(false)
+      setAdultConfirmed(false)
     }
   }
 
@@ -50,6 +54,8 @@ export function AccountDialog({ open, onClose, clientId, nonce, signingIn, signI
     }
   }, [onClose])
 
+  const createBlocked = emailMode === 'create' && !adultConfirmed
+
   return (
     <dialog className="account-dialog" ref={dialog} aria-labelledby="account-title">
       <button type="button" className="icon-button modal-close" aria-label={tx("Close")} onClick={() => dialog.current?.close()}>
@@ -63,6 +69,7 @@ export function AccountDialog({ open, onClose, clientId, nonce, signingIn, signI
           className="setup-fields account-email-form"
           onSubmit={(event) => {
             event.preventDefault()
+            if (createBlocked) return
             const data = new FormData(event.currentTarget)
             onEmailAuth({
               email: String(data.get('email') || ''),
@@ -101,7 +108,10 @@ export function AccountDialog({ open, onClose, clientId, nonce, signingIn, signI
               </button>
             </span>
           </label>
-          <button className="button" type="submit" disabled={signingIn}>{emailMode === 'create' ? 'Create account' : 'Sign in'}</button>
+          {emailMode === 'create' && (
+            <AgeConfirm id="age-confirm-email" checked={adultConfirmed} onChange={setAdultConfirmed} />
+          )}
+          <button className="button" type="submit" disabled={signingIn || createBlocked}>{emailMode === 'create' ? 'Create account' : 'Sign in'}</button>
           <button
             className="button button-quiet"
             type="button"
@@ -115,7 +125,12 @@ export function AccountDialog({ open, onClose, clientId, nonce, signingIn, signI
         </form>
       ) : (
         <>
-          <GoogleSignInButton clientId={clientId} nonce={nonce} onCredential={onGoogleCredential} active={open} />
+          <AgeConfirm id="age-confirm-google" checked={adultConfirmed} onChange={setAdultConfirmed} />
+          {adultConfirmed ? (
+            <GoogleSignInButton clientId={clientId} nonce={nonce} onCredential={onGoogleCredential} active={open} />
+          ) : (
+            <p className="setup-note age-gate-note">{tx("Confirm you are 18 or older before signing up with Google.")}</p>
+          )}
           <button type="button" className="button button-quiet account-email-start" onClick={() => setEmailMode('create')}>
             {tx("Sign up without Google")}
           </button>

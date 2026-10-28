@@ -197,6 +197,23 @@ main.stage:focus-visible { outline: 3px solid #e7c56a; outline-offset: -3px; }
 .account-dialog::backdrop { background: rgba(28, 45, 66, 0.46); }
 .account-dialog h2 { margin: 0 0 8px; padding-right: 36px; font-size: 1.45rem; letter-spacing: -0.03em; }
 .account-email-form { margin-top: 8px; }
+.age-confirm {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 4px 0 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--navy);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.35;
+  cursor: pointer;
+}
+.age-confirm input { flex: none; width: 20px; height: 20px; margin: 0; accent-color: var(--terracotta); }
+.age-gate-note { margin: 0 0 10px; }
 .account-email-start { width: 100%; margin-top: 10px; }
 .password-line { display: flex; align-items: stretch; gap: 8px; }
 .password-line input { flex: 1; min-width: 0; }

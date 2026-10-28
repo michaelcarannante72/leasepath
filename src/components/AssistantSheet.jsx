@@ -13,6 +13,7 @@ import {
   stopSpeaking,
   writeSpeakReplies,
 } from '../rubyVoice.js'
+import { AgeConfirm } from './AgeConfirm.jsx'
 import { GoogleSignInButton } from './GoogleSignInButton.jsx'
 import { Icon } from './Icon.jsx'
 
@@ -66,6 +67,8 @@ export function AssistantSheet({
   const spokenCount = useRef(0)
   const support = speechSupport(typeof window !== 'undefined' ? window : undefined)
   const [listening, setListening] = useState(false)
+  // Signing in here can create the account, so the 18+ confirmation is required before the Google button.
+  const [adultConfirmed, setAdultConfirmed] = useState(false)
   const [voiceError, setVoiceError] = useState('')
   const [speakReplies, setSpeakReplies] = useState(() => readSpeakReplies())
 
@@ -204,7 +207,12 @@ export function AssistantSheet({
           <div className="gate">
             <h3>{tx("Sign in to ask another question")}</h3>
             <p>{FREE_COACH_QUESTIONS} {tx("questions are free on this browser. Sign in with Google to ask more. Search and resources stay open.")}</p>
-            <GoogleSignInButton clientId={access.googleClientId} nonce={access.googleNonce} onCredential={onGoogleCredential} active={locked} />
+            <AgeConfirm id="age-confirm-ruby" checked={adultConfirmed} onChange={setAdultConfirmed} />
+            {adultConfirmed ? (
+              <GoogleSignInButton clientId={access.googleClientId} nonce={access.googleNonce} onCredential={onGoogleCredential} active={locked} />
+            ) : (
+              <p className="fine">{tx("Confirm you are 18 or older to continue with Google.")}</p>
+            )}
             {access.signInError && <p className="fine">{access.signInError}</p>}
             <button type="button" className="button button-quiet" onClick={onOpenResources} disabled={access.signingIn}>{tx("See resources")}</button>
           </div>

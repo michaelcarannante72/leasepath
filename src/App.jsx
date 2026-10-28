@@ -27,6 +27,7 @@ import { LISTINGS } from './data.js'
 import { SITE_PAGES } from './sitePages.js'
 import { PROGRAMS, VOUCHER_PROGRAMS, assessListing, filterListings } from './fit.js'
 import { onInstallAvailable, promptInstall } from './install.js'
+import { readAgeConfirmed } from './ageGate.js'
 import { readItem, readJson, writeItem } from './storage.js'
 import { dayNumber } from './dates.js'
 import { SECTION8_AGENCIES } from './data/section8.js'
@@ -546,6 +547,11 @@ export default function App() {
 
   const signIn = useCallback(async (credential) => {
     setSignInError('')
+    // Checked again here so no Google button anywhere can create an account without the age confirmation.
+    if (!readAgeConfirmed()) {
+      setSignInError('Confirm that you are 18 or older before signing up.')
+      return
+    }
     setSigningIn(true)
     try {
       const response = await fetch('/api/auth/google', {
@@ -566,6 +572,10 @@ export default function App() {
 
   const signUpWithEmail = useCallback(async ({ email, password, mode }) => {
     setSignInError('')
+    if (mode === 'create' && !readAgeConfirmed()) {
+      setSignInError('Confirm that you are 18 or older before creating an account.')
+      return
+    }
     setSigningIn(true)
     try {
       const response = await fetch('/api/auth/email', {

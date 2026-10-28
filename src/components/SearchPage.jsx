@@ -1,3 +1,4 @@
+import { SHOW_SAMPLE_LISTINGS } from '../features.js'
 import { tx } from '../i18nAuto.js'
 import { Building } from './Building.jsx'
 import { Icon } from './Icon.jsx'
@@ -192,6 +193,7 @@ export function SearchPage({
                 <option value="neighborhood">{t("search.sort.neighborhood")}</option>
               </select>
             </label>
+            {SHOW_SAMPLE_LISTINGS && (
             <label className={`check-line${filters.savedOnly ? ' is-set' : ''}`}>
               <input
                 type="checkbox"
@@ -200,6 +202,7 @@ export function SearchPage({
               />
               {t("search.savedOnly")}
             </label>
+            )}
           </div>
           {chips.length > 0 && (
             <div className="filter-chips">
@@ -221,6 +224,7 @@ export function SearchPage({
         )}
       </section>
 
+      {SHOW_SAMPLE_LISTINGS ? (
       <div id="search-results">
         <div className="results-bar">
           <p aria-live="polite">
@@ -295,8 +299,12 @@ export function SearchPage({
           </ul>
         )}
       </div>
-      {/* Landlord-submitted units and the sponsor slot sit after the practice listings. */}
-      <SheetListings filters={filters} />
+      ) : (
+        /* Sample listings are archived (SHOW_SAMPLE_LISTINGS); the HRA-list apartments are the results. */
+        <SheetListings filters={filters} primary onChange={onChange} />
+      )}
+      {/* Landlord-submitted units and the sponsor slot sit after the listings. */}
+      {SHOW_SAMPLE_LISTINGS && <SheetListings filters={filters} />}
       <VoucherReadyUnits compact />
       <LandingExtras />
       <SponsoredSlot placement="search" />

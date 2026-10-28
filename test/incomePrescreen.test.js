@@ -9,7 +9,7 @@ import { INCOME_HINT, INCOME_LABEL, PRESCREEN_EXPLAIN, PRESCREEN_PROGRAMS, PRESC
 import { sanitizePlace } from '../server/accounts.js'
 import { prepareGuide } from '../server/guide.js'
 import { assessListing } from '../src/fit.js'
-import { LISTINGS } from '../src/data.js'
+import { SAMPLE_LISTINGS as LISTINGS } from '../src/data/sampleListings.archive.js'
 import { normalizeHousehold, rentFlags, sourceText } from '../src/rentCheck.js'
 
 const read = (path) => untx(readFileSync(new URL(`../${path}`, import.meta.url), 'utf8'))

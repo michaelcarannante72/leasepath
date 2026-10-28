@@ -74,3 +74,16 @@ test('listing checker notes a pasted ad that names a listed address or phone', (
   assert.deepEqual(matchSheetListing('call 718-313-3069').map((u) => u.number), [33])
   assert.deepEqual(checkListing('2br in Queens $2400 call 555 0100').sheetMatches, [])
 })
+
+test('only HRA-list apartments render: sample listings are archived behind SHOW_SAMPLE_LISTINGS', async () => {
+  const { SHOW_SAMPLE_LISTINGS } = await import('../src/features.js')
+  const { LISTINGS } = await import('../src/data.js')
+  const { SAMPLE_LISTINGS } = await import('../src/data/sampleListings.archive.js')
+  assert.equal(SHOW_SAMPLE_LISTINGS, false)
+  assert.deepEqual(LISTINGS, [])
+  assert.ok(SAMPLE_LISTINGS.length > 0, 'archived, not deleted')
+  const page = readFileSync(new URL('../src/components/SearchPage.jsx', import.meta.url), 'utf8')
+  assert.match(page, /<SheetListings filters=\{filters\} primary onChange=\{onChange\} \/>/)
+  const sheet = readFileSync(new URL('../src/components/SheetListings.jsx', import.meta.url), 'utf8')
+  assert.match(sheet, /No HRA-list apartment matches these filters\./)
+})

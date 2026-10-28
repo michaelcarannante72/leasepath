@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { assessListing } from '../src/fit.js'
-import { LISTINGS } from '../src/data.js'
+import { SAMPLE_LISTINGS as LISTINGS } from '../src/data/sampleListings.archive.js'
 import { ASK, ASK_SPECIALIST, askFor, cityfhepsCap, rentFlags, sourceText } from '../src/rentCheck.js'
 import { CITYFHEPS_2026_ROWS, CITYFHEPS_RULES } from '../src/data/cityfheps.js'
 import { HASA_ROWS, HASA_RULES } from '../src/data/hasa.js'

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { readFileSync } from 'node:fs'
 import { assessListing, cardFlags, cardLabel, cardText, filterListings, leadFlag, starterMessage } from '../src/fit.js'
-import { LISTINGS } from '../src/data.js'
+import { SAMPLE_LISTINGS as LISTINGS } from '../src/data/sampleListings.archive.js'
 
 const oneBed = LISTINGS.find((listing) => listing.id === 'crown-heights-1br')
 const twoBed = LISTINGS.find((listing) => listing.id === 'sunset-park-2br')

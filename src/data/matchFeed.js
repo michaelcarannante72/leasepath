@@ -32,8 +32,8 @@ export function housingConnectItems(version = '2026-10') {
 }
 
 /** Practice sample units that name a voucher program. Not offers or live vacancies. */
-export function unitItems() {
-  return LISTINGS.map((listing) => ({
+export function unitItems(source = LISTINGS) {
+  return source.map((listing) => ({
     id: `unit-${listing.id}`,
     kind: 'unit',
     borough: listing.borough,

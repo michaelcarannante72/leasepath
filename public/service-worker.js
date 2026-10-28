@@ -1,7 +1,7 @@
 // Bump CACHE_VERSION when this file's caching rules change. Hashed files under /assets/
 // are refreshed on every install, and old ones are pruned on activate.
 const CACHE_PREFIX = 'leasepath-shell-'
-const CACHE_VERSION = 'v9' // mobile redesign; route pages are lazy chunks: precache every chunk listed in /asset-manifest.json
+const CACHE_VERSION = 'v10' // mobile redesign; route pages are lazy chunks: precache every chunk listed in /asset-manifest.json
 const CACHE_NAME = `${CACHE_PREFIX}${CACHE_VERSION}`
 
 // App shell + icons. Hash routes (#/resources, #/steps, #/plan, …) load from '/' once cached,

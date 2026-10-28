@@ -1,3 +1,4 @@
+import { SAMPLE_LISTINGS } from '../src/data/sampleListings.archive.js'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
@@ -42,15 +43,16 @@ test('Housing Connect feed cites official HPD / Housing Connect URLs and hotline
   }
 })
 
-test('unit feed comes from sample LISTINGS and is not sold as a vacancy', () => {
-  const units = unitItems()
+test('sample units are archived: the live feed has none, and the archived ones are never sold as a vacancy', () => {
+  assert.deepEqual(unitItems(), [], 'no sample units while SHOW_SAMPLE_LISTINGS is false')
+  const units = unitItems(SAMPLE_LISTINGS)
   assert.ok(units.length >= 5)
   for (const item of units) {
     assert.equal(item.kind, 'unit')
     assert.match(item.detail, /not a vacancy/i)
     assert.match(item.href, /^#\/listing\//)
   }
-  assert.ok(matchFeed().length > units.length)
+  assert.ok(matchFeed().length > 0)
 })
 
 test('prefs stay on device and matching filters borough, size, and voucher', () => {
@@ -120,7 +122,7 @@ test('UI and service worker only notify after explicit permission wiring', () =>
   assert.match(sw, /leasepath-match-alert/)
   assert.match(sw, /showNotification/)
   assert.match(sw, /notificationclick/)
-  assert.match(sw, /CACHE_VERSION = 'v9'/)
+  assert.match(sw, /CACHE_VERSION = 'v10'/)
 
   const app = read('src/App.jsx')
   assert.match(app, /runMatchCheck/)

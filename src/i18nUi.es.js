@@ -3,6 +3,7 @@
 export const UI_ES = {
   "Close": "Cerrar",
   "Get more from LeasePath": "Saque más de LeasePath",
+  "Find apartments": "Buscar apartamentos",
   "Install the app": "Instale la app",
   "You may qualify": "Puede que califique",
   "Over the limits": "Sobre los límites",

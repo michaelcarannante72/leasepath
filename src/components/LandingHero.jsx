@@ -77,11 +77,16 @@ export function LandingHero() {
         <a className="photo-by" href={HERO_PHOTO.sourceUrl} target="_blank" rel="noreferrer">{HERO_PHOTO.credit}</a>
       </div>
       )}
-      {!wide && <HeroSkyline />}
+      {wide ? <div className="hero-skyline-row" aria-hidden="true"><HeroSkyline /><HeroSkyline /></div> : <HeroSkyline />}
       <div className="hero-text">
         <p className="eyebrow">{t("hero.eyebrow")}</p>
         <h1 id="hero-title">{t("hero.title")}</h1>
         <p className="hero-value">{t("hero.value")}</p>
+        {wide && (
+          <a className="hero-search-cta" href="#search-title" onClick={(event) => { event.preventDefault(); const panel = document.querySelector('.home-search'); panel?.scrollIntoView({ behavior: 'smooth', block: 'start' }); panel?.querySelector('input')?.focus({ preventScroll: true }) }}>
+            {tx("Find apartments")} <span aria-hidden="true">→</span>
+          </a>
+        )}
       </div>
     </section>
   )

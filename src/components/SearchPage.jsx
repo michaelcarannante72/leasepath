@@ -8,6 +8,8 @@ import { SheetListings } from './SheetListings.jsx'
 import { SponsoredSlot } from './SponsoredSlot.jsx'
 import { PROGRAMS, cardFlags, cardLabel, cardText, money, sizeLabel, utilityLabel } from '../fit.js'
 import { useLanguage } from './languageContext.js'
+import { SAMPLE_LISTINGS_ENABLED } from '../features.js'
+import { filterSheetListings, SHEET_LISTINGS } from '../data/sheetListings.js'
 
 const APPLY_DOORS = [
   {
@@ -57,6 +59,34 @@ function ApplyPanel() {
         ))}
       </ul>
     </section>
+  )
+}
+
+const RESET = { q: '', program: 'All', borough: 'All', beds: 'Any', maxRent: '', savedOnly: false, sort: 'rent-asc' }
+
+/** Results when sample apartments are off: the HRA-list apartments, with a count and an empty state. */
+function SheetResults({ filters, onChange }) {
+  const shown = filterSheetListings(filters).length
+  const total = SHEET_LISTINGS.length
+  return (
+    <div id="search-results">
+      <div className="results-bar">
+        <p aria-live="polite">
+          <strong>{shown}</strong> {shown === 1 ? tx('apartment') : tx('apartments')} {tx('from an HRA list')}
+          {shown !== total ? ` ${tx('of')} ${total}` : ''}
+        </p>
+        <p className="fine">{tx("Call to confirm each unit. A worker still has to approve the apartment.")}</p>
+      </div>
+      {shown === 0 ? (
+        <div className="empty">
+          <h2>{tx("No HRA-list apartments match these filters.")}</h2>
+          <p>{tx("Try another borough or size, clear the rent ceiling, or switch the voucher to all three.")}</p>
+          <button type="button" className="button" onClick={() => onChange(RESET)}>{tx("Reset filters")}</button>
+        </div>
+      ) : (
+        <SheetListings filters={filters} />
+      )}
+    </div>
   )
 }
 
@@ -221,6 +251,7 @@ export function SearchPage({
         )}
       </section>
 
+      {SAMPLE_LISTINGS_ENABLED ? (
       <div id="search-results">
         <div className="results-bar">
           <p aria-live="polite">
@@ -295,8 +326,11 @@ export function SearchPage({
           </ul>
         )}
       </div>
+      ) : (
+        <SheetResults filters={filters} onChange={onChange} />
+      )}
       {/* Landlord-submitted units and the sponsor slot sit after the practice listings. */}
-      <SheetListings filters={filters} />
+      {SAMPLE_LISTINGS_ENABLED && <SheetListings filters={filters} />}
       <VoucherReadyUnits compact />
       <LandingExtras />
       <SponsoredSlot placement="search" />

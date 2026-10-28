@@ -23,7 +23,11 @@ import { SearchPage } from './components/SearchPage.jsx'
 import { VoucherReadyUnits } from './components/VoucherReadyUnits.jsx'
 import { FREE_COACH_QUESTIONS } from './coachLimit.js'
 import { POSTS } from './blog.js'
-import { LISTINGS } from './data.js'
+import { LISTINGS as ALL_SAMPLE_LISTINGS } from './data.js'
+import { SAMPLE_LISTINGS_ENABLED } from './features.js'
+
+// Sample apartments are off unless the flag is on (the data stays in data.js).
+const LISTINGS = SAMPLE_LISTINGS_ENABLED ? ALL_SAMPLE_LISTINGS : []
 import { SITE_PAGES } from './sitePages.js'
 import { PROGRAMS, VOUCHER_PROGRAMS, assessListing, filterListings } from './fit.js'
 import { onInstallAvailable, promptInstall } from './install.js'
@@ -861,7 +865,7 @@ export default function App() {
         )}
         {route.name === 'detail' && !listing && (
           <div className="empty">
-            <h1>{tx("That sample is not on this list.")}</h1>
+            <h1>{SAMPLE_LISTINGS_ENABLED ? tx("That sample is not on this list.") : tx("Practice apartments are no longer shown. Search lists apartments from an HRA list.")}</h1>
             <button type="button" className="button" onClick={() => go('#/')}>{tx("Back to search")}</button>
           </div>
         )}

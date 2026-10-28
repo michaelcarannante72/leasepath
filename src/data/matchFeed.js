@@ -3,6 +3,7 @@
  * Sample units come from the in-app LISTINGS practice list — not live vacancies. */
 
 import { LISTINGS } from '../data.js'
+import { SAMPLE_LISTINGS_ENABLED } from '../features.js'
 
 export const HOUSING_CONNECT = {
   label: 'NYC Housing Connect',
@@ -49,5 +50,6 @@ export function unitItems() {
 }
 
 export function matchFeed() {
-  return [...housingConnectItems(), ...unitItems()]
+  // Sample units only join the feed while sample listings are switched on.
+  return [...housingConnectItems(), ...(SAMPLE_LISTINGS_ENABLED ? unitItems() : [])]
 }

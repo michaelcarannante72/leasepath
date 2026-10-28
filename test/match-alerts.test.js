@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import test from 'node:test'
+import { SAMPLE_LISTINGS_ENABLED } from '../src/features.js'
 import { HOUSING_CONNECT, housingConnectItems, matchFeed, unitItems } from '../src/data/matchFeed.js'
 import {
   buildNotification,
@@ -50,7 +51,13 @@ test('unit feed comes from sample LISTINGS and is not sold as a vacancy', () => 
     assert.match(item.detail, /not a vacancy/i)
     assert.match(item.href, /^#\/listing\//)
   }
-  assert.ok(matchFeed().length > units.length)
+  // Samples join the feed only while sample listings are on; with them off the feed is Housing Connect reminders only.
+  const feed = matchFeed()
+  if (SAMPLE_LISTINGS_ENABLED) assert.equal(feed.length, housingConnectItems().length + units.length)
+  else {
+    assert.equal(feed.length, housingConnectItems().length)
+    assert.ok(feed.every((item) => item.kind !== 'unit'))
+  }
 })
 
 test('prefs stay on device and matching filters borough, size, and voucher', () => {

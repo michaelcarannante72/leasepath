@@ -122,7 +122,7 @@ test('UI and service worker only notify after explicit permission wiring', () =>
   assert.match(sw, /leasepath-match-alert/)
   assert.match(sw, /showNotification/)
   assert.match(sw, /notificationclick/)
-  assert.match(sw, /CACHE_VERSION = 'v10'/)
+  assert.match(sw, /CACHE_VERSION = 'v11'/)
 
   const app = read('src/App.jsx')
   assert.match(app, /runMatchCheck/)

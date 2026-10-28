@@ -7,6 +7,7 @@ import { PantryFinder } from './PantryFinder.jsx'
 import { FREE_FOOD_CAUTION, FREE_FOOD_LABEL, ADDED_ON, SOURCE_CREDIT, COMMUNITY_SECTIONS } from '../freeFood.js'
 import { BOROUGHS, filterSection } from '../resourceFilter.js'
 import { SponsoredSlot } from './SponsoredSlot.jsx'
+import { PageHero } from './PageHero.jsx'
 
 // Search and filters live only in component state: nothing is fetched, saved, or sent.
 
@@ -185,42 +186,46 @@ export function ResourcesPage() {
 
   return (
     <div className="page resources-page">
-      <p className="eyebrow">{t("resources.eyebrow")}</p>
-      <h1>{t("resources.title")}</h1>
-      <p className="lede">{t("resources.lede")}</p>
-      <nav className="guide-links" aria-label={t("resources.jump")}>
+      <PageHero eyebrow={t("resources.eyebrow")} title={t("resources.title")} id="resources-title">
+        <p className="page-hero-lede">{t("resources.lede")}</p>
+      </PageHero>
+      <nav className="guide-links icon-rows icon-rows-grid" aria-label={t("resources.jump")}>
         <h2 className="guide-links-title">{t("resources.jump")}</h2>
-        <ul className="chip-links">
-          <li><a href="#/housing-connect">{t("resources.link.hc")}</a></li>
-          <li><a href="#/listing-check">{t("resources.link.check")}</a></li>
-          <li><a href="#/after-you-find#chap">{t("resources.chap")}</a></li>
-          <li><a href="#/after-you-find">{t("resources.afterFind")}</a></li>
-          <li><a href="#/inspection-prep">{t("resources.link.hqs")}</a></li>
-          <li><a href="#/scam-alerts">{t("resources.link.scam")}</a></li>
-          <li><a href="#/moving-help">{t("resources.link.moving")}</a></li>
-          <li><a href="#/know-your-rights">{t("resources.link.rights")}</a></li>
-          <li><a href="#/landlord-welcome">{t("resources.link.landlord")}</a></li>
-          <li><a href="#/docs-tracker">{t("resources.link.docs")}</a></li>
-          <li><a href="#/roadmap">{t("resources.link.roadmap")}</a></li>
-          <li><a href="#/after-movein">{t("resources.link.movein")}</a></li>
-          <li><a href="#/utility-help">{t("resources.link.heap")}</a></li>
-          <li><a href="#/viewing-checklist">{t("resources.link.viewing")}</a></li>
-          <li><a href="#/youth">{t("resources.link.youth")}</a></li>
-          <li><a href="#/install">{t("resources.link.install")}</a></li>
+        <ul className="icon-rows-list">
+          <li><a className="icon-row" href="#/housing-connect"><span className="icon-row-icon" aria-hidden="true"><Icon name="home" size={18} /></span><span className="icon-row-label">{t("resources.link.hc")}</span><span className="icon-row-chev" aria-hidden="true"><Icon name="chevron" size={18} /></span></a></li>
+          <li><a className="icon-row" href="#/listing-check"><span className="icon-row-icon" aria-hidden="true"><Icon name="search" size={18} /></span><span className="icon-row-label">{t("resources.link.check")}</span><span className="icon-row-chev" aria-hidden="true"><Icon name="chevron" size={18} /></span></a></li>
+          <li><a className="icon-row" href="#/after-you-find#chap"><span className="icon-row-icon" aria-hidden="true"><Icon name="heart" size={18} /></span><span className="icon-row-label">{t("resources.chap")}</span><span className="icon-row-chev" aria-hidden="true"><Icon name="chevron" size={18} /></span></a></li>
+          <li><a className="icon-row" href="#/after-you-find"><span className="icon-row-icon" aria-hidden="true"><Icon name="home" size={18} /></span><span className="icon-row-label">{t("resources.afterFind")}</span><span className="icon-row-chev" aria-hidden="true"><Icon name="chevron" size={18} /></span></a></li>
+          <li><a className="icon-row" href="#/inspection-prep"><span className="icon-row-icon" aria-hidden="true"><Icon name="check" size={18} /></span><span className="icon-row-label">{t("resources.link.hqs")}</span><span className="icon-row-chev" aria-hidden="true"><Icon name="chevron" size={18} /></span></a></li>
+          <li><a className="icon-row" href="#/scam-alerts"><span className="icon-row-icon" aria-hidden="true"><Icon name="card" size={18} /></span><span className="icon-row-label">{t("resources.link.scam")}</span><span className="icon-row-chev" aria-hidden="true"><Icon name="chevron" size={18} /></span></a></li>
+          <li><a className="icon-row" href="#/moving-help"><span className="icon-row-icon" aria-hidden="true"><Icon name="city" size={18} /></span><span className="icon-row-label">{t("resources.link.moving")}</span><span className="icon-row-chev" aria-hidden="true"><Icon name="chevron" size={18} /></span></a></li>
+          <li><a className="icon-row" href="#/know-your-rights"><span className="icon-row-icon" aria-hidden="true"><Icon name="blog" size={18} /></span><span className="icon-row-label">{t("resources.link.rights")}</span><span className="icon-row-chev" aria-hidden="true"><Icon name="chevron" size={18} /></span></a></li>
+          <li><a className="icon-row" href="#/landlord-welcome"><span className="icon-row-icon" aria-hidden="true"><Icon name="pin" size={18} /></span><span className="icon-row-label">{t("resources.link.landlord")}</span><span className="icon-row-chev" aria-hidden="true"><Icon name="chevron" size={18} /></span></a></li>
+          <li><a className="icon-row" href="#/docs-tracker"><span className="icon-row-icon" aria-hidden="true"><Icon name="blog" size={18} /></span><span className="icon-row-label">{t("resources.link.docs")}</span><span className="icon-row-chev" aria-hidden="true"><Icon name="chevron" size={18} /></span></a></li>
+          <li><a className="icon-row" href="#/roadmap"><span className="icon-row-icon" aria-hidden="true"><Icon name="steps" size={18} /></span><span className="icon-row-label">{t("resources.link.roadmap")}</span><span className="icon-row-chev" aria-hidden="true"><Icon name="chevron" size={18} /></span></a></li>
+          <li><a className="icon-row" href="#/after-movein"><span className="icon-row-icon" aria-hidden="true"><Icon name="home" size={18} /></span><span className="icon-row-label">{t("resources.link.movein")}</span><span className="icon-row-chev" aria-hidden="true"><Icon name="chevron" size={18} /></span></a></li>
+          <li><a className="icon-row" href="#/utility-help"><span className="icon-row-icon" aria-hidden="true"><Icon name="spark" size={18} /></span><span className="icon-row-label">{t("resources.link.heap")}</span><span className="icon-row-chev" aria-hidden="true"><Icon name="chevron" size={18} /></span></a></li>
+          <li><a className="icon-row" href="#/viewing-checklist"><span className="icon-row-icon" aria-hidden="true"><Icon name="check" size={18} /></span><span className="icon-row-label">{t("resources.link.viewing")}</span><span className="icon-row-chev" aria-hidden="true"><Icon name="chevron" size={18} /></span></a></li>
+          <li><a className="icon-row" href="#/youth"><span className="icon-row-icon" aria-hidden="true"><Icon name="heart" size={18} /></span><span className="icon-row-label">{t("resources.link.youth")}</span><span className="icon-row-chev" aria-hidden="true"><Icon name="chevron" size={18} /></span></a></li>
+          <li><a className="icon-row" href="#/install"><span className="icon-row-icon" aria-hidden="true"><Icon name="phone" size={18} /></span><span className="icon-row-label">{t("resources.link.install")}</span><span className="icon-row-chev" aria-hidden="true"><Icon name="chevron" size={18} /></span></a></li>
         </ul>
       </nav>
 
-      <aside className="borough-guides-callout" aria-labelledby="borough-guides-title">
-        <h2 id="borough-guides-title">{tx("Borough voucher-renter guides")}</h2>
-        <p>{tx("Transit notes, HRA Benefits Access and SNAP centers (addresses from HRA), and tips for each borough.")}</p>
-        <p><a className="button" href="#/guides">{tx("Open borough guides")}</a></p>
-      </aside>
+      <div className="feature-tiles">
+        <a className="feature-tile borough-guides-callout" href="#/guides" aria-labelledby="borough-guides-title">
+          <span className="feature-tile-icon" aria-hidden="true"><Icon name="pin" size={22} /></span>
+          <strong id="borough-guides-title" className="feature-tile-title">{tx("Borough voucher-renter guides")}</strong>
+          <span className="feature-tile-body">{tx("Transit notes, HRA Benefits Access and SNAP centers (addresses from HRA), and tips for each borough.")}</span>
+          <span className="feature-tile-cta">{tx("Open borough guides")} <span aria-hidden="true">→</span></span>
+        </a>
 
-      <aside className="partners-callout" aria-labelledby="partners-callout-title">
-        <h2 id="partners-callout-title">{tx("Legal aid and nonprofit partners")}</h2>
-        <p>{tx("Legal Aid Society, Housing Court Answers, the NYC Tenant Helpline, Office of Civil Justice, and more — filterable by borough.")}</p>
-        <p><a className="button" href="#/partners">{tx("Open partner directory")}</a></p>
-      </aside>
+        <a className="feature-tile partners-callout" href="#/partners" aria-labelledby="partners-callout-title">
+          <span className="feature-tile-icon" aria-hidden="true"><Icon name="card" size={22} /></span>
+          <strong id="partners-callout-title" className="feature-tile-title">{tx("Legal aid and nonprofit partners")}</strong>
+          <span className="feature-tile-body">{tx("Legal Aid Society, Housing Court Answers, the NYC Tenant Helpline, Office of Civil Justice, and more — filterable by borough.")}</span>
+          <span className="feature-tile-cta">{tx("Open partner directory")} <span aria-hidden="true">→</span></span>
+        </a>
+      </div>
 
       <aside className="help-now" aria-labelledby="help-now-title">
         <h2 id="help-now-title">{t("resources.helpNow")}</h2>
@@ -247,21 +252,21 @@ export function ResourcesPage() {
           </div>
         </div>
 
-        <nav className="community-jump" aria-label={t("resources.categories")}>
+        <nav className="community-jump" data-layout="tiles" aria-label={t("resources.categories")}>
           <ul>
             {COMMUNITY_SECTIONS.map((section) => (
               <li key={section.id}>
-                <button type="button" className="chip chip-category" aria-pressed={category === section.id} onClick={() => pickCategory(section.id)}>
-                  <Icon name={SECTION_ICONS[section.id] || 'heart'} size={14} />
-                  <span>{section.jump}</span>
+                <button type="button" className="chip-category category-tile" aria-pressed={category === section.id} onClick={() => pickCategory(section.id)}>
+                  <span className="category-tile-icon" aria-hidden="true"><Icon name={SECTION_ICONS[section.id] || 'heart'} size={22} /></span>
+                  <span className="category-tile-name">{section.jump}</span>
                   <span className="chip-count">{section.items.length}</span>
                 </button>
               </li>
             ))}
             <li>
-              <button type="button" className="chip chip-category" aria-pressed={category === CITY_ID} onClick={() => pickCategory(CITY_ID)}>
-                <Icon name="city" size={14} />
-                <span>{t("resources.cityPrograms")}</span>
+              <button type="button" className="chip-category category-tile" aria-pressed={category === CITY_ID} onClick={() => pickCategory(CITY_ID)}>
+                <span className="category-tile-icon" aria-hidden="true"><Icon name="city" size={22} /></span>
+                <span className="category-tile-name">{t("resources.cityPrograms")}</span>
                 <span className="chip-count">{cityCount}</span>
               </button>
             </li>
@@ -301,7 +306,32 @@ export function ResourcesPage() {
             <p className="city-lede">{t("resources.cityLede")}</p>
           </div>
         )}
-        {visibleCity.map((section) => (
+        {visibleCity.filter((section) => !section.hasa).map((section) => (
+          <Collapsible
+            key={section.id}
+            id={section.id}
+            title={section.title}
+            count={section.shown.length}
+            icon={section.icon}
+            badge={section.hasa ? 'HASA-specific' : undefined}
+            open={isOpen(section.id)}
+            onToggle={() => toggle(section.id)}
+          >
+            <ul className="resource-list">
+              {section.shown.map((item) => <CityCard key={item.title} item={item} hasa={section.hasa} />)}
+            </ul>
+          </Collapsible>
+        ))}
+        {visibleCity.some((section) => section.hasa) && (
+          <div className="city-block hasa-block">
+            <h2 id="hasa-programs" className="city-title">
+              <span className="section-icon" aria-hidden="true"><Icon name="heart" size={20} /></span>
+              {tx("For HASA clients")}
+            </h2>
+            <p className="city-lede">{tx("Only for people with HASA (HIV/AIDS Services Administration) support. Everything above is open to all New Yorkers.")}</p>
+          </div>
+        )}
+        {visibleCity.filter((section) => section.hasa).map((section) => (
           <Collapsible
             key={section.id}
             id={section.id}

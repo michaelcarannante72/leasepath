@@ -780,7 +780,11 @@ export default function App() {
   const listing = route.name === 'detail' ? LISTINGS.find((item) => item.id === route.id) : null
   const post = route.name === 'post' ? POSTS.find((item) => item.slug === route.id) : null
   const infoPage = route.name === 'info' ? SITE_PAGES.find((item) => item.slug === route.id) : null
-  const dockActive = assistantOpen || (rubyIntroOpen && consentDone)
+  // Ruby's first-visit intro is for renters. On the landlord/broker and admin routes it would open
+  // on top of the form and swallow the first click, so those routes never show it.
+  const landlordRoute = route.name === 'list-unit' || route.name === 'listings-admin'
+  const rubyIntroShown = rubyIntroOpen && consentDone && !landlordRoute
+  const dockActive = assistantOpen || rubyIntroShown
     ? 'assistant'
     : route.name === 'detail'
       ? 'search'
@@ -933,7 +937,7 @@ export default function App() {
         onDone={finishDelete}
       />
       <Dock active={dockActive} onSelect={navSelect} />
-      <RubyIntro open={rubyIntroOpen && consentDone} onTalk={talkToRuby} onLater={dismissRubyIntro} />
+      <RubyIntro open={rubyIntroShown} onTalk={talkToRuby} onLater={dismissRubyIntro} />
       {assistantOpen && (
         <AssistantSheet
           messages={messages}

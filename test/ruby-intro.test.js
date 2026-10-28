@@ -34,8 +34,10 @@ test('Ruby intro shows once via localStorage and re-opens from the dock when cha
   assert.match(app, /chatEmpty/)
   assert.match(app, /openRubyIntro/)
   assert.match(app, /talkToRuby/)
-  // Consent comes first as one bar; the intro waits for it.
-  assert.match(app, /<RubyIntro open=\{rubyIntroOpen && consentDone\}/)
+  // Consent comes first as one bar; the intro waits for it, and never covers the landlord form.
+  assert.match(app, /const rubyIntroShown = rubyIntroOpen && consentDone && !landlordRoute/)
+  assert.match(app, /const landlordRoute = route\.name === 'list-unit' \|\| route\.name === 'listings-admin'/)
+  assert.match(app, /<RubyIntro open=\{rubyIntroShown\}/)
   assert.match(app, /<ConsentBar [^>]*onSettled=\{\(\) => setConsentDone\(true\)\}/)
   assert.match(read('src/i18n.js'), /Welcome to LeasePath\. Let's get you into an apartment\./)
   assert.match(app, /welcomeMessage\(|ruby\.welcome/)

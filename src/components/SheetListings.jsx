@@ -1,5 +1,5 @@
 import { tx } from '../i18nAuto.js'
-import { SHEET_LABEL, filterSheetListings, SHEET_LISTINGS } from '../data/sheetListings.js'
+import { SHEET_LABEL, filterSheetListings, PUBLIC_SHEET_LISTINGS } from '../data/sheetListings.js'
 
 function money(value) {
   return `$${Number(value).toLocaleString('en-US')}`
@@ -51,7 +51,7 @@ export function SheetListings({ filters, primary = false, onChange }) {
   if (!units.length) {
     return (
       <section id="search-results" className="voucher-ready sheet-listings panel" aria-labelledby="sheet-listings-heading">
-        <h2 id="sheet-listings-heading">{tx("Apartments from an HRA list")} <span className="fine">(0 {tx("of")} {SHEET_LISTINGS.length})</span></h2>
+        <h2 id="sheet-listings-heading">{tx("Apartments from an HRA list")} <span className="fine">(0 {tx("of")} {PUBLIC_SHEET_LISTINGS.length})</span></h2>
         <div className="empty" aria-live="polite">
           <h3>{filters.savedOnly ? tx("Saved only covers practice listings, which are hidden for now.") : tx("No HRA-list apartment matches these filters.")}</h3>
           <p>{tx("Try another borough, any bedroom size, or a higher rent ceiling.")}</p>
@@ -62,7 +62,7 @@ export function SheetListings({ filters, primary = false, onChange }) {
   }
   return (
     <section id={primary ? 'search-results' : undefined} className="voucher-ready sheet-listings panel" aria-labelledby="sheet-listings-heading">
-      <h2 id="sheet-listings-heading">{tx("Apartments from an HRA list")} <span className="fine" aria-live={primary ? 'polite' : undefined}>({units.length}{primary && units.length !== SHEET_LISTINGS.length ? ` ${tx('of')} ${SHEET_LISTINGS.length}` : ''})</span></h2>
+      <h2 id="sheet-listings-heading">{tx("Apartments from an HRA list")} <span className="fine" aria-live={primary ? 'polite' : undefined}>({units.length}{primary && units.length !== SHEET_LISTINGS.length ? ` ${tx('of')} ${PUBLIC_SHEET_LISTINGS.length}` : ''})</span></h2>
       <p>{tx("Copied from a printed apartment list dated October 2026. LeasePath has not checked these units. Call to confirm the rent and that the unit is still available, and confirm with your worker before you pay anything.")}</p>
       <ul className="cards voucher-ready-cards">
         {units.map((unit) => <SheetListingCard key={unit.id} unit={unit} />)}

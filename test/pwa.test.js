@@ -105,7 +105,7 @@ test('there are no Android, TWA, or old-project remnants in the PWA repo', () =>
   const pattern = /stoop|android|assetlinks|\btwa\b|bubblewrap|play store|related_applications/i
   const files = ['index.html', 'wrangler.jsonc', 'package.json', '.env.example']
     .concat(walk('src'), walk('public'), walk('server'), walk('worker'))
-    .filter((path) => !/\.(png|svg|ico)$/.test(path))
+    .filter((path) => !/\.(png|svg|ico|jpe?g|webp|avif|gif|mp4|woff2?)$/i.test(path))
   for (const file of files) assert.equal(pattern.test(read(file)), false, `${file} mentions an abandoned target`)
   assert.equal(existsSync(join(root, 'public/.well-known')), false)
   // The README may say the app is PWA-only, but it must not point at the old project folder.

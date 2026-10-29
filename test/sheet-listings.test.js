@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import test from 'node:test'
-import { SHEET_LABEL, SHEET_LISTINGS, filterSheetListings, matchSheetListing, sheetListingsFor, telHref } from '../src/data/sheetListings.js'
+import { SHEET_LABEL, SHEET_LISTINGS, PUBLIC_SHEET_LISTINGS, filterSheetListings, isFilled, matchSheetListing, sheetListingsFor, telHref } from '../src/data/sheetListings.js'
 import { searchHtmlForPath } from '../server/searchPages.js'
 import { checkListing } from '../src/listingChecker.js'
 import { UI_ES } from '../src/i18nUi.es.js'
@@ -51,11 +51,26 @@ test('voucher fit uses the verified limits; #13 is over for a 1BR', () => {
 
 test('search filters apply to sheet listings', () => {
   assert.deepEqual(filterSheetListings({ borough: 'Bronx', beds: '2' }).map((u) => u.number), [17, 20, 19, 18, 16])
-  assert.equal(filterSheetListings({}).length, 35)
+  assert.equal(filterSheetListings({}).length, 33)
   assert.ok(filterSheetListings({ q: 'harlem' }).length === 6)
   assert.ok(filterSheetListings({ maxRent: '2000' }).every((u) => u.rent <= 2000))
   assert.deepEqual(filterSheetListings({ savedOnly: true }), [])
   assert.equal(filterSheetListings({ beds: 'SRO' }).length, 0)
+})
+
+test('units a landlord told us are rented are hidden from everything public, and nothing is deleted', () => {
+  assert.equal(SHEET_LISTINGS.length, 35, 'the full transcription is kept')
+  assert.equal(PUBLIC_SHEET_LISTINGS.length, 33)
+  assert.deepEqual(PUBLIC_SHEET_LISTINGS.filter((u) => isFilled(u.number)), [])
+  for (const number of [27, 29]) {
+    const unit = SHEET_LISTINGS[number - 1]
+    assert.ok(unit, `row ${number} is still in the transcript`)
+    assert.equal(isFilled(number), true)
+    assert.equal(filterSheetListings({ q: unit.street }).length, 0, `${unit.street} is not searchable`)
+    assert.deepEqual(matchSheetListing(unit.street), [], `${unit.street} does not match in the checker`)
+    assert.deepEqual(matchSheetListing(unit.contact), [], `${unit.contact} does not match in the checker`)
+  }
+  assert.equal(isFilled(13), false)
 })
 
 test('SEO pages list matching units with you-may-qualify / over wording', () => {

@@ -4,15 +4,34 @@ import { openAuth, readCookie, validNonce, verifyGoogleIdToken, googleCerts } fr
 import { MODEL, prepareGuide, completeGuide } from './guide.js'
 import { loadPantries } from './pantries.js'
 import {
+  LISTING_LINK_INVALID,
   adminAuthorized,
   approveListing,
   listApproved,
   listPending,
+  listRemoved,
+  listRented,
+  loadListingForEdit,
+  markListingRented,
+  relistListing,
   parseListingSubmission,
+  parsePhotos,
   readBearer,
+  readListingPhoto,
+  readPendingPhoto,
   rejectListing,
+  removeListingForToken,
+  saveListingEdit,
   storePendingListing,
 } from './listings.js'
+
+const EDIT_PATHS = [
+  '/api/listings/edit',
+  '/api/listings/edit/save',
+  '/api/listings/edit/remove',
+  '/api/listings/edit/rented',
+  '/api/listings/edit/relist',
+]
 
 function withAccess(status, body, auth, cookies = auth.cookies) {
   return {
@@ -107,6 +126,135 @@ export async function handleApi({
     }
   }
 
+  if (pathname === '/api/listings/rented') {
+    if (method !== 'GET') return { status: 405, json: { error: 'method' }, cookies: [] }
+    const token = readBearer(authorization) || (searchParams && searchParams.get('token')) || ''
+    if (!adminAuthorized(token, '', listingsAdminToken)) {
+      return { status: 401, cookies: [], json: { error: 'unauthorized', message: 'Admin token required.' } }
+    }
+    if (!listingsKv) return { status: 503, cookies: [], json: { error: 'listings', message: 'Listings storage is not configured.' } }
+    try {
+      const listings = await listRented(listingsKv)
+      return { status: 200, cookies: [], json: { listings } }
+    } catch {
+      return { status: 503, cookies: [], json: { error: 'listings', message: 'Rented units could not load.' } }
+    }
+  }
+
+  if (pathname === '/api/listings/removed') {
+    if (method === 'OPTIONS') return { status: 204, json: {}, cookies: [] }
+    if (method !== 'GET') return { status: 405, json: { error: 'method' }, cookies: [] }
+    const token = readBearer(authorization) || (searchParams && searchParams.get('token')) || ''
+    if (!adminAuthorized(token, '', listingsAdminToken)) {
+      return { status: 401, cookies: [], json: { error: 'unauthorized', message: 'Admin token required.' } }
+    }
+    if (!listingsKv) return { status: 503, cookies: [], json: { error: 'listings', message: 'Listings storage is not configured.' } }
+    try {
+      const listings = await listRemoved(listingsKv)
+      return { status: 200, cookies: [], json: { listings } }
+    } catch {
+      return { status: 503, cookies: [], json: { error: 'listings', message: 'Removed units could not load.' } }
+    }
+  }
+
+  // Photos are served from their own keys. Only approved units are public; pending ones need the admin token.
+  const photoMatch = pathname.match(/^\/api\/listings\/photo\/([a-zA-Z0-9]+)\/([1-9])$/)
+  if (photoMatch) {
+    if (method === 'OPTIONS') return { status: 204, json: {}, cookies: [] }
+    if (method !== 'GET' && method !== 'HEAD') return { status: 405, json: { error: 'method' }, cookies: [] }
+    if (!listingsKv) return { status: 404, json: { error: 'not_found' }, cookies: [] }
+    const [, id, rawN] = photoMatch
+    const n = Number(rawN)
+    try {
+      let photo = await readListingPhoto(listingsKv, id, n)
+      if (!photo) {
+        const token = readBearer(authorization) || (searchParams && searchParams.get('token')) || ''
+        if (adminAuthorized(token, '', listingsAdminToken)) photo = await readPendingPhoto(listingsKv, id, n)
+      }
+      if (!photo) return { status: 404, json: { error: 'not_found' }, cookies: [] }
+      return {
+        status: 200,
+        cookies: [],
+        cacheControl: 'public, max-age=300',
+        raw: new Response(photo.bytes, {
+          status: 200,
+          headers: {
+            'content-type': photo.type,
+            'cache-control': 'public, max-age=300',
+            'content-disposition': 'inline',
+            'x-content-type-options': 'nosniff',
+          },
+        }),
+      }
+    } catch {
+      return { status: 503, json: { error: 'listings', message: 'That photo could not load.' }, cookies: [] }
+    }
+  }
+
+  // Private edit: the token is the only way in. A wrong token and a missing record answer the same.
+  if (EDIT_PATHS.includes(pathname)) {
+    if (method === 'OPTIONS') return { status: 204, json: {}, cookies: [] }
+    if (method !== 'POST') return { status: 405, json: { error: 'method' }, cookies: [] }
+    if (!origin || origin !== requestOrigin) {
+      return { status: 403, json: { error: 'origin', message: 'That request did not come from LeasePath.' }, cookies: [] }
+    }
+    const token = typeof body?.token === 'string' ? body.token.trim() : ''
+    if (!token || token.length > 200) return { status: 404, cookies: [], json: LISTING_LINK_INVALID }
+    if (!listingsKv) return { status: 503, cookies: [], json: { error: 'listings', message: 'Listings storage is not configured.' } }
+    try {
+      if (pathname === '/api/listings/edit') {
+        const found = await loadListingForEdit(listingsKv, token)
+        if (!found.ok) return { status: 404, cookies: [], json: LISTING_LINK_INVALID }
+        return { status: 200, cookies: [], json: { ok: true, listing: found.listing } }
+      }
+      if (pathname === '/api/listings/edit/save') {
+        const saved = await saveListingEdit(listingsKv, token, body)
+        if (!saved.ok) {
+          if (!saved.error) return { status: 404, cookies: [], json: LISTING_LINK_INVALID }
+          if (saved.json) return { status: saved.json.error === 'photos_too_big' ? 413 : 400, cookies: [], json: saved.json }
+          return { status: 400, cookies: [], json: { error: 'validation', message: saved.error } }
+        }
+        return {
+          status: 200,
+          cookies: [],
+          json: {
+            ok: true,
+            status: saved.status,
+            needsReview: saved.needsReview,
+            listing: saved.listing,
+            message: saved.needsReview
+              ? 'Saved. Because the unit details changed, it goes back to review before it shows publicly again.'
+              : 'Saved. Your contact details are updated.',
+          },
+        }
+      }
+      if (pathname === '/api/listings/edit/rented') {
+        const rented = await markListingRented(listingsKv, token)
+        if (!rented) return { status: 404, cookies: [], json: LISTING_LINK_INVALID }
+        return {
+          status: 200,
+          cookies: [],
+          json: {
+            ok: true,
+            status: 'rented',
+            alreadyRented: rented.alreadyRented,
+            message: 'Marked as rented. It is out of the public list, and your edit link still works if it becomes available again.',
+          },
+        }
+      }
+      if (pathname === '/api/listings/edit/relist') {
+        const relisted = await relistListing(listingsKv, token)
+        if (!relisted) return { status: 404, cookies: [], json: LISTING_LINK_INVALID }
+        return { status: 200, cookies: [], json: { ok: true, status: relisted.status, message: 'Back in the review queue. It shows publicly again once LeasePath approves it.' } }
+      }
+      const removed = await removeListingForToken(listingsKv, token)
+      if (!removed) return { status: 404, cookies: [], json: LISTING_LINK_INVALID }
+      return { status: 200, cookies: [], json: { ok: true, message: 'That unit is removed from LeasePath. Thank you for letting renters know.' } }
+    } catch {
+      return { status: 503, cookies: [], json: { error: 'listings', message: 'That change could not be saved. Try again in a moment.' } }
+    }
+  }
+
   const reviewMatch = pathname.match(/^\/api\/listings\/([a-zA-Z0-9]+)\/(approve|reject)$/)
   if (reviewMatch) {
     if (method === 'OPTIONS') return { status: 204, json: {}, cookies: [] }
@@ -144,17 +292,26 @@ export async function handleApi({
     if (!parsed.ok) {
       return { status: 400, cookies: [], json: { error: 'validation', message: parsed.error } }
     }
+    // One photo is required on a new listing: a card with no image does not get clicked.
+    const photos = parsePhotos(body, { required: true })
+    if (!photos.ok) {
+      const status = photos.json?.error === 'photos_required' ? 400 : photos.json ? 413 : 400
+      return { status, cookies: [], json: photos.json || { error: 'validation', message: photos.error } }
+    }
     if (!listingsKv) {
       return { status: 503, cookies: [], json: { error: 'listings', message: 'Listings storage is not configured yet. Try again later.' } }
     }
     try {
-      const record = await storePendingListing(listingsKv, parsed.listing)
+      const record = await storePendingListing(listingsKv, parsed.listing, { photos: photos.photos })
       return {
         status: 201,
         cookies: [],
+        // The raw edit token is returned exactly once, to the browser that submitted. It is not stored raw
+        // and it never appears in the public list, the admin queue, or any log line.
         json: {
           ok: true,
           id: record.id,
+          editToken: record.editToken,
           message: 'Thanks. Your unit is in the pending-review queue. It will not show publicly until LeasePath approves it.',
         },
       }

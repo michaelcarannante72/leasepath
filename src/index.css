@@ -1949,7 +1949,7 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 .lc-page .lede { max-width: 40rem; }
 .lc-privacy { display: flex; gap: 8px; align-items: flex-start; margin: 0 0 14px; padding: 10px 12px; border-radius: 12px; background: var(--note-bg); color: var(--note); font-size: 0.9rem; line-height: 1.4; }
 .lc-privacy svg { flex: none; margin-top: 2px; }
-.lc-paste { width: 100%; min-height: 10rem; font-family: inherit; font-size: 1rem; line-height: 1.45; padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); color: var(--ink); resize: vertical; }
+.lc-paste { width: 100%; min-height: 10rem; font-family: inherit; font-size: 1rem; line-height: 1.45; padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); color: var(--navy); resize: vertical; }
 .lc-actions { margin: 6px 0 0; }
 .lc-results { display: grid; gap: 18px; margin-top: 18px; }
 .lc-parsed { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
@@ -2174,8 +2174,15 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 }
 .list-unit-form fieldset { border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin: 0; }
 .list-unit-form legend { padding: 0 4px; font-weight: 800; }
-.list-unit-form .check-grid { display: grid; gap: 8px; margin-top: 8px; }
-.list-unit-form .attestation { font-weight: 600; align-items: start; }
+.list-unit-form .check-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 10px; margin-top: 4px; }
+/* Twelve amenities stacked one per row is 500px of phone screen; two columns halves it. */
+.list-unit-form .check-grid .check-line {
+  display: flex; align-items: center; gap: 8px;
+  min-height: 40px; padding: 0; font-weight: 600; font-size: 0.9375rem; line-height: 1.2;
+}
+.list-unit-form .check-grid .check-line input { width: 18px; height: 18px; }
+.list-unit-form .attestation { display: flex; align-items: flex-start; gap: 8px; min-height: 0; padding: 4px 0; font-weight: 600; font-size: 0.9375rem; line-height: 1.35; }
+.list-unit-form .attestation input { flex: 0 0 auto; width: 20px; height: 20px; margin-top: 2px; }
 .list-unit-form .fine, .voucher-ready .fine { color: var(--muted); font-size: 0.875rem; }
 
 /* "Free to list" line under the landlord form's intro copy. */
@@ -2190,6 +2197,73 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 .voucher-ready-cards { margin-top: 12px; }
 .voucher-ready-cards h3 { margin: 4px 0; font-size: 1.05rem; }
 .ok-msg { color: var(--ok); font-weight: 700; }
+
+/* A validation error has to be findable from the submit button, not 1,500px above it. */
+.form-error-sticky {
+  position: sticky; bottom: 12px; z-index: 3;
+  display: grid; gap: 2px;
+  margin: 4px 0 0; padding: 12px 14px;
+  border: 1px solid var(--terracotta); border-left: 4px solid var(--terracotta);
+  border-radius: 12px; background: var(--terracotta-soft);
+  color: var(--terracotta); font-weight: 600; line-height: 1.4;
+  box-shadow: 0 6px 18px rgba(28, 45, 66, 0.12);
+}
+.form-error-sticky strong { display: block; font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; }
+.form-error-sticky:focus { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+/* Photo picker: thumbnails big enough to recognize, small enough to keep the form short. */
+.list-unit-form textarea {
+  padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: white;
+  font: inherit; font-weight: 500; line-height: 1.45; resize: vertical; min-height: 120px;
+}
+.list-unit-form input[type="file"] { min-height: 0; padding: 10px 12px; background: var(--bg); font-weight: 600; }
+.list-unit-form .photo-field .fine { margin: 0; }
+.photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; margin: 4px 0 0; padding: 0; list-style: none; }
+.photo-item { position: relative; margin: 0; }
+.photo-item img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); }
+.photo-remove {
+  position: absolute; top: 4px; right: 4px; min-height: 28px; padding: 2px 8px;
+  border: 0; border-radius: 999px; background: rgba(28, 45, 66, 0.86); color: white;
+  font-size: 0.75rem; font-weight: 700; cursor: pointer;
+}
+.photo-remove:hover { background: var(--terracotta); }
+
+/* The private edit link on the success screen: long, monospace, and hard to misread. */
+.edit-link-card { margin: 18px 0; display: grid; gap: 10px; border-left: 4px solid var(--gold); }
+.edit-link-card h2 { margin: 0; font-size: 1.05rem; }
+.edit-link-card p { margin: 0; line-height: 1.5; }
+.edit-link {
+  display: block; padding: 10px 12px; border-radius: 10px; background: var(--navy-soft);
+  font-size: 0.8rem; line-height: 1.4; overflow-wrap: anywhere; color: var(--navy);
+}
+.takedown-card { margin: 20px 0; display: grid; gap: 10px; border-left: 4px solid var(--line); }
+.takedown-card h2 { margin: 0; font-size: 1.05rem; }
+.takedown-confirm { display: grid; gap: 8px; padding: 12px 14px; border-radius: 12px; background: var(--terracotta-soft); }
+.takedown-confirm p { margin: 0; font-weight: 600; }
+.button-danger { background: var(--terracotta); border-color: var(--terracotta); color: white; }
+.button-danger:hover { background: #8a3d24; border-color: #8a3d24; }
+.edit-listing-page .list-unit-form { margin-top: 12px; }
+.removed-list { margin-top: 22px; }
+.removed-list h2 { font-size: 1.1rem; }
+
+/* Voucher-ready cards: description clamped, photos in one calm row. */
+.voucher-card .card-photos, .admin-photos { display: flex; gap: 6px; margin: 0 0 10px; padding: 0; list-style: none; overflow-x: auto; }
+.voucher-card .card-photos li, .admin-photos li { margin: 0; flex: 0 0 auto; }
+.voucher-card .card-photos img, .admin-photos img {
+  display: block; width: 96px; height: 72px; object-fit: cover; border-radius: 10px; border: 1px solid var(--line);
+}
+.admin-photos img { width: 120px; height: 90px; }
+.admin-photos .photo-pending { width: 120px; height: 90px; border-radius: 10px; background: var(--navy-soft); }
+.card-description {
+  margin: 6px 0; color: var(--navy); line-height: 1.45;
+  display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;
+}
+.admin-description { white-space: pre-wrap; line-height: 1.45; border-left: 3px solid var(--line); padding-left: 10px; }
+
+@media (max-width: 560px) {
+  .form-error-sticky { position: sticky; bottom: 8px; font-size: 0.9rem; }
+  .photo-grid { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); }
+}
 .listings-admin-page .panel { display: grid; gap: 12px; margin: 16px 0; }
 .listings-admin-page .admin-contact { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
 .listings-admin-page .admin-contact a { font-weight: 700; overflow-wrap: anywhere; }
@@ -3369,3 +3443,100 @@ body { background: var(--bg); color: var(--navy); font-size: var(--fs-body); lin
 .resources-page .community-jump[data-layout="tiles"] li { min-width: 0; }
 .resources-page .category-tile { border-radius: 16px; padding: 14px; font-size: 1rem; }
 @media (max-width: 560px) { .resources-page .community-jump[data-layout="tiles"] ul { grid-template-columns: 1fr 1fr; } }
+
+/* --- Three-step listing form --------------------------------------------------------------
+   One step is one screen on a phone. The step bar is the whole progress model: numbered tabs
+   the landlord can see at a glance, with the current one in the site's gold. */
+.step-bar { display: flex; gap: 6px; margin: 0 0 4px; padding: 0; list-style: none; }
+.step-bar li {
+  flex: 1; display: flex; align-items: center; gap: 6px;
+  padding: 8px 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg);
+  color: var(--muted); font-size: 0.78rem; font-weight: 700; line-height: 1.2;
+}
+.step-bar .step-number {
+  display: grid; place-items: center; flex: 0 0 auto;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--line); color: var(--navy); font-size: 0.72rem; font-variant-numeric: tabular-nums;
+}
+.step-bar .step-current { border-color: var(--gold); background: white; color: var(--navy); }
+.step-bar .step-current .step-number { background: var(--gold); color: #241c05; }
+.step-bar .step-done .step-number { background: var(--navy); color: white; }
+.step-bar .step-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.step-hint { margin: 0 0 8px; }
+.list-unit-form .form-step { display: grid; gap: 10px; margin: 0; padding: 0; border: 0; }
+.list-unit-form .form-step > legend { padding: 0; font-size: 1.05rem; font-weight: 700; }
+.list-unit-form .form-step fieldset { display: grid; gap: 8px; margin: 0; padding: 0; border: 0; }
+.list-unit-form .form-step fieldset > legend { padding: 0; font-weight: 700; font-size: 0.9rem; }
+.field-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+/* Street and unit are both short; keeping them on one row saves a screenful on a phone. */
+.field-pair-address { grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr); }
+/* Date input and its "Available now" shortcut share a row. */
+.date-row { display: flex; align-items: center; gap: 8px; }
+.date-row input { flex: 1 1 auto; min-width: 0; }
+.date-row .button-quiet { flex: 0 0 auto; white-space: nowrap; min-height: 44px; }
+
+/* Chips: property type, cats, voucher. A radio a thumb can hit, instead of a 3px dot. */
+.chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 40px; padding: 8px 14px;
+  border: 1px solid var(--line); border-radius: 999px; background: white;
+  color: var(--navy); font-weight: 600; cursor: pointer;
+}
+.chip input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.chip-on { border-color: var(--navy); background: var(--navy); color: white; }
+.chip:focus-within { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+/* The footer sits in normal flow at the end of each step. Sticky looked right but does nothing
+   here: `overflow-x: clip` on the body disables position: sticky in Chrome, and a footer pinned to
+   the viewport bottom would sit under the fixed dock and, on a first visit, the consent bar. */
+.step-footer {
+  display: grid; gap: 6px;
+  margin-top: 4px; padding: 10px 0 4px;
+  border-top: 1px solid var(--line);
+}
+/* Anything that scrolls the footer into view (including the error focus) clears the fixed dock. */
+.step-footer { scroll-margin-bottom: 96px; }
+/* In flow, so the message can never float over the button it is asking the landlord to press. */
+.step-footer .form-error-sticky { position: static; bottom: auto; margin: 0; }
+.step-footer .button-row { margin: 0; }
+.step-footer .fine { margin: 0; text-align: right; }
+.button-quiet {
+  min-height: 44px; padding: 10px 16px;
+  border: 1px solid var(--line); border-radius: 12px; background: white;
+  color: var(--navy); font: inherit; font-weight: 700; cursor: pointer;
+}
+.button-quiet:hover { border-color: var(--navy); }
+
+@media (max-width: 520px) {
+  .step-bar .step-title { display: none; }
+  .step-bar li { justify-content: center; }
+  .field-pair { grid-template-columns: 1fr; }
+  /* Two short selects still fit on one phone row. */
+  .field-pair-pair-only { grid-template-columns: 1fr 1fr; }
+  /* Amenities stay in two columns on a phone: the labels are one or two words, and a single
+     column made this step three screens tall on its own. */
+  .list-unit-form .check-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* Public card: the lines a voucher renter scans first. Fees and pets get their own row so
+   "No application fee" and "Dogs OK" are not buried inside a sentence. */
+.voucher-card .card-unit { font-weight: 600; color: var(--muted); }
+.voucher-card .card-beds { margin: 2px 0 0; font-weight: 700; }
+.voucher-card .card-area:empty { display: none; }
+.voucher-card .card-voucher { margin: 6px 0 0; font-weight: 700; }
+.voucher-card .card-voucher.ok { color: var(--navy); }
+.voucher-card .card-terms {
+  display: flex; flex-wrap: wrap; gap: 6px 8px;
+  margin: 8px 0 0; padding: 0; list-style: none;
+}
+.voucher-card .card-terms li {
+  padding: 3px 10px; border: 1px solid var(--line); border-radius: 999px;
+  background: var(--bg); font-size: 0.82rem; font-weight: 600;
+}
+.voucher-card .card-amenities { margin: 8px 0 0; font-size: 0.85rem; color: var(--muted); }
+
+.rented-card, .takedown-card { display: grid; gap: 8px; }
+.rented-card h2, .takedown-card h2 { margin: 0; }
+.rented-list { display: grid; gap: 10px; margin: 8px 0 0; padding: 0; list-style: none; }
+.rented-list li { padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }

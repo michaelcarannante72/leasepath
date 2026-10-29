@@ -35,35 +35,46 @@ function memoryKv() {
   }
 }
 
+// The minimum a landlord can submit after the three-step form: every required field, one photo.
 const good = {
   address: '123 Test Ave',
   borough: 'Bronx',
-  size: '1 bedroom',
+  propertyType: 'Condo or apartment unit',
+  bedrooms: '1',
+  bathrooms: '1',
   rent: '1800',
-  voucherTypes: ['Section 8', 'CityFHEPS'],
-  inspectionReady: true,
+  availableDate: '2026-11-01',
   contactName: 'Alex Broker',
   contactEmail: 'alex@example.com',
   contactPhone: '212-555-0100',
   attestation: true,
 }
+const PHOTO = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/wAALCAABAAEBAREA/8QAFAABAAAAAAAAAAAAAAAAAAAACf/EABQQAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQEAAD8AKp//2Q=='
 
 test('listing form options stay aligned', () => {
   assert.ok(VOUCHER_TYPES.includes('Section 8'))
   assert.ok(BOROUGHS.includes('Brooklyn'))
   assert.ok(UNIT_SIZES.includes('Studio'))
+  assert.ok(BOROUGHS.length === 5)
 })
 
 test('parseListingSubmission accepts a complete attestation and rejects missing fields', () => {
   const ok = parseListingSubmission(good)
   assert.equal(ok.ok, true)
   assert.equal(ok.listing.rent, 1800)
-  assert.deepEqual(ok.listing.voucherTypes, ['Section 8', 'CityFHEPS'])
+  // No voucher taxonomy is asked for any more: "Yes" is the default, and it means every lawful subsidy.
+  assert.deepEqual(ok.listing.voucherAccepted, 'Yes')
+  assert.ok(ok.listing.voucherTypes.includes('Section 8'))
+  assert.ok(ok.listing.voucherTypes.includes('CityFHEPS'))
   assert.equal(parseListingSubmission({ ...good, attestation: false }).ok, false)
   assert.equal(parseListingSubmission({ ...good, borough: 'Yonkers' }).ok, false)
   assert.equal(parseListingSubmission({ ...good, contactEmail: 'nope' }).ok, false)
   assert.equal(parseListingSubmission({ ...good, rent: '50' }).ok, false)
-  assert.equal(parseListingSubmission({ ...good, voucherTypes: [] }).ok, false)
+  assert.equal(parseListingSubmission({ ...good, voucherAccepted: 'Maybe' }).ok, false, 'only Yes / No / Ask me')
+  assert.equal(parseListingSubmission({ ...good, propertyType: 'Castle' }).ok, false, 'property type is a closed list')
+  assert.equal(parseListingSubmission({ ...good, bedrooms: '' }).ok, false, 'bedrooms required')
+  assert.equal(parseListingSubmission({ ...good, bathrooms: '0' }).ok, false, 'zero bathrooms is not a home')
+  assert.equal(parseListingSubmission({ ...good, availableDate: '' }).ok, false, 'available date required')
 })
 
 test('pending listings stay out of the approved public list until approved', async () => {
@@ -103,7 +114,7 @@ test('API: submit stores pending; approved endpoint stays empty until approve', 
   const created = await handleApi({
     method: 'POST',
     pathname: '/api/listings',
-    body: good,
+    body: { ...good, photos: [PHOTO] },
     origin,
     requestOrigin: origin,
     listingsKv: kv,
@@ -146,7 +157,8 @@ test('API: pending and review require the admin token', async () => {
 
 test('list-unit page copy covers source-of-income and pending review', () => {
   const root = new URL('..', import.meta.url).pathname
-  const page = readFileSync(join(root, 'src/components/ListUnitPage.jsx'), 'utf8')
+  // The form itself is shared with the private edit page, so the copy may live in either file.
+  const page = [readFileSync(join(root, 'src/components/ListUnitPage.jsx'), 'utf8'), readFileSync(join(root, 'src/components/ListingForm.jsx'), 'utf8')].join('\n')
   assert.match(page, /List a voucher-ready unit/)
   assert.match(page, /source-of-income discrimination is illegal/)
   assert.match(page, /pending-review queue/)
@@ -170,7 +182,7 @@ test('wrangler binds LISTINGS_KV and LISTINGS_LIMITER', () => {
 
 test('list-unit page is ready to hand to a stranger: free to list, review, no application fees', () => {
   const root = new URL('..', import.meta.url).pathname
-  const page = readFileSync(join(root, 'src/components/ListUnitPage.jsx'), 'utf8')
+  const page = [readFileSync(join(root, 'src/components/ListUnitPage.jsx'), 'utf8'), readFileSync(join(root, 'src/components/ListingForm.jsx'), 'utf8'), readFileSync(join(root, 'src/components/FormError.jsx'), 'utf8')].join('\n')
   // The three promises a landlord or broker needs before they fill in the form.
   assert.match(page, /tx\("Free to list\."\)/)
   assert.match(page, /no listing fee/)

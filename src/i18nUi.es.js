@@ -1,6 +1,213 @@
 // Spanish for components' English UI text (key = the English shown in the JSX).
 // Brand and program names stay as-is.
 export const UI_ES = {
+  'Not allowed':
+    'No permitido',
+  'the voucher-ready units page':
+    'la página de unidades con vales',
+  'Marked rented':
+    'Marcada como rentada',
+  'Amenities:':
+    'Comodidades:',
+  'This unit is live. If you change the address, rent, bedrooms, vouchers, fees, description, pets, amenities, available date, or photos, it goes back to review before it shows publicly again. Changing only your contact details keeps it live.':
+    'Esta unidad está publicada. Si cambias la dirección, la renta, las habitaciones, los vales, los cargos, la descripción, las mascotas, las comodidades, la fecha disponible o las fotos, vuelve a revisión antes de mostrarse públicamente otra vez. Cambiar solo tus datos de contacto la mantiene publicada.',
+  'Network problem. Nothing was changed. Try again in a moment.':
+    'Problema de red. No se cambió nada. Inténtalo de nuevo en un momento.',
+  'That change could not be saved. Try again in a moment.':
+    'Ese cambio no se pudo guardar. Inténtalo de nuevo en un momento.',
+  'Paste your existing Craigslist or Zillow ad here, or describe the unit: laundry, transportation, what is included.':
+    'Pega tu anuncio actual de Craigslist o Zillow aquí, o describe la unidad: lavandería, transporte, qué está incluido.',
+  'For example, Bed-Stuy':
+    'Por ejemplo, Bed-Stuy',
+  'If it is approved, it goes live on the public voucher-ready units page: ':
+    'Si se aprueba, aparece en la página pública de unidades con vales: ',
+  'You can change the rent, the details, or take the unit down any time with your private edit link below. There is also a Mark as rented button there once it is taken.':
+    'Puedes cambiar la renta, los detalles o retirar la unidad en cualquier momento con tu enlace privado de abajo. También hay un botón de Marcar como rentada cuando se ocupe.',
+  'Renters see the rent, the fees, the pet policy, and the contact details you gave, and can call or email you directly.':
+    'Quienes rentan ven la renta, los cargos, la política de mascotas y los datos de contacto que diste, y pueden llamarte o escribirte directamente.',
+  'Deposit:':
+    'Depósito:',
+  'Application fee:':
+    'Cargo por solicitud:',
+  'Broker fee:':
+    'Cargo de corredor:',
+  'Dogs:':
+    'Perros:',
+  'Cats:':
+    'Gatos:',
+  'Marked as rented':
+    'Marcadas como rentadas',
+  'These units were marked rented with their private edit link. Renters do not see them, but the listing and its contact details stay here in case it opens up again. This is not the same as removed.':
+    'Estas unidades se marcaron como rentadas con su enlace privado de edición. Quienes rentan no las ven, pero el anuncio y sus datos de contacto se quedan aquí por si vuelve a estar libre. No es lo mismo que retirada.',
+  'Marked as rented ':
+    'Marcadas como rentadas ',
+  '{n} baths':
+    '{n} baños',
+  '1 bath':
+    '1 baño',
+  'Vouchers: {answer}':
+    'Vales: {answer}',
+  'Vouchers accepted':
+    'Se aceptan vales',
+  'Dogs: small only':
+    'Perros: solo pequeños',
+  'No dogs':
+    'No se aceptan perros',
+  'No cats':
+    'No se aceptan gatos',
+  'Broker fee: {fee}':
+    'Cargo de corredor: {fee}',
+  'No broker fee':
+    'Sin cargo de corredor',
+  'Deposit: {amount}':
+    'Depósito: {amount}',
+  'No security deposit':
+    'Sin depósito de seguridad',
+  'Application fee: {amount}':
+    'Cargo por solicitud: {amount}',
+  'No application fee':
+    'Sin cargo por solicitud',
+  'You marked this unit as rented, so it is off the public list and saved in your records here. If it opens up again, mark it available and it will go back into review.':
+    'Marcaste esta unidad como rentada, así que está fuera de la lista pública y guardada en tus registros. Si vuelve a estar libre, márcala como disponible y regresará a revisión.',
+  'Marking it rented takes it off the public list right away. It is not deleted: it stays in this dashboard so you can put it back later.':
+    'Marcarla como rentada la quita de la lista pública de inmediato. No se borra: se queda en este panel para que la repongas después.',
+  'It is off the public list. Renters cannot see it or contact you about it. It stays in this dashboard so you can put it back when it is free again.':
+    'Está fuera de la lista pública. Quienes rentan no pueden verla ni contactarte por ella. Se queda en este panel para que la repongas cuando vuelva a estar libre.',
+  'Mark this unit as rented and take it off the public list?':
+    '¿Marcar esta unidad como rentada y quitarla de la lista pública?',
+  'Putting the unit back on the list…':
+    'Volviendo a poner la unidad en la lista…',
+  'Marking the unit as rented…':
+    'Marcando la unidad como rentada…',
+  'Back on the list.':
+    'De vuelta en la lista.',
+  'Marked as rented.':
+    'Marcada como rentada.',
+  'Mark available again':
+    'Marcar como disponible otra vez',
+  'Yes, it is rented':
+    'Sí, está rentada',
+  'Mark as rented':
+    'Marcar como rentada',
+  'This unit is rented':
+    'Esta unidad está rentada',
+  'Rented it?':
+    '¿Ya se rentó?',
+  'Add at least one photo. A listing with a photo gets replies; one without gets skipped.':
+    'Agrega al menos una foto. Un anuncio con foto recibe respuestas; uno sin foto se pasa por alto.',
+  'Hardwood floors':
+    'Pisos de madera',
+  'Storage':
+    'Almacenamiento',
+  'Parking':
+    'Estacionamiento',
+  'Gym':
+    'Gimnasio',
+  'Furnished':
+    'Amueblado',
+  'Air conditioning':
+    'Aire acondicionado',
+  'Outdoor space':
+    'Espacio exterior',
+  'Dishwasher':
+    'Lavavajillas',
+  'Doorman':
+    'Portero',
+  'Elevator':
+    'Ascensor',
+  'Laundry in building':
+    'Lavandería en el edificio',
+  'Laundry in unit':
+    'Lavandería en la unidad',
+  'Amenities':
+    'Comodidades',
+  'At least one is required. Zillow requires one, and a rental card with no image does not get clicked. Up to 4, JPG, PNG, or WebP, shrunk on your phone before they upload.':
+    'Se requiere al menos una. Zillow exige una, y una tarjeta sin imagen no recibe clics. Hasta 4, JPG, PNG o WebP, reducidas en tu teléfono antes de subirlas.',
+  'Optional': 'Opcional',
+  'Photo':
+    'Foto',
+  'One photo':
+    'Una foto',
+  'Ask me':
+    'Pregúntame',
+  'LeasePath is a voucher-first site. Most renters here pay with a voucher.':
+    'LeasePath es un sitio de vales. La mayoría de quienes rentan aquí pagan con un vale.',
+  'Housing vouchers accepted':
+    'Se aceptan vales de vivienda',
+  'Large OK':
+    'Grandes permitidos',
+  'Small only':
+    'Solo pequeños',
+  'Dogs allowed':
+    'Se permiten perros',
+  'Cats allowed':
+    'Se permiten gatos',
+  'Other':
+    'Otro',
+  'Half month':
+    'Medio mes',
+  'One month':
+    'Un mes',
+  'None':
+    'Ninguno',
+  'Not stated':
+    'No indicado',
+  'Enter 0 if there is none. Blank means you would rather not say.':
+    'Escribe 0 si no hay. En blanco significa que prefieres no decirlo.',
+  'Application fee (USD)':
+    'Cargo por solicitud (USD)',
+  'Leave blank if not stated':
+    'Déjalo vacío si no lo indicas',
+  'Security deposit (USD)':
+    'Depósito de seguridad (USD)',
+  'Available now':
+    'Disponible ahora',
+  'The day a renter can move in.':
+    'El día en que una persona puede mudarse.',
+  'Pick bathrooms':
+    'Elige baños',
+  'Full bathrooms':
+    'Baños completos',
+  'Pick bedrooms':
+    'Elige habitaciones',
+  'Bedrooms':
+    'Habitaciones',
+  'Townhouse':
+    'Casa adosada',
+  'Condo or apartment unit':
+    'Condominio o apartamento',
+  'House':
+    'Casa',
+  'Property type':
+    'Tipo de propiedad',
+  'Optional.':
+    'Opcional.',
+  'Bed-Stuy, Jackson Heights…':
+    'Bed-Stuy, Jackson Heights…',
+  'Neighborhood':
+    'Barrio',
+  'Optional. Kept separate from the address so the street still reads correctly.':
+    'Opcional. Va separado de la dirección para que la calle se lea bien.',
+  'Apt 4B':
+    'Apto 4B',
+  'Unit number':
+    'Número de apartamento',
+  'Step {step} of {total}':
+    'Paso {step} de {total}',
+  'Continue':
+    'Continuar',
+  'One photo, a description, and how to reach you.':
+    'Una foto, una descripción y cómo comunicarse contigo.',
+  'Deposit, fees, and who can live there.':
+    'Depósito, cargos y quién puede vivir allí.',
+  'Address, size, rent, and when it is free.':
+    'Dirección, tamaño, renta y desde cuándo está libre.',
+  'Photos and contact':
+    'Fotos y contacto',
+  'Costs and pets':
+    'Costos y mascotas',
+  'The apartment':
+    'El apartamento',
   "Close": "Cerrar",
   "Get more from LeasePath": "Saque más de LeasePath",
   "Saved only covers practice listings, which are hidden for now.": "Guardados solo incluye anuncios de práctica, que están ocultos por ahora.",
@@ -639,4 +846,86 @@ export const UI_ES = {
   "Confirm you are 18 or older before signing up with Google.": "Confirme que tiene 18 años o más antes de registrarse con Google.",
   "Confirm you are 18 or older to continue with Google.": "Confirme que tiene 18 años o más para continuar con Google.",
   "Copyright / DMCA": "Derechos de autor / DMCA",
+  "Add the street address.": "Agregue la dirección.",
+  "Pick a borough.": "Elija un condado.",
+  "Pick the unit size.": "Elija el tamaño de la unidad.",
+  "Enter a monthly rent between $100 and $20,000.": "Escriba un alquiler mensual entre $100 y $20,000.",
+  "Pick at least one voucher type you accept.": "Elija al menos un tipo de vale que acepta.",
+  "Add a contact name.": "Agregue un nombre de contacto.",
+  "Add a contact email or a phone with at least 10 digits.": "Agregue un correo de contacto o un teléfono con al menos 10 dígitos.",
+  "That contact email does not look right. Fix it or leave it empty and give a phone.": "Ese correo de contacto no parece correcto. Corríjalo o déjelo vacío y ponga un teléfono.",
+  "Enter the available date as a real date, or leave it blank.": "Escriba la fecha disponible como una fecha real, o déjela vacía.",
+  "You must attest that you accept vouchers and charge no application fees.": "Debe declarar que acepta vales y que no cobra cargos por solicitud.",
+  "Add up to 4 photos. The extra ones were not added.": "Agregue hasta 4 fotos. Las demás no se agregaron.",
+  "is larger than 5 MB": "pesa más de 5 MB",
+  "is not a JPG, PNG, or WebP (iPhone HEIC photos need to be shared as JPEG)": "no es JPG, PNG ni WebP (las fotos HEIC del iPhone deben compartirse como JPEG)",
+  "could not be read": "no se pudo leer",
+  "{name} {why}.": "{name} {why}.",
+  "That photo": "Esa foto",
+  "The photos add up to more than 2 MB. Remove one and try again.": "Las fotos suman más de 2 MB. Quite una y vuelva a intentarlo.",
+  "Pets": "Mascotas",
+  "No preference listed": "Sin preferencia indicada",
+  "Available date": "Fecha disponible",
+  "Optional. Leave blank if it is available now.": "Opcional. Déjela vacía si está disponible ahora.",
+  "Description (optional)": "Descripción (opcional)",
+  "Paste your existing Craigslist or Zillow ad here, or describe the unit: rooms, floor, laundry, transportation, what is included.": "Pegue aquí su anuncio de Craigslist o Zillow, o describa la unidad: cuartos, piso, lavandería, transporte y qué está incluido.",
+  "Photos (optional)": "Fotos (opcional)",
+  "Up to 4 photos, JPG, PNG, or WebP. They are shrunk on your phone before they upload.": "Hasta 4 fotos, JPG, PNG o WebP. Se reducen en su teléfono antes de subirlas.",
+  "Unit photo": "Foto de la unidad",
+  "Remove": "Quitar",
+  "{count} of 4 photos · {kb} KB": "{count} de 4 fotos · {kb} KB",
+  "Contact email (optional if you give a phone)": "Correo de contacto (opcional si da un teléfono)",
+  "Give a phone, an email, or both. Renters need one way to reach you.": "Dé un teléfono, un correo o ambos. Los inquilinos necesitan una forma de comunicarse con usted.",
+  "Preparing your photos…": "Preparando sus fotos…",
+  "This link is no longer valid": "Este enlace ya no es válido",
+  "That edit link has expired, or the unit it pointed to is no longer on LeasePath. Nothing was changed.": "Ese enlace de edición venció, o la unidad a la que apuntaba ya no está en LeasePath. No se cambió nada.",
+  "Post a unit": "Publicar una unidad",
+  "That link could not be checked. Check your connection and try again.": "No se pudo revisar ese enlace. Revise su conexión y vuelva a intentarlo.",
+  "Saving your changes…": "Guardando sus cambios…",
+  "That change could not be saved. Your edits are still here — try again.": "Ese cambio no se pudo guardar. Sus ediciones siguen aquí; vuelva a intentarlo.",
+  "Saved.": "Guardado.",
+  "Network problem. Your edits are still here. Try again in a moment.": "Problema de conexión. Sus ediciones siguen aquí. Vuelva a intentarlo en un momento.",
+  "Removing your listing…": "Quitando su anuncio…",
+  "That unit could not be removed. Try again in a moment.": "No se pudo quitar esa unidad. Vuelva a intentarlo en un momento.",
+  "Network problem. The unit was not removed. Try again in a moment.": "Problema de conexión. La unidad no se quitó. Vuelva a intentarlo en un momento.",
+  "Edit your listing": "Edite su anuncio",
+  "Opening your listing…": "Abriendo su anuncio…",
+  "Your listing is removed": "Su anuncio está quitado",
+  "It no longer shows on the voucher-ready units page, and it is out of the review queue. Thank you for letting renters know.": "Ya no aparece en la página de unidades listas para vales y salió de la cola de revisión. Gracias por avisar a los inquilinos.",
+  "Try again": "Intentar de nuevo",
+  "This unit is live. If you change the address, rent, size, vouchers, description, pets, available date, or photos, it goes back to review before it shows publicly again. Changing only your contact details keeps it live.": "Esta unidad está publicada. Si cambia la dirección, el alquiler, el tamaño, los vales, la descripción, las mascotas, la fecha disponible o las fotos, vuelve a revisión antes de mostrarse otra vez al público. Si solo cambia sus datos de contacto, sigue publicada.",
+  "This unit is waiting for review. Your changes replace the version in the queue, and it stays in the queue.": "Esta unidad espera revisión. Sus cambios reemplazan la versión en la cola, y sigue en la cola.",
+  "Save changes": "Guardar cambios",
+  "Saving…": "Guardando…",
+  "Remove this listing": "Quitar este anuncio",
+  "Taking the unit down hides it right away and takes it out of the review queue. You can post it again later if it becomes available.": "Quitar la unidad la oculta de inmediato y la saca de la cola de revisión. Puede publicarla otra vez más adelante si vuelve a estar disponible.",
+  "Remove this unit from LeasePath? Renters will not see it anymore.": "¿Quitar esta unidad de LeasePath? Los inquilinos ya no la verán.",
+  "Yes, remove it": "Sí, quítela",
+  "Keep the listing": "Mantener el anuncio",
+  "That did not save yet": "Todavía no se guardó",
+  "Checking that you are a person. This takes a few seconds.": "Verificando que es una persona. Esto tarda unos segundos.",
+  "Sending your unit…": "Enviando su unidad…",
+  "That listing could not be saved. Your details are still here — try again.": "Ese anuncio no se pudo guardar. Sus datos siguen aquí; vuelva a intentarlo.",
+  "Network problem. Your details are still here. Try again in a moment.": "Problema de conexión. Sus datos siguen aquí. Vuelva a intentarlo en un momento.",
+  "Your private edit link": "Su enlace privado de edición",
+  "Save this link. It is the only way back to change the rent, the contact details, or to take the unit down. Anyone with the link can edit the listing, so do not post it publicly.": "Guarde este enlace. Es la única forma de volver para cambiar el alquiler, los datos de contacto o para quitar la unidad. Cualquier persona con el enlace puede editar el anuncio, así que no lo publique.",
+  "Copied": "Copiado",
+  "Copy link": "Copiar enlace",
+  "Open the edit page": "Abrir la página de edición",
+  "Link copied. Paste it into a note or text it to yourself.": "Enlace copiado. Péguelo en una nota o envíeselo por mensaje de texto.",
+  "Photo of {address}": "Foto de {address}",
+  "Available {date}": "Disponible {date}",
+  "Pets:": "Mascotas:",
+  "Available:": "Disponible:",
+  "Removed by the lister": "Quitadas por el anunciante",
+  "These units were taken down with their private edit link. They are hidden from renters and out of the review queue.": "Estas unidades se quitaron con su enlace privado de edición. Están ocultas para los inquilinos y fuera de la cola de revisión.",
+  "Removed": "Quitada",
+  "Dogs OK": "Se aceptan perros",
+  "Cats OK": "Se aceptan gatos",
+  "No pets": "Sin mascotas",
+  "Case by case": "Se evalúa caso por caso",
+  "Email": "Correo",
+  "{name} is larger than 5 MB. Try a smaller one.": "{name} pesa más de 5 MB. Pruebe con una más pequeña.",
+  "{name} is not a JPG, PNG, or WebP. On an iPhone, share HEIC photos as JPEG.": "{name} no es JPG, PNG ni WebP. En un iPhone, comparta las fotos HEIC como JPEG.",
+  "{name} could not be read. Try adding it again.": "{name} no se pudo leer. Pruebe agregarla de nuevo.",
 }

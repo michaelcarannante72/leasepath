@@ -1,5 +1,5 @@
 import { tx } from './i18nAuto.js'
-import { getTurnstileToken } from './turnstile.js'
+import { CHAT_ACTION, getTurnstileToken } from './turnstile.js'
 import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './index.css'
 import { AssistantSheet } from './components/AssistantSheet.jsx'
@@ -63,6 +63,7 @@ const YouthLgbtqResourcesPage = lazyNamed(() => import('./components/YouthLgbtqR
 const InstallAndSharePage = lazyNamed(() => import('./components/InstallAndSharePage.jsx'), 'InstallAndSharePage')
 const ListUnitPage = lazyNamed(() => import('./components/ListUnitPage.jsx'), 'ListUnitPage')
 const ListingsAdminPage = lazyNamed(() => import('./components/ListingsAdminPage.jsx'), 'ListingsAdminPage')
+const EditListingPage = lazyNamed(() => import('./components/EditListingPage.jsx'), 'EditListingPage')
 const AfterYouFindPage = lazyNamed(() => import('./components/AfterYouFindPage.jsx'), 'AfterYouFindPage')
 const CaseworkerPackPage = lazyNamed(() => import('./components/CaseworkerPackPage.jsx'), 'CaseworkerPackPage')
 const InspectionPrepPage = lazyNamed(() => import('./components/InspectionPrepPage.jsx'), 'InspectionPrepPage')
@@ -157,6 +158,8 @@ function parseHash() {
   if (hash === '/housing-connect') return { name: 'housing-connect' }
   if (hash === '/sponsor') return { name: 'sponsor' }
   if (hash === '/docs-tracker') return { name: 'docs' }
+  // Private edit link: #/edit-listing?t=<token>. The token must never leak into analytics or a referrer.
+  if (hash === '/edit-listing' || hash.startsWith('/edit-listing?')) return { name: 'edit-listing' }
   if (hash === '/list-unit') return { name: 'list-unit' }
   if (hash === '/listings-admin') return { name: 'listings-admin' }
   if (hash === '/voucher-ready') return { name: 'voucher-ready' }
@@ -748,7 +751,7 @@ export default function App() {
         // One quick Cloudflare check, then the Worker remembers it for a while.
         let turnstileToken = ''
         try {
-          turnstileToken = await getTurnstileToken()
+          turnstileToken = await getTurnstileToken({ action: CHAT_ACTION })
         } catch {
           turnstileToken = ''
         }
@@ -782,7 +785,7 @@ export default function App() {
   const infoPage = route.name === 'info' ? SITE_PAGES.find((item) => item.slug === route.id) : null
   // Ruby's first-visit intro is for renters. On the landlord/broker and admin routes it would open
   // on top of the form and swallow the first click, so those routes never show it.
-  const landlordRoute = route.name === 'list-unit' || route.name === 'listings-admin'
+  const landlordRoute = route.name === 'list-unit' || route.name === 'listings-admin' || route.name === 'edit-listing'
   const rubyIntroShown = rubyIntroOpen && consentDone && !landlordRoute
   const dockActive = assistantOpen || rubyIntroShown
     ? 'assistant'
@@ -918,6 +921,7 @@ export default function App() {
         {route.name === 'post' && <BlogPost post={post} />}
         {route.name === 'list-unit' && <ListUnitPage />}
         {route.name === 'listings-admin' && <ListingsAdminPage />}
+        {route.name === 'edit-listing' && <EditListingPage />}
         {route.name === 'voucher-ready' && (
           <article className="page">
             <VoucherReadyUnits />

@@ -65,7 +65,8 @@ test('Turnstile: challenge without pass, verify token once, then cookie skips th
   const fetchImpl = async (url, init) => {
     calls++
     assert.match(String(url), /challenges\.cloudflare\.com\/turnstile\/v0\/siteverify/)
-    return new Response(JSON.stringify({ success: init.body.get('response') === 'good' }))
+    // Siteverify reports the action it recorded; the chat route only accepts its own.
+    return new Response(JSON.stringify({ success: init.body.get('response') === 'good', action: 'ruby_chat' }))
   }
   const none = await guardChat({ env, ip: '1.2.3.4', cookieHeader: '', token: '', fetchImpl })
   assert.equal(none.status, 403)

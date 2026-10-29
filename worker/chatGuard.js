@@ -75,7 +75,12 @@ export function humanCookie(value, secure) {
   return [`${HUMAN_COOKIE}=${value}`, 'HttpOnly', 'Path=/api/guide', 'SameSite=Strict', `Max-Age=${HUMAN_SECONDS}`, ...(secure ? ['Secure'] : [])].join('; ')
 }
 
-export async function verifyTurnstile(secret, token, ip, fetchImpl = fetch) {
+/**
+ * Siteverify, with the action check Turnstile recommends. A token minted for one widget cannot be
+ * replayed on another route: the action the browser asked for has to match the action the route expects.
+ * Pass expectedAction = '' only where any action is acceptable.
+ */
+export async function verifyTurnstile(secret, token, ip, fetchImpl = fetch, expectedAction = '') {
   if (typeof token !== 'string' || !token || token.length > 2048) return false
   try {
     const form = new FormData()
@@ -84,7 +89,9 @@ export async function verifyTurnstile(secret, token, ip, fetchImpl = fetch) {
     if (ip) form.append('remoteip', ip)
     const response = await fetchImpl(TURNSTILE_VERIFY_URL, { method: 'POST', body: form })
     const data = await response.json().catch(() => ({}))
-    return data?.success === true
+    if (data?.success !== true) return false
+    if (!expectedAction) return true
+    return typeof data.action === 'string' && data.action === expectedAction
   } catch {
     return false
   }
@@ -100,7 +107,8 @@ export async function guardChat({ env, ip, cookieHeader, token, secure, nowMs = 
   const signing = env.LEASEPATH_AUTH_SECRET || ''
   if (!turnstileSecret || !signing) return { ok: true }
   if (await verifyHumanPass(signing, readCookieValue(cookieHeader, HUMAN_COOKIE), nowMs)) return { ok: true }
-  if (token && (await verifyTurnstile(turnstileSecret, token, ip, fetchImpl))) {
+  // Ruby's widget still declares action 'ruby_chat'; anything else is not a chat token.
+  if (token && (await verifyTurnstile(turnstileSecret, token, ip, fetchImpl, 'ruby_chat'))) {
     return { ok: true, cookie: humanCookie(await issueHumanPass(signing, nowMs), secure) }
   }
   return { ok: false, status: 403, json: CHALLENGE_REQUIRED }

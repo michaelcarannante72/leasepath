@@ -1,7 +1,10 @@
-// Cloudflare Turnstile for Ruby's chat. Loaded only when the server asks for a check (403 challenge_required),
-// then the Worker sets a short-lived signed cookie so later questions are not challenged.
+// Cloudflare Turnstile. Ruby's chat and the landlord listing form each ask for their own action, so a
+// token minted for one cannot be replayed on the other; the Worker checks the action it gets back.
 export const TURNSTILE_SITE_KEY = '0x4AAAAAAFjVfMwzZWi4LBAW'
 export const TURNSTILE_SCRIPT = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
+
+/** The action Ruby's chat has always used. The listing form passes 'landlord_listing'. */
+export const CHAT_ACTION = 'ruby_chat'
 
 let loading = null
 
@@ -23,9 +26,24 @@ export function loadTurnstile(win = window, doc = document) {
   return loading
 }
 
-/** Runs the managed check. Usually invisible; shows a small box only if Cloudflare needs an interaction. */
-export async function getTurnstileToken({ timeoutMs = 60_000 } = {}) {
-  const turnstile = await loadTurnstile()
+function withTimeout(promise, ms, message) {
+  let timer
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error(message)), ms)
+    }),
+  ]).finally(() => clearTimeout(timer))
+}
+
+/**
+ * Runs the managed check and resolves to a token.
+ * `action` is the string Cloudflare records and reports back on siteverify; `timeoutMs` bounds both
+ * loading the script and waiting for the widget, so a blocked challenge fails in seconds rather than
+ * leaving a form frozen. Callers that can proceed without a token should catch and continue.
+ */
+export async function getTurnstileToken({ timeoutMs = 60_000, action = CHAT_ACTION } = {}) {
+  const turnstile = await withTimeout(loadTurnstile(), Math.min(timeoutMs, 8_000), 'turnstile load timeout')
   const holder = document.createElement('div')
   holder.className = 'turnstile-holder'
   holder.setAttribute('aria-live', 'polite')
@@ -36,7 +54,7 @@ export async function getTurnstileToken({ timeoutMs = 60_000 } = {}) {
       const timer = setTimeout(() => reject(new Error('turnstile timeout')), timeoutMs)
       widgetId = turnstile.render(holder, {
         sitekey: TURNSTILE_SITE_KEY,
-        action: 'ruby_chat',
+        action,
         appearance: 'interaction-only',
         callback: (token) => { clearTimeout(timer); resolve(token) },
         'error-callback': () => { clearTimeout(timer); reject(new Error('turnstile')) },
@@ -46,5 +64,14 @@ export async function getTurnstileToken({ timeoutMs = 60_000 } = {}) {
   } finally {
     try { if (widgetId !== undefined) turnstile.remove(widgetId) } catch { /* already gone */ }
     holder.remove()
+  }
+}
+
+/** Best effort: resolves to '' instead of throwing, for forms that must not lose what was typed. */
+export async function getTurnstileTokenOrEmpty(options = {}) {
+  try {
+    return (await getTurnstileToken(options)) || ''
+  } catch {
+    return ''
   }
 }

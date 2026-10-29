@@ -1,88 +1,67 @@
 import { tx } from '../i18nAuto.js'
 import { useState } from 'react'
-import { getTurnstileToken } from '../turnstile.js'
-import { BOROUGHS, UNIT_SIZES, VOUCHER_TYPES } from '../data/listingForm.js'
+import { getTurnstileTokenOrEmpty } from '../turnstile.js'
+import { emptyListingForm } from '../listingRules.js'
+import { ListingForm } from './ListingForm.jsx'
 
-const empty = {
-  address: '',
-  borough: '',
-  size: '',
-  rent: '',
-  voucherTypes: [],
-  inspectionReady: '',
-  contactName: '',
-  contactEmail: '',
-  contactPhone: '',
-  attestation: false,
-}
+// A challenge that hangs is not allowed to hold the form hostage. Five seconds is plenty for a managed
+// widget, and if it has not answered by then the submission goes out without a token.
+const LISTING_CHALLENGE_TIMEOUT = 5_000
 
 export function ListUnitPage() {
-  const [form, setForm] = useState(empty)
   const [error, setError] = useState('')
-  const [done, setDone] = useState(false)
+  const [status, setStatus] = useState('')
+  const [done, setDone] = useState(null)
   const [busy, setBusy] = useState(false)
-  const [checking, setChecking] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const [formKey, setFormKey] = useState(0)
 
-  const set = (patch) => setForm((current) => ({ ...current, ...patch }))
-
-  const toggleVoucher = (name) => {
-    setForm((current) => {
-      const has = current.voucherTypes.includes(name)
-      return {
-        ...current,
-        voucherTypes: has ? current.voucherTypes.filter((v) => v !== name) : [...current.voucherTypes, name],
-      }
-    })
-  }
-
-  const submit = async (event) => {
-    event.preventDefault()
-    if (busy) return
+  const submit = async ({ problem, body } = {}) => {
+    if (problem) {
+      setError(problem)
+      return
+    }
     setError('')
     setBusy(true)
+    setStatus(tx("Checking that you are a person. This takes a few seconds."))
     try {
-      let turnstileToken = ''
-      setChecking(true)
-      try {
-        turnstileToken = await getTurnstileToken()
-      } catch {
-        setError('The human check did not finish. Refresh and try again.')
-        return
-      } finally {
-        setChecking(false)
-      }
+      // Best effort. A blocked challenge, an in-app browser, or a strict ad blocker returns '' here and
+      // the submission still goes out: the server's rate limiter is what actually stops abuse.
+      const turnstileToken = await getTurnstileTokenOrEmpty({
+        timeoutMs: LISTING_CHALLENGE_TIMEOUT,
+        action: 'landlord_listing',
+      })
+      setStatus(tx("Sending your unit…"))
       const response = await fetch('/api/listings', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          ...form,
-          inspectionReady: form.inspectionReady === 'yes',
-          turnstileToken,
-        }),
+        body: JSON.stringify({ ...body, turnstileToken }),
       })
       const data = await response.json().catch(() => ({}))
-      if (response.status === 403 && data.error === 'challenge_required') {
-        setError(data.message || 'Complete the human check and try again.')
-        return
-      }
-      if (response.status === 429) {
-        setError(data.message || 'Too many submissions. Wait a minute and try again.')
-        return
-      }
       if (!response.ok) {
-        setError(data.message || 'That listing could not be saved.')
+        setError(data.message || tx("That listing could not be saved. Your details are still here — try again."))
         return
       }
-      setDone(true)
-      setForm(empty)
+      setDone(data)
+      setStatus('')
     } catch {
-      setError('Network problem. Try again in a moment.')
+      setError(tx("Network problem. Your details are still here. Try again in a moment."))
     } finally {
       setBusy(false)
+      setStatus('')
     }
   }
 
   if (done) {
+    const editUrl = done.editToken ? `${window.location.origin}${window.location.pathname}#/edit-listing?t=${done.editToken}` : ''
+    const copy = async () => {
+      try {
+        await navigator.clipboard.writeText(editUrl)
+        setCopied(true)
+      } catch {
+        setCopied(false)
+      }
+    }
     return (
       <article className="page list-unit-page">
         <p className="eyebrow">{tx("Landlords and brokers")}</p>
@@ -90,16 +69,41 @@ export function ListUnitPage() {
         <p className="lede">
           {tx("Thanks. Your unit is in the pending-review queue. It is never shown publicly until LeasePath approves it.")}
         </p>
+        {/* What happens next, and where it will show up. Both matter: the landlord has just handed
+            over their phone number and needs to know that nothing is public yet, and where to look. */}
         <ol className="list-unit-next">
           <li>{tx("LeasePath reviews the unit, usually within a few business days.")}</li>
-          <li>{tx("If it is approved, it shows on the voucher-ready units page with the contact details you gave, so renters or their workers can reach you directly.")}</li>
+          <li>{tx("If it is approved, it goes live on the public voucher-ready units page: ")}<a href="#/voucher-ready">{tx("the voucher-ready units page")}</a>{"."}</li>
+          <li>{tx("Renters see the rent, the fees, the pet policy, and the contact details you gave, and can call or email you directly.")}</li>
           <li>{tx("If we have a question or cannot approve it, we email the contact address you gave.")}</li>
+          <li>{tx("You can change the rent, the details, or take the unit down any time with your private edit link below. There is also a Mark as rented button there once it is taken.")}</li>
         </ol>
-        <p className="fine">
-          {tx("Need to correct something? Submit the unit again with the right details and mention it in your next reply from the contact email.")}
-        </p>
+        {editUrl && (
+          <section className="edit-link-card panel">
+            <h2>{tx("Your private edit link")}</h2>
+            <p>
+              {tx("Save this link. It is the only way back to change the rent, the contact details, or to take the unit down. Anyone with the link can edit the listing, so do not post it publicly.")}
+            </p>
+            <code className="edit-link">{editUrl}</code>
+            <div className="button-row">
+              <button type="button" className="button" onClick={copy}>{copied ? tx("Copied") : tx("Copy link")}</button>
+              <a className="button button-quiet" href={editUrl}>{tx("Open the edit page")}</a>
+            </div>
+            {copied && <p className="fine" role="status">{tx("Link copied. Paste it into a note or text it to yourself.")}</p>}
+          </section>
+        )}
         <div className="button-row">
-          <button type="button" className="button" onClick={() => setDone(false)}>{tx("List another unit")}</button>
+          <button
+            type="button"
+            className="button"
+            onClick={() => {
+              setDone(null)
+              setCopied(false)
+              setFormKey((n) => n + 1)
+            }}
+          >
+            {tx("List another unit")}
+          </button>
           <a className="button button-quiet" href="#/voucher-ready">{tx("See approved units")}</a>
         </div>
       </article>
@@ -117,89 +121,15 @@ export function ListUnitPage() {
         <strong>{tx("Free to list.")}</strong>{' '}
         {tx("There is no charge to submit a unit and no listing fee. LeasePath never asks a voucher holder for an application fee.")}
       </p>
-      <p className="notice-card panel soi-note">
-        {tx("In New York City, source-of-income discrimination is illegal. A landlord or broker may not refuse a renter because they pay with Section 8, CityFHEPS, FHEPS, HASA, or another lawful housing subsidy. Report it to the")}{' '}
-        <a href="https://www.nyc.gov/site/cchr/index.page" target="_blank" rel="noopener noreferrer">{tx("NYC Commission on Human Rights")}</a>.
-      </p>
-
-      <form className="list-unit-form panel" onSubmit={submit} noValidate>
-        <label>
-          {tx("Street address")}
-          <input name="address" autoComplete="street-address" value={form.address} onChange={(e) => set({ address: e.target.value })} required maxLength={300} />
-        </label>
-        <label>
-          {tx("Borough")}
-          <select name="borough" value={form.borough} onChange={(e) => set({ borough: e.target.value })} required>
-            <option value="">{tx("Pick a borough")}</option>
-            {BOROUGHS.map((b) => <option key={b} value={b}>{b}</option>)}
-          </select>
-        </label>
-        <label>
-          {tx("Size")}
-          <select name="size" value={form.size} onChange={(e) => set({ size: e.target.value })} required>
-            <option value="">{tx("Pick a size")}</option>
-            {UNIT_SIZES.map((s) => <option key={s} value={s}>{s}</option>)}
-          </select>
-        </label>
-        <label>
-          {tx("Monthly rent (USD)")}
-          <input name="rent" inputMode="numeric" value={form.rent} onChange={(e) => set({ rent: e.target.value.replace(/[^\d]/g, '').slice(0, 6) })} required />
-        </label>
-
-        <fieldset>
-          <legend>{tx("Voucher types accepted")}</legend>
-          <div className="check-grid">
-            {VOUCHER_TYPES.map((name) => (
-              <label key={name} className="check-line">
-                <input type="checkbox" checked={form.voucherTypes.includes(name)} onChange={() => toggleVoucher(name)} />
-                {name}
-              </label>
-            ))}
-          </div>
-        </fieldset>
-
-        <fieldset>
-          <legend>{tx("Inspection-ready")}</legend>
-          <div className="check-grid">
-            <label className="check-line">
-              <input type="radio" name="inspectionReady" checked={form.inspectionReady === 'yes'} onChange={() => set({ inspectionReady: 'yes' })} />
-              {tx("Yes")}
-            </label>
-            <label className="check-line">
-              <input type="radio" name="inspectionReady" checked={form.inspectionReady === 'no'} onChange={() => set({ inspectionReady: 'no' })} />
-              {tx("No / not sure")}
-            </label>
-          </div>
-        </fieldset>
-
-        <label>
-          {tx("Contact name")}
-          <input name="contactName" autoComplete="name" value={form.contactName} onChange={(e) => set({ contactName: e.target.value })} required maxLength={200} />
-        </label>
-        <label>
-          {tx("Contact email")}
-          <input name="contactEmail" type="email" autoComplete="email" value={form.contactEmail} onChange={(e) => set({ contactEmail: e.target.value })} required maxLength={120} />
-        </label>
-        <label>
-          {tx("Contact phone")}
-          <input name="contactPhone" type="tel" autoComplete="tel" value={form.contactPhone} onChange={(e) => set({ contactPhone: e.target.value })} required maxLength={40} />
-        </label>
-
-        <label className="check-line attestation">
-          <input type="checkbox" checked={form.attestation} onChange={(e) => set({ attestation: e.target.checked })} required />
-          {tx("I attest that this unit accepts housing vouchers and that I charge no application fees to voucher holders.")}
-        </label>
-
-        {error && <p className="form-error" role="alert">{error}</p>}
-        <p className="fine list-unit-status" role="status" aria-live="polite">
-          {checking ? tx("Checking that you are a person. This can take a few seconds — keep this tab open.") : ''}
-        </p>
-        <div className="button-row">
-          <button type="submit" className="button" disabled={busy}>{busy ? tx("Sending…") : tx("Submit for review")}</button>
-          <a className="button button-quiet" href="#/voucher-ready">{tx("Voucher-ready units")}</a>
-        </div>
-        <p className="fine">{tx("LeasePath does not sell listing data. Pending units stay off the public site until approved.")}</p>
-      </form>
+      <ListingForm
+        key={formKey}
+        initial={emptyListingForm()}
+        error={error}
+        status={status}
+        busy={busy}
+        onSubmit={submit}
+        extra={<a className="button button-quiet" href="#/voucher-ready">{tx("Voucher-ready units")}</a>}
+      />
     </article>
   )
 }

@@ -34,12 +34,14 @@ export function writeConsent(value, storage = globalThis.localStorage) {
  * - Ruby's chat sheet is open, on any route;
  * - the route is My voucher (#/plan), which shows the program panels, including HASA, and the income pre-screen;
  * - the route is Resources (#/resources), which lists city and community help (housing, food, health, legal);
- * - any route path that mentions HASA (for example a #/blog/... or #/info/... slug with "hasa").
+ * - any route path that mentions HASA (for example a #/blog/... or #/info/... slug with "hasa");
+ * - the private edit page (#/edit-listing?t=...), whose query string is a credential. Nothing about that
+ *   view — not even the path — goes to GTM, so a token cannot end up in a page_location.
  */
 export function isSensitiveView({ hashPath = '', assistantOpen = false } = {}) {
   if (assistantOpen) return true
   const path = String(hashPath).split('?')[0].toLowerCase()
-  if (path === '/plan' || path === '/resources') return true
+  if (path === '/plan' || path === '/resources' || path === '/edit-listing') return true
   return /hasa/.test(path)
 }
 

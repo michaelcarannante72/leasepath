@@ -6,6 +6,7 @@ import { UsageMeter, durableUsage } from './usageMeter.js'
 import { SECURITY_HEADERS } from './security.js'
 import { guardChat } from './chatGuard.js'
 import { guardListingSubmit } from './listingsGuard.js'
+import { MAX_PHOTOS_TOTAL_BYTES } from '../src/data/listingForm.js'
 
 export { UsageMeter, AccountBook }
 
@@ -13,7 +14,18 @@ function requestOrigin(url) {
   return new URL(url).origin
 }
 
-const MAX_BODY = 100_000
+// Photo data URLs travel inside the listing JSON as base64, so listing writes get their own cap:
+// the shared 2 MB decoded photo budget is ~2.7 MB once base64-encoded, plus room for the text fields.
+const CHAT_MAX_BODY = 100_000
+const MAX_BODY = Math.ceil((MAX_PHOTOS_TOTAL_BYTES * 4) / 3) + 200_000
+
+// Landlord writes: a new submission, an edit, a takedown, and the private token lookup.
+const LISTING_WRITE_PATHS = [
+  /^\/api\/listings$/,
+  /^\/api\/listings\/edit$/,
+  /^\/api\/listings\/edit\/save$/,
+  /^\/api\/listings\/edit\/remove$/,
+]
 
 // Static files get the same headers from public/_headers (generated from worker/security.js).
 // The Worker answers /api and the policy pages itself.
@@ -25,6 +37,11 @@ function withSecurity(response) {
 }
 
 function jsonResponse(result) {
+  // A route may answer with its own Response (a photo). Security headers still get applied.
+  if (result.raw) {
+    for (const cookie of result.cookies || []) result.raw.headers.append('Set-Cookie', cookie)
+    return withSecurity(result.raw)
+  }
   const headers = new Headers({ 'content-type': 'application/json', 'cache-control': result.cacheControl || 'no-store' })
   for (const cookie of result.cookies || []) headers.append('Set-Cookie', cookie)
   if (result.status === 204) return withSecurity(new Response(null, { status: 204, headers }))
@@ -40,7 +57,7 @@ function badRequest(status) {
 }
 
 // Clean shareable paths for hash-routed app pages. Each one 301s to the app route.
-const SHARE_PAGES = ['after-you-find', 'steps', 'resources', 'plan', 'blog', 'list-unit', 'listings-admin', 'voucher-ready', 'housing-connect', 'sponsor', 'listing-check', 'docs-tracker', 'guides', 'partners', 'quiz', 'start', 'rent-share', 'rent-calculator', 'roadmap', 'shelter-roadmap', 'after-movein', 'tenant-rights', 'utility-help', 'heap', 'viewing-checklist', 'viewing', 'waitlist', 'waitlist-tracker', 'youth', 'youth-lgbtq', 'install', 'share', 'install-and-share', 'caseworker-pack', 'inspection-prep', 'scam-alerts', 'moving-help', 'know-your-rights', 'landlord-welcome', 'match-alerts', 'income-check', 'income-prescreen', 'borough-guides']
+const SHARE_PAGES = ['after-you-find', 'steps', 'resources', 'plan', 'blog', 'list-unit', 'listings-admin', 'edit-listing', 'voucher-ready', 'housing-connect', 'sponsor', 'listing-check', 'docs-tracker', 'guides', 'partners', 'quiz', 'start', 'rent-share', 'rent-calculator', 'roadmap', 'shelter-roadmap', 'after-movein', 'tenant-rights', 'utility-help', 'heap', 'viewing-checklist', 'viewing', 'waitlist', 'waitlist-tracker', 'youth', 'youth-lgbtq', 'install', 'share', 'install-and-share', 'caseworker-pack', 'inspection-prep', 'scam-alerts', 'moving-help', 'know-your-rights', 'landlord-welcome', 'match-alerts', 'income-check', 'income-prescreen', 'borough-guides']
 export const SHARE_PATHS = Object.fromEntries(
   SHARE_PAGES.flatMap((page) => [[`/${page}`, `/#/${page}`], [`/${page}/`, `/#/${page}`]]),
 )
@@ -83,14 +100,15 @@ async function route(request, env) {
   let body = {}
   if (request.method === 'POST' || request.method === 'PUT') {
     // Content-Length can be missing or wrong, so the size is checked on what was actually read.
-    if (Number(request.headers.get('content-length') || 0) > MAX_BODY) return badRequest(413)
+    const limit = url.pathname.startsWith('/api/listings') ? MAX_BODY : CHAT_MAX_BODY
+    if (Number(request.headers.get('content-length') || 0) > limit) return badRequest(413)
     let text
     try {
       text = await request.text()
     } catch {
       return badRequest(400)
     }
-    if (text.length > MAX_BODY) return badRequest(413)
+    if (text.length > limit) return badRequest(413)
     if (text) {
       try {
         body = JSON.parse(text)
@@ -115,7 +133,9 @@ async function route(request, env) {
     guardCookie = guard.cookie || null
   }
 
-  if (url.pathname === '/api/listings' && request.method === 'POST') {
+  // Every route that writes a listing is rate limited per IP. A Turnstile token is verified when one is
+  // sent; a missing token is not fatal, so a broken in-app-browser challenge never loses a submission.
+  if (LISTING_WRITE_PATHS.some((pattern) => pattern.test(url.pathname)) && request.method === 'POST') {
     const token = typeof body?.turnstileToken === 'string' ? body.turnstileToken : ''
     if (body && typeof body === 'object') delete body.turnstileToken
     const guard = await guardListingSubmit({

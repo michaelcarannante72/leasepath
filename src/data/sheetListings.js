@@ -8,6 +8,14 @@ import { SIZES, VOUCHERS, pagePath } from './voucherSearches.js'
 export const SHEET_LABEL = "From an HRA apartment list, Oct 2026. Call to confirm it's still available."
 export const SHEET_DATE = '2026-10-27'
 
+// Units a landlord has told us are already rented, by row number, with the date we learned it.
+// They stay in ROWS so the transcription is complete and nothing is deleted, but they are left out of
+// PUBLIC_SHEET_LISTINGS, which is everything the site shows, searches, and matches.
+const CONFIRMED_FILLED = new Map([
+  [27, '2026-10-28'], // 35-16 28th Street, Queens — landlord's reply: "This unit has already been rented."
+  [29, '2026-10-28'], // 167 Sands Street #218, Brooklyn — the landlord told us it was taken.
+])
+
 // [#, rooms, street, unit, borough as written, rent, contact as written]
 const ROWS = [
   [1, "studio", "1405 Vyse Avenue", "3F", "Bronx", 2462, "(917) 563-2458"],
@@ -101,6 +109,14 @@ export const SHEET_LISTINGS = ROWS.map(([number, rooms, street, unit, written, r
   }
 })
 
+/** The 33 units still open. Use this anywhere a person sees, searches, or checks the list. */
+export const PUBLIC_SHEET_LISTINGS = SHEET_LISTINGS.filter((unit) => !CONFIRMED_FILLED.has(unit.number))
+
+/** True when this row's landlord has told us the unit is gone. */
+export function isFilled(number) {
+  return CONFIRMED_FILLED.has(number)
+}
+
 const BEDS_FILTER = { Studio: 'studio', 1: '1br', 2: '2br', 3: '3br' }
 
 /** Same filters as the practice search: borough, beds, max rent, text. Saved-only hides them (they cannot be saved). */
@@ -109,7 +125,7 @@ export function filterSheetListings(filters = {}) {
   const q = String(filters.q || '').trim().toLowerCase()
   const maxRent = Number(filters.maxRent)
   const beds = filters.beds && filters.beds !== 'Any' ? filters.beds : null
-  return SHEET_LISTINGS.filter((item) => {
+  return PUBLIC_SHEET_LISTINGS.filter((item) => {
     if (filters.borough && filters.borough !== 'All' && item.borough !== filters.borough) return false
     if (maxRent > 0 && item.rent > maxRent) return false
     if (beds) {
@@ -122,7 +138,7 @@ export function filterSheetListings(filters = {}) {
 }
 
 export function sheetListingsFor(boroughSlug, sizeSlug) {
-  return SHEET_LISTINGS.filter((item) => item.boroughSlug === boroughSlug && item.sizeSlug === sizeSlug)
+  return PUBLIC_SHEET_LISTINGS.filter((item) => item.boroughSlug === boroughSlug && item.sizeSlug === sizeSlug)
 }
 
 function norm(text) {
@@ -133,5 +149,5 @@ function norm(text) {
 export function matchSheetListing(raw) {
   const text = ` ${norm(raw)} `
   const digits = String(raw || '').replace(/\D/g, '')
-  return SHEET_LISTINGS.filter((item) => text.includes(` ${norm(item.street)} `) || (item.tel && digits.includes(item.tel.slice(6))))
+  return PUBLIC_SHEET_LISTINGS.filter((item) => text.includes(` ${norm(item.street)} `) || (item.tel && digits.includes(item.tel.slice(6))))
 }

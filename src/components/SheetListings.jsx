@@ -1,5 +1,5 @@
 import { tx } from '../i18nAuto.js'
-import { SHEET_LABEL, filterSheetListings, PUBLIC_SHEET_LISTINGS } from '../data/sheetListings.js'
+import { SHEET_LABEL, filterSheetListings, PUBLIC_SHEET_LISTINGS, SHEET_LISTINGS } from '../data/sheetListings.js'
 
 function money(value) {
   return `$${Number(value).toLocaleString('en-US')}`

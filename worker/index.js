@@ -6,6 +6,7 @@ import { UsageMeter, durableUsage } from './usageMeter.js'
 import { SECURITY_HEADERS } from './security.js'
 import { guardChat } from './chatGuard.js'
 import { guardListingSubmit } from './listingsGuard.js'
+import { comingSoonHtml, isApiPath, isAssetPath, PAUSED_ROBOTS, PAUSED_SITEMAP, sitePaused } from './pause.js'
 import { MAX_PHOTOS_TOTAL_BYTES } from '../src/data/listingForm.js'
 
 export { UsageMeter, AccountBook }
@@ -64,6 +65,43 @@ export const SHARE_PATHS = Object.fromEntries(
 
 async function route(request, env) {
   const url = new URL(request.url)
+
+  // The storefront switch (worker/pause.js). While paused, every page answers with the
+  // placeholder and the API refuses cleanly; only real files keep serving.
+  if (sitePaused(env) && (isApiPath(url.pathname) || !isAssetPath(url.pathname))) {
+    // A closed robots.txt and an empty sitemap, so a placeholder never gets indexed
+    // and search results stop sending people to pages that are dark.
+    if (url.pathname === '/robots.txt' || url.pathname === '/sitemap.xml') {
+      const isRobots = url.pathname === '/robots.txt'
+      return withSecurity(new Response(isRobots ? PAUSED_ROBOTS : PAUSED_SITEMAP, {
+        status: 200,
+        headers: {
+          'content-type': isRobots ? 'text/plain; charset=utf-8' : 'application/xml; charset=utf-8',
+          'cache-control': 'no-store',
+        },
+      }))
+    }
+    if (isApiPath(url.pathname)) {
+      return withSecurity(new Response(JSON.stringify({
+        error: 'paused',
+        message: 'LeasePath is paused for a few days. HASA, CityFHEPS and Section 8 resources are at https://nyc.gov/hra.',
+      }), {
+        status: 503,
+        headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' },
+      }))
+    }
+    if (request.method !== 'GET' && request.method !== 'HEAD') {
+      return withSecurity(new Response(null, { status: 503, headers: { allow: 'GET, HEAD', 'cache-control': 'no-store' } }))
+    }
+    return withSecurity(new Response(request.method === 'HEAD' ? null : comingSoonHtml(), {
+      status: 200,
+      headers: {
+        'content-type': 'text/html; charset=utf-8',
+        'cache-control': 'no-store',
+      },
+    }))
+  }
+
   if (Object.hasOwn(SHARE_PATHS, url.pathname)) {
     return withSecurity(new Response(null, { status: 301, headers: { location: new URL(SHARE_PATHS[url.pathname], url.origin).toString(), 'cache-control': 'public, max-age=3600' } }))
   }
@@ -94,6 +132,12 @@ async function route(request, env) {
     }))
   }
   if (!url.pathname.startsWith('/api/')) {
+    // '/' and the two crawler files are listed in wrangler.jsonc's run_worker_first only
+    // so the pause switch (worker/pause.js) can answer them. With the site live this hands
+    // each one straight back to the real asset — the app shell, robots.txt, the sitemap.
+    if (url.pathname === '/' || url.pathname === '/robots.txt' || url.pathname === '/sitemap.xml') {
+      return env.ASSETS.fetch(request)
+    }
     return jsonResponse({ status: 404, json: { error: 'not_found' }, cookies: [] })
   }
 

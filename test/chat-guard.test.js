@@ -32,7 +32,9 @@ test('rate limiter keys by IP and fails open when the binding errors', async () 
 })
 
 test('Worker returns a friendly 429 after a burst of chat posts from one IP', async () => {
-  const env = { CHAT_LIMITER: limiter(3), LEASEPATH_AUTH_SECRET: 's' }
+  // SITE_PAUSED opens the storefront so the rate limiter is actually reached;
+  // paused requests are refused at the door with a 503 before any limiter runs.
+  const env = { CHAT_LIMITER: limiter(3), LEASEPATH_AUTH_SECRET: 's', SITE_PAUSED: '0' }
   const statuses = []
   for (let i = 0; i < 5; i++) {
     const r = await worker.fetch(new Request(`${base}/api/guide`, { method: 'POST', body: '{}', headers: { origin: base, 'cf-connecting-ip': '9.9.9.9' } }), env)

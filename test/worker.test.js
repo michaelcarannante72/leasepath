@@ -32,7 +32,14 @@ function memoryNamespace() {
   }
 }
 
-const env = { USAGE_METER: memoryNamespace(), LEASEPATH_AUTH_SECRET: 'test-secret', GOOGLE_CLIENT_ID: 'client-id' }
+// SITE_PAUSED opens the storefront: everything below tests the site as it behaves when
+// the pause switch is off. The paused behavior has its own suite in test/pause.test.js.
+const env = {
+  USAGE_METER: memoryNamespace(),
+  LEASEPATH_AUTH_SECRET: 'test-secret',
+  GOOGLE_CLIENT_ID: 'client-id',
+  SITE_PAUSED: '0',
+}
 const post = (body, headers = {}) =>
   worker.fetch(new Request(`${base}/api/guide`, { method: 'POST', body, headers: { origin: base, ...headers } }), env)
 

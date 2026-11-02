@@ -22,7 +22,14 @@ register(`data:text/javascript,${encodeURIComponent(`
 
 const { default: worker } = await import('../worker/index.js')
 const base = 'https://leasepath.test'
-const env = { USAGE_METER: { getByName() { return { read: async () => 0, consume: async () => ({ ok: true, count: 1 }), release: async () => {} } } }, LEASEPATH_AUTH_SECRET: 'test-secret', GOOGLE_CLIENT_ID: 'client-id' }
+// SITE_PAUSED keeps these tests pointed at the live site. The paused behavior has its
+// own suite in test/pause.test.js.
+const env = {
+  USAGE_METER: { getByName() { return { read: async () => 0, consume: async () => ({ ok: true, count: 1 }), release: async () => {} } } },
+  LEASEPATH_AUTH_SECRET: 'test-secret',
+  GOOGLE_CLIENT_ID: 'client-id',
+  SITE_PAUSED: '0',
+}
 
 test('popular search catalog covers only verified voucher × size rows across five boroughs', () => {
   assert.equal(SEARCH_PAGES.length, Object.keys(VERIFIED_LIMITS).length * BOROUGHS.length)

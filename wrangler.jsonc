@@ -10,7 +10,7 @@
   // The coming-soon switch (worker/pause.js). "on" — or any value that is not one of
   // 0/false/off/no/live/open — serves the placeholder and refuses the API. To bring the
   // site back, set this to "0" and redeploy; nothing else needs to change.
-  "vars": { "SITE_PAUSED": "on" },
+  "vars": { "SITE_PAUSED": "0" },
   "assets": {
     "directory": "./dist",
     // Named so worker/index.js can hand a request straight back to the built file.

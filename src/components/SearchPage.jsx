@@ -6,6 +6,7 @@ import { LandingExtras, LandingHero } from './LandingHero.jsx'
 import { ACCESS_HRA_URL, BOROUGHS, HOMEBASE_URL } from '../data.js'
 import { VoucherReadyUnits } from './VoucherReadyUnits.jsx'
 import { LandlordPitch } from './LandlordPitch.jsx'
+import { LeasebotBanner } from './LeasebotBanner.jsx'
 import { SearchEmptyState } from './SearchEmptyState.jsx'
 import { SponsoredSlot } from './SponsoredSlot.jsx'
 import { PROGRAMS, cardFlags, cardLabel, cardText, money, sizeLabel, utilityLabel } from '../fit.js'
@@ -88,6 +89,7 @@ export function SearchPage({
   return (
     <div className="landing">
       <LandingHero />
+      <LeasebotBanner />
       <LandlordPitch />
       {/* One compact search panel. The pitch and the 3-step strip now open the Steps page. */}
       <section className="home-search" aria-labelledby="search-title">

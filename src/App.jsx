@@ -47,6 +47,7 @@ const MatchAlertsPage = lazyNamed(() => import('./components/PlanToolPages.jsx')
 const PlanPage = lazyNamed(() => import('./components/PlanPage.jsx'), 'PlanPage')
 const ResourcesPage = lazyNamed(() => import('./components/ResourcesPage.jsx'), 'ResourcesPage')
 const HousingConnectPage = lazyNamed(() => import('./components/HousingConnectPage.jsx'), 'HousingConnectPage')
+const LeasebotPage = lazyNamed(() => import('./components/LeasebotPage.jsx'), 'LeasebotPage')
 const SponsorPage = lazyNamed(() => import('./components/SponsorPage.jsx'), 'SponsorPage')
 const ListingCheckerPage = lazyNamed(() => import('./components/ListingCheckerPage.jsx'), 'ListingCheckerPage')
 const BoroughGuidesIndex = lazyNamed(() => import('./components/BoroughGuidesPage.jsx'), 'BoroughGuidesIndex')
@@ -156,6 +157,7 @@ function parseHash() {
   if (hash === '/know-your-rights') return { name: 'rights' }
   if (hash === '/landlord-welcome') return { name: 'landlord' }
   if (hash === '/housing-connect') return { name: 'housing-connect' }
+  if (hash === '/leasebot') return { name: 'leasebot' }
   if (hash === '/sponsor') return { name: 'sponsor' }
   if (hash === '/docs-tracker') return { name: 'docs' }
   // Private edit link: #/edit-listing?t=<token>. The token must never leak into analytics or a referrer.
@@ -801,7 +803,7 @@ export default function App() {
               ? 'resources'
               : route.name === 'rent' || route.name === 'waitlist' || route.name === 'match-alerts' || route.name === 'income-check'
                 ? 'plan'
-              : route.name === 'list-unit' || route.name === 'voucher-ready' || route.name === 'listings-admin' || route.name === 'quiz' || route.name === 'viewing'
+              : route.name === 'list-unit' || route.name === 'voucher-ready' || route.name === 'listings-admin' || route.name === 'quiz' || route.name === 'viewing' || route.name === 'leasebot'
                 ? 'search'
             : route.name
   const navSelect = (id) => {
@@ -899,6 +901,7 @@ export default function App() {
         {route.name === 'rights-movein' && <TenantRightsAfterMoveinPage />}
         {route.name === 'landlord' && <LandlordWelcomePage />}
         {route.name === 'housing-connect' && <HousingConnectPage />}
+        {route.name === 'leasebot' && <LeasebotPage />}
         {route.name === 'sponsor' && <SponsorPage />}
         {route.name === 'listing-check' && <ListingCheckerPage />}
         {route.name === 'docs' && <DocsDeadlinePage />}

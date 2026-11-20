@@ -7,7 +7,7 @@ import { PAGE_EN, PAGE_ES } from '../src/i18nPages.js'
 import { t } from '../src/i18n.js'
 
 // Strings that are the same in both languages (names, numbers).
-const SAME_OK = new Set(['Housing Connect', 'LeasePath', 'Ruby', 'NYC', 'HASA', 'CityFHEPS', 'NYCHA', 'OK', 'WhatsApp'])
+const SAME_OK = new Set(['Housing Connect', 'LeasePath', 'Leasebot', 'Ruby', 'NYC', 'HASA', 'CityFHEPS', 'NYCHA', 'OK', 'WhatsApp'])
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8')
 
 test('every page key has a Spanish string that is not the English one', () => {

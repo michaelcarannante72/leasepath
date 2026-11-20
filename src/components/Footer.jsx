@@ -53,6 +53,7 @@ export function Footer({ compact = false }) {
             ) : null
           })}
           <a href="#/blog">{tx("Blog")}</a>
+          <a href="#/leasebot">{tx("See Leasebot")}</a>
           <a href="#/install">{tx("Install the app")}</a>
           <a href="#/sponsor">{tx("Sponsor LeasePath")}</a>
           <AnalyticsChoiceLink />
@@ -79,7 +80,7 @@ export function Footer({ compact = false }) {
           </section>
         ))}
       </div>
-      <p className="footer-analytics-row"><a href="#/sponsor">{tx("Sponsor LeasePath")}</a> · <a href="/terms">{tx("Copyright / DMCA")}</a> · <AnalyticsChoiceLink /></p>
+      <p className="footer-analytics-row"><a href="#/leasebot">{tx("See Leasebot")}</a> · <a href="#/sponsor">{tx("Sponsor LeasePath")}</a> · <a href="/terms">{tx("Copyright / DMCA")}</a> · <AnalyticsChoiceLink /></p>
       <NotAffiliated />
     </footer>
   )

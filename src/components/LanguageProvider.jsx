@@ -2,18 +2,19 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { LanguageContext } from './languageContext.js'
 import { applyDocumentLang, readLang, t as translate, writeLang } from '../i18n.js'
 import { setTxLang } from '../i18nAuto.js'
-import { SPANISH_UI_ENABLED } from '../features.js'
 
 
 export function LanguageProvider({ children }) {
-  const [lang, setLangState] = useState(() => (SPANISH_UI_ENABLED ? readLang() : 'en'))
+  // Header toggle stays behind SPANISH_UI_ENABLED. Leasebot always offers English/Español,
+  // so language is stored and honored even while the global flag is off.
+  const [lang, setLangState] = useState(readLang)
 
   useEffect(() => {
     applyDocumentLang(lang)
   }, [lang])
 
   const setLang = useCallback((next) => {
-    const value = writeLang(SPANISH_UI_ENABLED ? next : 'en')
+    const value = writeLang(next)
     setLangState(value)
     applyDocumentLang(value)
   }, [])

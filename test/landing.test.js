@@ -14,8 +14,8 @@ test('the not-affiliated line moved from the hero to the footer and is never hid
   assert.match(i18n, /'hero\.notAffiliated': 'Not affiliated with HRA, NYCHA, or any government agency\.'/)
   const footer = readFileSync(new URL('../src/components/Footer.jsx', import.meta.url), 'utf8')
   assert.match(footer, /className="not-affiliated">\{t\(["']hero\.notAffiliated["']\)\}<\/p>/)
-  // Rendered by both the compact and the full footer.
-  assert.equal((footer.match(/<NotAffiliated \/>/g) || []).length, 2)
+  // Rendered by the compact footer, the full footer, and the Leasebot-only footer.
+  assert.equal((footer.match(/<NotAffiliated \/>/g) || []).length, 3)
   assert.doesNotMatch(hero, /not-affiliated/, 'the hero stays one headline and one line')
   for (const block of css.split('@media')) {
     assert.doesNotMatch(block, /\.not-affiliated[^{]*\{[^}]*display:\s*none/, 'never display:none')

@@ -4,7 +4,6 @@ import { LanguageSwitch } from './LanguageToggle.jsx'
 import { SPONSOR_CONTACT } from '../data/sponsors.js'
 import {
   LEASEBOT_HEADLINE,
-  LEASEBOT_PRIVACY,
   LEASEBOT_SUBHEAD,
   LeasebotHelpNow,
   LeasebotMascot,
@@ -17,35 +16,16 @@ export {
   LEASEBOT_SUBHEAD,
 } from './LeasebotBanner.jsx'
 
-const STEPS = [
-  {
-    title: 'Finds voucher-friendly listings',
-    detail: 'Looks across the web for units that may take HASA, CityFHEPS, or Section 8, then shows you ones that could fit.',
-  },
-  {
-    title: 'Drafts inquiries you approve',
-    detail: 'Leasebot writes the message. Nothing is sent until you tap Approve.',
-  },
-  {
-    title: 'Texts, emails, and calls landlords',
-    detail: 'When Leasebot contacts a landlord, it says up front that it is an AI assistant reaching out for a renter.',
-  },
-  {
-    title: 'Books viewings on your calendar',
-    detail: 'When a landlord offers times, Leasebot helps you pick one, adds it to your calendar, and sends a reminder.',
-  },
-  {
-    title: 'One log of every reply',
-    detail: 'Every message and reply stays in one place you can review.',
-  },
+const HUGE_STEPS = [
+  'Tell it what you need.',
+  'It searches and follows up.',
+  'You approve every message.',
 ]
 
-const TRUST = [
-  'You approve every message before it goes out.',
-  'Leasebot never shares HIV status, HASA, or medical details unless you turn that on. By default it only says you have a rental subsidy.',
-  'Leasebot never signs a lease or sends documents without your approval.',
-  'Everything that is free on LeasePath stays free. Leasebot is a planned paid add-on.',
-  "Leasebot does not charge you a broker fee, and it does not ask you to pay a landlord's broker.",
+const TRUST_STRIP = [
+  'Never shares your health or HASA info.',
+  'Free to chat.',
+  'Not a city agency.',
 ]
 
 function isEmail(value) {
@@ -83,6 +63,17 @@ function ChatPreview() {
   return (
     <figure className="leasebot-chat" aria-labelledby="leasebot-chat-label">
       <figcaption id="leasebot-chat-label" className="leasebot-chat-label">{tx('Preview')}</figcaption>
+      <p className="sr-only">
+        {tx('I need a 2 bedroom in the Bronx, CityFHEPS')}
+        {' '}
+        {tx('Found 3 that fit your limit. 1 looks like a scam, so I skipped it.')}
+        {' '}
+        {tx('Drafted a message to Jordan at Cedar Place.')}
+        {' '}
+        {tx('Approve & send')}
+        {' '}
+        {tx('Viewing booked Sat 11am')}
+      </p>
       <div className="leasebot-chat-window">
         <header className="leasebot-chat-head">
           <LeasebotMascot size={36} className="leasebot-mascot leasebot-mascot-mini" />
@@ -91,18 +82,27 @@ function ChatPreview() {
             <span>{tx('Just now')}</span>
           </div>
         </header>
-        <ol className="leasebot-chat-log">
-          <li className="leasebot-bubble">
-            <p>{tx('Found 4 new 1BRs under your limit in the Bronx')}</p>
+        <ol className="leasebot-chat-log" aria-hidden="true">
+          <li className="leasebot-dotline is-renter step-dots-1">
+            <span /><span /><span />
           </li>
-          <li className="leasebot-bubble is-flag">
-            <p>{tx("Flagged 1 ad: says 'no programs'")}</p>
+          <li className="leasebot-bubble is-renter step-1">
+            <p>{tx('I need a 2 bedroom in the Bronx, CityFHEPS')}</p>
           </li>
-          <li className="leasebot-bubble">
-            <p>{tx('Drafted a message to Jordan at Cedar Place at 2:10 PM. Approve?')}</p>
-            <span className="leasebot-approve" aria-hidden="true">{tx('Approve')}</span>
+          <li className="leasebot-dotline step-dots-2">
+            <span /><span /><span />
           </li>
-          <li className="leasebot-bubble is-booked">
+          <li className="leasebot-bubble step-2">
+            <p>{tx('Found 3 that fit your limit. 1 looks like a scam, so I skipped it.')}</p>
+          </li>
+          <li className="leasebot-dotline step-dots-3">
+            <span /><span /><span />
+          </li>
+          <li className="leasebot-bubble step-3">
+            <p>{tx('Drafted a message to Jordan at Cedar Place.')}</p>
+            <span className="leasebot-approve">{tx('Approve & send')}</span>
+          </li>
+          <li className="leasebot-bubble is-booked step-4">
             <p>{tx('Viewing booked Sat 11am')}</p>
           </li>
         </ol>
@@ -111,9 +111,10 @@ function ChatPreview() {
   )
 }
 
-function WaitlistForm() {
+function WaitlistForm({ variant = 'hero' } = {}) {
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
+  const hero = variant === 'hero'
 
   const submit = (event) => {
     event.preventDefault()
@@ -127,9 +128,18 @@ function WaitlistForm() {
   }
 
   return (
-    <form className="leasebot-waitlist" onSubmit={submit} noValidate aria-labelledby="leasebot-waitlist-title">
-      <h2 id="leasebot-waitlist-title">{tx('Join the waitlist')}</h2>
-      <p>{tx('Leasebot is coming soon. Leave your email and we will tell you when it is ready. LeasePath is a new startup, and this is not a government service.')}</p>
+    <form
+      className={hero ? 'leasebot-waitlist leasebot-hero-form' : 'leasebot-waitlist'}
+      id={hero ? 'leasebot-hero-cta' : undefined}
+      onSubmit={submit}
+      noValidate
+      aria-labelledby={hero ? 'leasebot-hero-form-label' : 'leasebot-waitlist-title'}
+    >
+      {hero ? (
+        <p id="leasebot-hero-form-label" className="sr-only">{tx('Get early access')}</p>
+      ) : (
+        <h2 id="leasebot-waitlist-title">{tx('Join the waitlist')}</h2>
+      )}
       <label htmlFor="leasebot-email">{tx('Your email')}</label>
       <div className="leasebot-waitlist-row">
         <input
@@ -145,7 +155,7 @@ function WaitlistForm() {
           }}
           required
         />
-        <button type="submit" className="button">{tx('Join the waitlist')}</button>
+        <button type="submit" className="button">{tx(hero ? 'Get early access' : 'Join the waitlist')}</button>
       </div>
       {error ? <p className="form-error" role="alert">{error}</p> : null}
       <p className="fine">{tx('This opens an email to LeasePath. We only use the address to tell you when Leasebot is ready. We do not store it on this page.')}</p>
@@ -157,28 +167,19 @@ function StickyWaitlistCta() {
   const [show, setShow] = useState(false)
   useEffect(() => {
     const hero = document.getElementById('leasebot-hero-cta')
-    const wait = document.getElementById('leasebot-waitlist-title')
-    if (!hero || !wait) return undefined
-    let heroIn = true
-    let waitIn = false
+    if (!hero) return undefined
     const io = new IntersectionObserver((entries) => {
-      for (const entry of entries) {
-        if (entry.target.id === 'leasebot-hero-cta') {
-          // Below the fold still counts as "in the hero"; only hide once it has scrolled off the top.
-          heroIn = entry.isIntersecting || entry.boundingClientRect.top > 0
-        }
-        if (entry.target.id === 'leasebot-waitlist-title') waitIn = entry.isIntersecting
-      }
-      setShow(!heroIn && !waitIn)
+      const entry = entries[0]
+      const heroIn = entry.isIntersecting || entry.boundingClientRect.top > 0
+      setShow(!heroIn)
     }, { threshold: 0.2 })
     io.observe(hero)
-    io.observe(wait)
     return () => io.disconnect()
   }, [])
   if (!show) return null
   return (
     <div className="leasebot-sticky">
-      <a className="button" href="#leasebot-waitlist-title">{tx('Join the waitlist')}</a>
+      <a className="button" href="#leasebot-hero-cta">{tx('Get early access')}</a>
     </div>
   )
 }
@@ -187,55 +188,43 @@ export function LeasebotPage() {
   useReveal()
   return (
     <div className="leasebot-page">
-      <div className="leasebot-lang-bar">
-        <LanguageSwitch className="leasebot-lang-switch" />
-      </div>
       <header className="leasebot-hero" aria-labelledby="leasebot-title">
         <div className="leasebot-hero-copy">
-          <LeasebotMascot size={112} />
+          <div className="leasebot-hero-top">
+            <p className="leasebot-wordmark">
+              <LeasebotMascot size={44} className="leasebot-mascot leasebot-mascot-mini" />
+              <span>Leasebot</span>
+            </p>
+            <LanguageSwitch className="leasebot-lang-switch" />
+          </div>
           <p className="eyebrow">{tx('Coming soon')}</p>
           <h1 id="leasebot-title">{tx(LEASEBOT_HEADLINE)}</h1>
           <p className="leasebot-subhead">{tx(LEASEBOT_SUBHEAD)}</p>
-          <p className="leasebot-privacy">{tx(LEASEBOT_PRIVACY)}</p>
-          <div className="button-row">
-            <a id="leasebot-hero-cta" className="button" href="#leasebot-waitlist-title">{tx('Join the waitlist')}</a>
-          </div>
+          <WaitlistForm variant="hero" />
         </div>
         <ChatPreview />
       </header>
 
       <div className="leasebot-body">
-        <LeasebotHelpNow headingId="leasebot-page-help-now" />
-
-        <section className="leasebot-steps leasebot-reveal" aria-labelledby="leasebot-steps-title">
-          <h2 id="leasebot-steps-title">{tx('How Leasebot works')}</h2>
-          <ol className="leasebot-tiles">
-            {STEPS.map((step, index) => (
-              <li key={step.title}>
-                <span className="how-num" aria-hidden="true">{index + 1}</span>
-                <strong>{tx(step.title)}</strong>
-                <p>{tx(step.detail)}</p>
+        <section className="leasebot-huge-steps leasebot-reveal" aria-labelledby="leasebot-steps-title">
+          <h2 id="leasebot-steps-title" className="sr-only">{tx('How Leasebot works')}</h2>
+          <ol>
+            {HUGE_STEPS.map((step, index) => (
+              <li key={step}>
+                <span className="leasebot-step-index" aria-hidden="true">{index + 1}</span>
+                <p>{tx(step)}</p>
               </li>
             ))}
           </ol>
         </section>
 
-        <section className="leasebot-trust leasebot-reveal" aria-labelledby="leasebot-trust-title">
-          <h2 id="leasebot-trust-title">{tx('You stay in control')}</h2>
-          <ul>
-            {TRUST.map((line) => (
-              <li key={line}>{tx(line)}</li>
-            ))}
-          </ul>
-        </section>
+        <p className="leasebot-trust-strip leasebot-reveal">
+          {TRUST_STRIP.map((line) => (
+            <span key={line}>{tx(line)}</span>
+          ))}
+        </p>
 
-        <section className="leasebot-pricing leasebot-reveal" aria-labelledby="leasebot-pricing-title">
-          <p className="eyebrow">{tx('Coming soon')}</p>
-          <h2 id="leasebot-pricing-title">{tx('A short hunt pass, and seats for agencies')}</h2>
-          <p>{tx('We plan a short apartment-hunt pass, plus sponsored seats that nonprofits and agencies can buy for their clients. Prices are not set yet.')}</p>
-        </section>
-
-        <WaitlistForm />
+        <LeasebotHelpNow headingId="leasebot-page-help-now" />
       </div>
       <StickyWaitlistCta />
     </div>

@@ -33,6 +33,7 @@ import { dayNumber } from './dates.js'
 import { SECTION8_AGENCIES } from './data/section8.js'
 import { cityfhepsAllowance, normalizeHousehold } from './rentCheck.js'
 import { incomePeriod, storedIncome } from './incomePrescreen.js'
+import { LEASEBOT_ONLY } from './features.js'
 
 // Route pages load on demand (code-split). The service worker caches each chunk the first time it is fetched
 // and precaches them all after install, so these routes still open offline.
@@ -182,7 +183,7 @@ function parseHash() {
   if (hash === '/steps' || hash === '/resources' || hash === '/plan' || hash === '/blog') {
     return { name: hash.slice(1) }
   }
-  if (hash === '/') return { name: 'search' }
+  if (hash === '/') return { name: LEASEBOT_ONLY ? 'leasebot' : 'search' }
   return { name: 'notfound' }
 }
 
@@ -788,7 +789,7 @@ export default function App() {
   // Ruby's first-visit intro is for renters. On the landlord/broker and admin routes it would open
   // on top of the form and swallow the first click, so those routes never show it.
   const landlordRoute = route.name === 'list-unit' || route.name === 'listings-admin' || route.name === 'edit-listing'
-  const rubyIntroShown = rubyIntroOpen && consentDone && !landlordRoute
+  const rubyIntroShown = rubyIntroOpen && consentDone && !landlordRoute && !LEASEBOT_ONLY
   const dockActive = assistantOpen || rubyIntroShown
     ? 'assistant'
     : route.name === 'detail'
@@ -824,7 +825,7 @@ export default function App() {
   }
 
   return (
-    <div className="app">
+    <div className={LEASEBOT_ONLY ? "app is-leasebot-only" : "app"}>
       <a className="skip-link" href="#main-content">{tx("Skip to main content")}</a>
       <Header
         navActive={dockActive}
@@ -943,7 +944,7 @@ export default function App() {
         onConfirm={deleteAccount}
         onDone={finishDelete}
       />
-      <Dock active={dockActive} onSelect={navSelect} />
+      {!LEASEBOT_ONLY && <Dock active={dockActive} onSelect={navSelect} />}
       <RubyIntro open={rubyIntroShown} onTalk={talkToRuby} onLater={dismissRubyIntro} />
       {assistantOpen && (
         <AssistantSheet

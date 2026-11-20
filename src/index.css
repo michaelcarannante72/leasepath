@@ -2673,6 +2673,9 @@ body { overflow: visible; overflow-x: clip; }
     z-index: 45;
   }
   .consent-bar, .cookie-prompt { position: fixed; left: 8px; right: 8px; bottom: calc(92px + env(safe-area-inset-bottom)); z-index: 46; }
+  .app.is-leasebot-only { padding-bottom: 0; }
+  .app.is-leasebot-only .consent-bar,
+  .app.is-leasebot-only .cookie-prompt { bottom: calc(8px + env(safe-area-inset-bottom)); }
 }
 @media (min-width: 1024px) {
   .consent-bar, .cookie-prompt { position: fixed; left: 16px; right: 16px; bottom: 16px; z-index: 46; }
@@ -3600,11 +3603,20 @@ body { background: var(--bg); color: var(--navy); font-size: var(--fs-body); lin
 .stage:has(.leasebot-page) {
   width: 100%;
   max-width: none;
+  background: var(--lb-bg, #080c16);
 }
 .stage:has(.leasebot-page) .site-footer {
   width: min(1120px, calc(100% - 32px));
   margin-inline: auto;
+  background: transparent;
+  color: #c5d0de;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
+.stage:has(.leasebot-page) .site-footer a,
+.stage:has(.leasebot-page) .site-footer .text-button {
+  color: #e8eef6;
+}
+.stage:has(.leasebot-page) .not-affiliated { color: #9aa8ba; }
 /* Beats .view > :not(.landing) { margin: 12px 14px 0 } and .stage .view > * { max-width: 100% }. */
 .view > .leasebot-page {
   width: 100%;
@@ -3622,8 +3634,15 @@ body { background: var(--bg); color: var(--navy); font-size: var(--fs-body); lin
   isolation: isolate;
   overflow: clip;
   display: grid;
-  gap: 28px;
-  padding: 28px 0 36px;
+  gap: 16px;
+  padding: 10px 0 16px;
+}
+.leasebot-hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 2px;
 }
 .leasebot-page::before {
   content: "";
@@ -3637,20 +3656,37 @@ body { background: var(--bg); color: var(--navy); font-size: var(--fs-body); lin
     radial-gradient(ellipse 40% 40% at 50% 0%, rgba(28, 45, 66, 0.65), transparent 70%);
 }
 .leasebot-hero-copy { position: relative; z-index: 1; min-width: 0; }
+.leasebot-wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: #f2a900;
+  font-size: clamp(1.45rem, 1rem + 2vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 1;
+  text-shadow:
+    0 0 14px rgba(242, 169, 0, 0.9),
+    0 0 36px rgba(242, 169, 0, 0.5),
+    0 0 72px rgba(242, 169, 0, 0.3);
+  animation: leasebot-glow 3.2s ease-in-out infinite;
+}
+.leasebot-wordmark .leasebot-mascot { flex: none; }
 .leasebot-hero .eyebrow {
   color: var(--lb-gold);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   font-weight: 750;
-  margin: 16px 0 10px;
+  margin: 8px 0 6px;
 }
 .leasebot-hero h1 {
-  margin: 0 0 16px;
+  margin: 0 0 10px;
   color: #fff;
-  font-size: clamp(2.4rem, 1rem + 6.4vw, 5.75rem);
-  font-weight: 750;
-  letter-spacing: -0.055em;
-  line-height: 0.95;
+  font-size: clamp(2.7rem, 1.1rem + 8vw, 5.2rem);
+  font-weight: 800;
+  letter-spacing: -0.065em;
+  line-height: 0.9;
   text-wrap: balance;
   max-width: 14ch;
 }
@@ -3664,20 +3700,13 @@ body { background: var(--bg); color: var(--navy); font-size: var(--fs-body); lin
   background: linear-gradient(90deg, var(--lb-gold), var(--lb-violet));
 }
 .leasebot-subhead {
-  margin: 0 0 14px;
-  max-width: 34ch;
+  margin: 0 0 12px;
+  max-width: 36ch;
   color: var(--lb-ink);
-  font-size: clamp(1.05rem, 0.95rem + 0.6vw, 1.35rem);
+  font-size: clamp(1.02rem, 0.95rem + 0.5vw, 1.3rem);
   font-weight: 550;
   line-height: 1.4;
   text-wrap: pretty;
-}
-.leasebot-privacy {
-  margin: 0 0 20px;
-  max-width: 52ch;
-  color: var(--lb-muted);
-  font-size: 0.95rem;
-  line-height: 1.5;
 }
 .leasebot-page .button:not(.ruby-theme .button):not(.button-quiet) {
   background: var(--lb-gold);
@@ -3702,6 +3731,20 @@ body { background: var(--bg); color: var(--navy); font-size: var(--fs-body); lin
   0%, 90%, 100% { transform: scaleY(1); }
   94% { transform: scaleY(0.08); }
 }
+@keyframes leasebot-glow {
+  0%, 100% {
+    text-shadow:
+      0 0 14px rgba(242, 169, 0, 0.85),
+      0 0 36px rgba(242, 169, 0, 0.45),
+      0 0 72px rgba(242, 169, 0, 0.25);
+  }
+  50% {
+    text-shadow:
+      0 0 22px rgba(242, 169, 0, 1),
+      0 0 54px rgba(242, 169, 0, 0.7),
+      0 0 96px rgba(242, 169, 0, 0.4);
+  }
+}
 .leasebot-hero .leasebot-mascot:not(.leasebot-mascot-mini) {
   animation: leasebot-float 3.6s ease-in-out infinite;
 }
@@ -3711,6 +3754,21 @@ body { background: var(--bg); color: var(--navy); font-size: var(--fs-body); lin
   animation: leasebot-blink 4.8s ease-in-out infinite;
 }
 .leasebot-eye-right { animation-delay: 0.12s; }
+
+.leasebot-page .leasebot-hero-form.leasebot-waitlist {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+.leasebot-hero-form label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 700;
+  color: #fff;
+}
+.leasebot-hero-form .fine { margin-top: 8px; font-size: 0.82rem; }
 
 .leasebot-chat {
   position: relative;
@@ -3751,20 +3809,105 @@ body { background: var(--bg); color: var(--navy); font-size: var(--fs-body); lin
   list-style: none;
   margin: 0;
   padding: 14px;
-  display: grid;
-  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  min-height: 292px;
 }
 .leasebot-bubble {
-  margin: 0;
+  margin: 0 0 10px;
   padding: 12px 14px;
   border-radius: 16px 16px 16px 6px;
   background: #1c2d42;
   color: var(--lb-ink);
   max-width: 36ch;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transform: translateY(8px);
+  animation: leasebot-show-msg 16s ease infinite;
 }
 .leasebot-bubble p { margin: 0; color: var(--lb-ink); }
-.leasebot-bubble.is-flag { background: #3a2a12; border: 1px solid rgba(242, 169, 0, 0.35); }
+.leasebot-bubble.is-renter {
+  margin-left: auto;
+  border-radius: 16px 16px 6px 16px;
+  background: #2a3d5c;
+}
 .leasebot-bubble.is-booked { background: #163326; border: 1px solid rgba(80, 200, 120, 0.3); }
+.leasebot-dotline {
+  display: flex;
+  gap: 5px;
+  width: fit-content;
+  margin: 0 0 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #1c2d42;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  animation: leasebot-show-dots 16s ease infinite;
+}
+.leasebot-dotline.is-renter { margin-left: auto; }
+.leasebot-dotline span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #c5d0de;
+  animation: leasebot-dot 1s ease-in-out infinite;
+}
+.leasebot-dotline span:nth-child(2) { animation-delay: 0.15s; }
+.leasebot-dotline span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes leasebot-dot {
+  0%, 80%, 100% { opacity: 0.35; transform: translateY(0); }
+  40% { opacity: 1; transform: translateY(-3px); }
+}
+/* 16s loop: dots then typed bubbles, conversation accumulates, then resets. */
+@keyframes leasebot-show-dots {
+  0%, 2% { opacity: 0; max-height: 0; margin-top: 0; margin-bottom: 0; padding-block: 0; }
+  3%, 8% { opacity: 1; max-height: 3em; margin-top: 0; margin-bottom: 10px; padding-block: 10px; }
+  9%, 100% { opacity: 0; max-height: 0; margin-top: 0; margin-bottom: 0; padding-block: 0; }
+}
+@keyframes leasebot-show-msg {
+  0%, 4% { opacity: 0; max-height: 0; margin-top: 0; margin-bottom: 0; padding-block: 0; transform: translateY(8px); }
+  6%, 94% { opacity: 1; max-height: 14em; margin-top: 0; margin-bottom: 10px; padding-block: 12px; transform: none; }
+  97%, 100% { opacity: 0; max-height: 0; margin-top: 0; margin-bottom: 0; padding-block: 0; }
+}
+.step-dots-1 { animation-name: leasebot-show-dots; }
+.step-1 { animation-name: leasebot-msg-1; }
+@keyframes leasebot-msg-1 {
+  0%, 8% { opacity: 0; max-height: 0; margin-top: 0; margin-bottom: 0; padding-block: 0; transform: translateY(8px); }
+  10%, 94% { opacity: 1; max-height: 14em; margin-top: 0; margin-bottom: 10px; padding-block: 12px; transform: none; }
+  97%, 100% { opacity: 0; max-height: 0; margin-top: 0; margin-bottom: 0; padding-block: 0; }
+}
+.step-dots-2 { animation-name: leasebot-dots-2; }
+.step-2 { animation-name: leasebot-msg-2; }
+.step-dots-3 { animation-name: leasebot-dots-3; }
+.step-3 { animation-name: leasebot-msg-3; }
+.step-4 { animation-name: leasebot-msg-4; }
+@keyframes leasebot-dots-2 {
+  0%, 24% { opacity: 0; max-height: 0; margin-top: 0; margin-bottom: 0; padding-block: 0; }
+  26%, 31% { opacity: 1; max-height: 3em; margin-top: 0; margin-bottom: 10px; padding-block: 10px; }
+  32%, 100% { opacity: 0; max-height: 0; margin-top: 0; margin-bottom: 0; padding-block: 0; }
+}
+@keyframes leasebot-msg-2 {
+  0%, 30% { opacity: 0; max-height: 0; margin-top: 0; margin-bottom: 0; padding-block: 0; transform: translateY(8px); }
+  32%, 94% { opacity: 1; max-height: 14em; margin-top: 0; margin-bottom: 10px; padding-block: 12px; transform: none; }
+  97%, 100% { opacity: 0; max-height: 0; margin-top: 0; margin-bottom: 0; padding-block: 0; }
+}
+@keyframes leasebot-dots-3 {
+  0%, 48% { opacity: 0; max-height: 0; margin-top: 0; margin-bottom: 0; padding-block: 0; }
+  50%, 55% { opacity: 1; max-height: 3em; margin-top: 0; margin-bottom: 10px; padding-block: 10px; }
+  56%, 100% { opacity: 0; max-height: 0; margin-top: 0; margin-bottom: 0; padding-block: 0; }
+}
+@keyframes leasebot-msg-3 {
+  0%, 54% { opacity: 0; max-height: 0; margin-top: 0; margin-bottom: 0; padding-block: 0; transform: translateY(8px); }
+  56%, 94% { opacity: 1; max-height: 16em; margin-top: 0; margin-bottom: 10px; padding-block: 12px; transform: none; }
+  97%, 100% { opacity: 0; max-height: 0; margin-top: 0; margin-bottom: 0; padding-block: 0; }
+}
+@keyframes leasebot-msg-4 {
+  0%, 72% { opacity: 0; max-height: 0; margin-top: 0; margin-bottom: 0; padding-block: 0; transform: translateY(8px); }
+  74%, 94% { opacity: 1; max-height: 10em; margin-top: 0; margin-bottom: 10px; padding-block: 12px; transform: none; }
+  97%, 100% { opacity: 0; max-height: 0; margin-top: 0; margin-bottom: 0; padding-block: 0; }
+}
 .leasebot-approve {
   display: inline-flex;
   align-items: center;
@@ -3776,10 +3919,62 @@ body { background: var(--bg); color: var(--navy); font-size: var(--fs-body); lin
   background: var(--lb-gold);
   color: var(--navy);
   font-weight: 750;
+  box-shadow: 0 0 0 0 rgba(242, 169, 0, 0.7);
+  animation: leasebot-approve-glow 1.6s ease-in-out infinite;
+}
+@keyframes leasebot-approve-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(242, 169, 0, 0.65), 0 0 12px rgba(242, 169, 0, 0.45); }
+  50% { box-shadow: 0 0 0 8px rgba(242, 169, 0, 0), 0 0 28px rgba(242, 169, 0, 0.85); }
 }
 
-.leasebot-body { display: grid; gap: 22px; padding: 8px 0 32px; }
+.leasebot-body { display: grid; gap: 28px; padding: 8px 0 40px; }
 .leasebot-page .leasebot-help-now { margin: 0; }
+.leasebot-huge-steps ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 18px;
+}
+.leasebot-huge-steps li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 14px 16px;
+  align-items: baseline;
+}
+.leasebot-step-index {
+  color: var(--lb-gold);
+  font-size: clamp(1.4rem, 1rem + 1.6vw, 2.2rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.leasebot-huge-steps p {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(2rem, 1.1rem + 5.2vw, 4.6rem);
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  line-height: 0.95;
+  text-wrap: balance;
+}
+.leasebot-trust-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 0;
+  margin: 0;
+  padding: 14px 0 0;
+  color: var(--lb-muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+.leasebot-trust-strip span:not(:last-child)::after {
+  content: "·";
+  margin: 0 0.7em;
+  color: var(--lb-gold);
+  font-weight: 800;
+}
 .leasebot-steps h2,
 .leasebot-trust h2,
 .leasebot-pricing h2,
@@ -3832,7 +4027,7 @@ body { background: var(--bg); color: var(--navy); font-size: var(--fs-body); lin
 .leasebot-waitlist-row {
   display: grid;
   gap: 10px;
-  margin-top: 8px;
+  margin-top: 4px;
 }
 .leasebot-waitlist input {
   width: 100%;
@@ -3855,12 +4050,15 @@ body { background: var(--bg); color: var(--navy); font-size: var(--fs-body); lin
   position: fixed;
   left: 0;
   right: 0;
-  bottom: calc(100px + env(safe-area-inset-bottom));
+  bottom: calc(16px + env(safe-area-inset-bottom));
   z-index: 20;
   display: flex;
   justify-content: center;
   padding: 8px 0 4px;
   pointer-events: none;
+}
+.app:not(.is-leasebot-only) .leasebot-sticky {
+  bottom: calc(100px + env(safe-area-inset-bottom));
 }
 .leasebot-sticky .button { pointer-events: auto; min-width: min(100%, 280px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35); }
 
@@ -3903,34 +4101,65 @@ body { background: var(--bg); color: var(--navy); font-size: var(--fs-body); lin
 .leasebot-banner .leasebot-help-now { margin: 0; }
 
 @media (min-width: 760px) {
-  .leasebot-hero { grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr); align-items: center; padding: 20px 0 28px; gap: 36px; }
+  .leasebot-hero { grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.9fr); align-items: start; padding: 28px 0 36px; gap: 36px; }
+  .leasebot-hero-top { justify-content: flex-start; gap: 16px; margin-bottom: 8px; }
   .leasebot-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .leasebot-waitlist-row { grid-template-columns: minmax(0, 1fr) auto; align-items: start; }
   .leasebot-banner-main { grid-template-columns: auto minmax(0, 1fr); gap: 22px; }
   .leasebot-banner { padding: 28px 24px; }
+  .leasebot-chat-log { min-height: 320px; }
 }
 @media (min-width: 1024px) {
   .leasebot-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .leasebot-tiles li:nth-child(4),
   .leasebot-tiles li:nth-child(5) { grid-column: span 1; }
   .leasebot-sticky { bottom: 16px; }
-  .leasebot-hero h1 { font-size: clamp(2.8rem, 3.2vw + 1.6rem, 5rem); }
-  .leasebot-privacy { margin-bottom: 16px; }
+  .leasebot-hero h1 {
+    font-size: clamp(4.4rem, 3.4vw + 3.1rem, 7.25rem);
+    font-weight: 800;
+    letter-spacing: -0.07em;
+    line-height: 0.88;
+    max-width: 12ch;
+  }
+  .leasebot-wordmark { font-size: clamp(2rem, 1.2rem + 1.6vw, 2.8rem); margin-bottom: 12px; }
+  .leasebot-huge-steps p { font-size: clamp(2.8rem, 1.4rem + 3.2vw, 4.8rem); }
 }
 @media (prefers-reduced-motion: reduce) {
   .leasebot-hero .leasebot-mascot,
   .leasebot-eye,
-  .leasebot-eye-right { animation: none; }
+  .leasebot-eye-right,
+  .leasebot-wordmark,
+  .leasebot-approve,
+  .leasebot-dotline span { animation: none; }
   .leasebot-reveal,
   .leasebot-reveal.is-in { opacity: 1; transform: none; transition: none; }
+  .leasebot-dotline { display: none; animation: none; }
+  .leasebot-bubble,
+  .leasebot-bubble.step-1,
+  .leasebot-bubble.step-2,
+  .leasebot-bubble.step-3,
+  .leasebot-bubble.step-4 {
+    animation: none;
+    opacity: 1;
+    max-height: none;
+    margin-top: 0;
+    margin-bottom: 10px;
+    padding: 12px 14px;
+    transform: none;
+    overflow: visible;
+  }
+  .leasebot-approve { box-shadow: 0 0 16px rgba(242, 169, 0, 0.45); }
+  .leasebot-wordmark {
+    text-shadow:
+      0 0 14px rgba(242, 169, 0, 0.7),
+      0 0 28px rgba(242, 169, 0, 0.35);
+  }
 }
 
-.leasebot-lang-bar {
-  width: min(1120px, calc(100% - 32px));
-  margin: 0 auto;
-  padding: 12px 0 0;
-  display: flex;
-  justify-content: flex-end;
+.leasebot-hero-top .lang-switch button {
+  min-height: 32px;
+  padding: 4px 11px;
+  font-size: 0.8rem;
 }
 .lang-switch, .leasebot-lang-switch {
   display: inline-flex;
@@ -3939,6 +4168,10 @@ body { background: var(--bg); color: var(--navy); font-size: var(--fs-body); lin
   border-radius: 999px;
   padding: 3px;
   background: rgba(8, 12, 22, 0.55);
+}
+.topbar .lang-switch {
+  background: #fff;
+  border-color: var(--line);
 }
 .lang-switch button {
   min-height: 36px;
@@ -3952,6 +4185,7 @@ body { background: var(--bg); color: var(--navy); font-size: var(--fs-body); lin
   font-weight: 700;
   cursor: pointer;
 }
+.topbar .lang-switch button { color: var(--navy); }
 .lang-switch button[aria-pressed="true"] {
   background: #f2a900;
   color: var(--navy);

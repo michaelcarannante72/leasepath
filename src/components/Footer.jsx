@@ -3,12 +3,14 @@ import { useLanguage } from './languageContext.js'
 import { FOOTER_GROUPS, SITE_PAGES } from '../sitePages.js'
 import { SEARCH_PAGES } from '../data/voucherSearches.js'
 import { OPEN_ANALYTICS_CHOICE } from './AnalyticsConsent.jsx'
+import { LEASEBOT_ONLY } from '../features.js'
 
 function AnalyticsChoiceLink() {
   return <button type="button" className="text-button footer-analytics" onClick={() => window.dispatchEvent(new Event(OPEN_ANALYTICS_CHOICE))}>{tx("Analytics choice")}</button>
 }
 
 const COMPACT_SLUGS = ['help', 'privacy', 'terms', 'submit-listings']
+const LEGAL_SLUGS = ['privacy', 'terms', 'cookies']
 
 function pageHref(slug) {
   if (slug === 'privacy' || slug === 'terms') return `/${slug}`
@@ -41,6 +43,22 @@ function NotAffiliated() {
 }
 
 export function Footer({ compact = false }) {
+  if (LEASEBOT_ONLY) {
+    return (
+      <footer className="site-footer site-footer-compact site-footer-leasebot">
+        <nav aria-label={tx("Footer")}>
+          {LEGAL_SLUGS.map((slug) => {
+            const page = SITE_PAGES.find((item) => item.slug === slug)
+            return page ? (
+              <a key={page.slug} href={pageHref(page.slug)}>{page.title}</a>
+            ) : null
+          })}
+          <AnalyticsChoiceLink />
+        </nav>
+        <NotAffiliated />
+      </footer>
+    )
+  }
   if (compact) {
     return (
       <footer className="site-footer site-footer-compact">

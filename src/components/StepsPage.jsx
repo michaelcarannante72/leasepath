@@ -70,7 +70,7 @@ export function StepsPage({ checked, onToggle, onAsk }) {
         </ol>
       </section>
 
-      <a className="roadmap-feature" href="#/roadmap" aria-labelledby="roadmap-callout-title">
+      <a className="roadmap-feature" href="#/roadmap">
         <span className="roadmap-copy">
           <span className="eyebrow">{tx("Roadmap")}</span>
           <strong id="roadmap-callout-title" className="roadmap-title">{tx("Shelter to housing roadmap")}</strong>

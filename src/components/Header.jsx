@@ -5,7 +5,7 @@ import { NAV_TABS } from '../navTabs.js'
 import { Icon } from './Icon.jsx'
 import { LanguageToggle } from './LanguageToggle.jsx'
 import { useLanguage } from './languageContext.js'
-import { SPANISH_UI_ENABLED } from '../features.js'
+import { LEASEBOT_ONLY, SPANISH_UI_ENABLED } from '../features.js'
 
 export function Header({ canInstall, onInstall, planCurrent, session, signingIn, signInError, onGoogleCredential, onEmailAuth, onSignOut, navActive, onNav }) {
   const { t } = useLanguage()
@@ -24,8 +24,8 @@ export function Header({ canInstall, onInstall, planCurrent, session, signingIn,
         <img className="brand-mark" src="/favicon.svg" alt="" width="36" height="36" />
         <span className="brand-name" aria-hidden="true">{tx("Lease")}<span>{tx("Path")}</span></span>
       </a>
-      <p className="topbar-note">{tx("HASA · CityFHEPS · Section 8")}</p>
-      {onNav && (
+      {!LEASEBOT_ONLY && <p className="topbar-note">{tx("HASA · CityFHEPS · Section 8")}</p>}
+      {onNav && !LEASEBOT_ONLY && (
         <nav className="topnav" aria-label={t("nav.main")}>
           {NAV_TABS.map((tab) => (
             <button
@@ -42,17 +42,19 @@ export function Header({ canInstall, onInstall, planCurrent, session, signingIn,
       )}
       <div className="topbar-actions">
         {SPANISH_UI_ENABLED && <LanguageToggle />}
-        {canInstall && (
+        {!LEASEBOT_ONLY && canInstall && (
           <button type="button" className="install-button" onClick={onInstall}>
             <span className="install-long">{t("install.long")}</span>
             <span className="install-short">{t("install.short")}</span>
           </button>
         )}
+        {!LEASEBOT_ONLY && (
         <a className="plan-pill" href="#/plan" aria-label={tx("My voucher")} aria-current={planCurrent ? 'page' : undefined}>
           <span className="plan-mark" aria-hidden="true"><Icon name="heart" size={15} /></span>
           <span className="plan-pill-label" aria-hidden="true">{t("nav.plan")}</span>
           <Icon name="chevron" size={16} />
         </a>
+        )}
         {session?.signedIn ? (
           <>
             <span className="account-email" title={session.email}>{session.email}</span>

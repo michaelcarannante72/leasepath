@@ -8,6 +8,7 @@ import { guardChat } from './chatGuard.js'
 import { guardListingSubmit } from './listingsGuard.js'
 import { comingSoonHtml, isApiPath, isAssetPath, PAUSED_ROBOTS, PAUSED_SITEMAP, sitePaused } from './pause.js'
 import { MAX_PHOTOS_TOTAL_BYTES } from '../src/data/listingForm.js'
+import { LEASEBOT_ONLY, leasebotSitemapXml } from '../src/features.js'
 
 export { UsageMeter, AccountBook }
 
@@ -135,6 +136,15 @@ async function route(request, env) {
     // '/' and the two crawler files are listed in wrangler.jsonc's run_worker_first only
     // so the pause switch (worker/pause.js) can answer them. With the site live this hands
     // each one straight back to the real asset — the app shell, robots.txt, the sitemap.
+    if (url.pathname === '/sitemap.xml' && LEASEBOT_ONLY) {
+      return withSecurity(new Response(leasebotSitemapXml(), {
+        status: 200,
+        headers: {
+          'content-type': 'application/xml; charset=utf-8',
+          'cache-control': 'public, max-age=300',
+        },
+      }))
+    }
     if (url.pathname === '/' || url.pathname === '/robots.txt' || url.pathname === '/sitemap.xml') {
       return env.ASSETS.fetch(request)
     }

@@ -994,6 +994,13 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   text-underline-offset: 3px;
 }
 .cookie-actions .button { margin-left: auto; }
+.cookie-prompt .cookie-short { display: none; }
+@media (max-width: 640px) {
+  .cookie-prompt { display: flex; align-items: center; gap: 8px; padding: 6px 10px; }
+  .cookie-prompt h2, .cookie-prompt .cookie-long, .cookie-actions a[href="/privacy"] { display: none; }
+  .cookie-prompt .cookie-short { display: block; font-size: 0.78rem; }
+  .cookie-actions { flex: none; flex-wrap: nowrap; gap: 8px; }
+}
 
 .dock {
   position: relative;

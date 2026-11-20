@@ -26,7 +26,8 @@ export function CookiePrompt() {
     <aside className="cookie-prompt" aria-labelledby="cookie-title">
       <div>
         <h2 id="cookie-title">{tx("Cookies on this phone")}</h2>
-        <p>{tx("LeasePath uses cookies to keep you signed in, to protect Google sign-in, and to count free questions to Ruby. They are not used to sell information. If you tap Allow on the analytics prompt, Google Analytics sets its own cookies (_ga) for analytics only. There are no advertising cookies and no sale of information. OK only hides this reminder.")}</p>
+        <p className="cookie-short">{tx("We use cookies to keep you signed in. No ads, no selling your info.")}</p>
+        <p className="cookie-long">{tx("LeasePath uses cookies to keep you signed in, to protect Google sign-in, and to count free questions to Ruby. They are not used to sell information. If you tap Allow on the analytics prompt, Google Analytics sets its own cookies (_ga) for analytics only. There are no advertising cookies and no sale of information. OK only hides this reminder.")}</p>
       </div>
       <div className="cookie-actions">
         <a href="/privacy">{tx("Privacy notice")}</a>

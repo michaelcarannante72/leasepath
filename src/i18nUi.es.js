@@ -312,6 +312,7 @@ export const UI_ES = {
   "Preview": "Vista previa",
   "Not an official HRA, NYCHA, or HPD form. Last reviewed": "No es un formulario oficial de HRA, NYCHA ni HPD. Última revisión",
   "Cookies on this phone": "Cookies en este teléfono",
+  "We use cookies to keep you signed in. No ads, no selling your info.": "Usamos cookies para mantener tu sesión iniciada. Sin anuncios y sin vender tu información.",
   "LeasePath uses cookies to keep you signed in, to protect Google sign-in, and to count free questions to Ruby. They are not used to sell information. If you tap Allow on the analytics prompt, Google Analytics sets its own cookies (_ga) for analytics only. There are no advertising cookies and no sale of information. OK only hides this reminder.": "LeasePath usa cookies para mantener su sesión, proteger el inicio con Google y contar las preguntas gratis a Ruby. No se usan para vender información. Si toca Permitir en el aviso de analítica, Google Analytics pone sus propias cookies (_ga) solo para analítica. No hay cookies de publicidad ni venta de información. OK solo oculta este aviso.",
   "Cookie details": "Detalles de cookies",
   "Your data is deleted": "Sus datos fueron borrados",

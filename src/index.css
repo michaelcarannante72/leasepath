@@ -2721,17 +2721,6 @@ body { overflow: visible; overflow-x: clip; }
   .app { padding-bottom: 0 !important; min-height: 0 !important; }
 }
 
-/* ---- HRA apartment list cards (data in src/data/sheetListings.js) ---- */
-.sheet-card .card-body { display: grid; gap: 6px; }
-.sheet-card .sheet-unit { font-weight: 600; color: var(--muted); }
-.sheet-label { margin: 0; font-size: 0.875rem; font-weight: 600; color: var(--navy); }
-.sheet-fit { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 0.9rem; }
-.sheet-fit li { padding-left: 1.1em; position: relative; overflow-wrap: anywhere; }
-.sheet-fit li::before { content: '✓'; position: absolute; left: 0; color: var(--navy); }
-.sheet-fit li.sheet-fit-over::before { content: '!'; font-weight: 800; color: var(--muted); }
-.sheet-phone-flag { margin: 0; font-size: 0.9rem; color: var(--muted); overflow-wrap: anywhere; }
-.sheet-card .card-call { overflow-wrap: anywhere; }
-
 /* =====================================================================================
    LeasePath design system v2 (mobile-first redesign).
    Everything below sits on top of the older rules and is the source of truth for:
@@ -2815,7 +2804,7 @@ body { background: var(--bg); color: var(--navy); font-size: var(--fs-body); lin
 }
 
 /* ---- ONE card ---- */
-.card, .sheet-card, .resource-card, .free-food-card, .apply-card, .panel, .page .panel,
+.card, .resource-card, .free-food-card, .apply-card, .panel, .page .panel,
 .page aside[class$="-callout"], .borough-guides-callout, .partners-callout, .help-now, .roadmap-callout,
 .install-guide, .plan-tools, .step, .next-action, .post-card, .youth-card, .utility-card, .heat-card,
 .rights-movein-card, .waitlist-card, .pantry-card, .borough-guide-card, .partner-directory .partner-card,
@@ -3010,13 +2999,9 @@ body { background: var(--bg); color: var(--navy); font-size: var(--fs-body); lin
 .card { overflow: hidden; transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease); }
 @media (hover: hover) { .card:hover { box-shadow: var(--e2); transform: translateY(-2px); } }
 .card .card-body { padding: var(--s2); }
-.card .rent, .sheet-rent { margin: 0; font-size: 1.625rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; color: var(--navy); }
-.card .rent span, .sheet-rent span { font-size: var(--fs-small); font-weight: 600; color: var(--muted); margin-left: 2px; }
-.card .size, .sheet-meta { margin: 0; font-size: 0.9375rem; color: var(--muted); }
-.sheet-meta strong { color: var(--navy); font-weight: 700; }
-.sheet-card .card-top { display: flex; align-items: center; justify-content: space-between; gap: var(--s1); flex-wrap: wrap; }
-.sheet-card h3 { font-size: var(--fs-h3); margin-top: var(--s1); }
-.sheet-card .card-body { gap: var(--s1); }
+.card .rent { margin: 0; font-size: 1.625rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; color: var(--navy); }
+.card .rent span { font-size: var(--fs-small); font-weight: 600; color: var(--muted); margin-left: 2px; }
+.card .size { margin: 0; font-size: 0.9375rem; color: var(--muted); }
 .qualify-pill {
   display: inline-flex;
   align-items: center;
@@ -3032,13 +3017,6 @@ body { background: var(--bg); color: var(--navy); font-size: var(--fs-body); lin
 }
 .qualify-pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 .qualify-pill.is-over { background: var(--gold-soft); color: #7a4706; }
-.sheet-label { font-size: var(--fs-small); font-weight: 600; color: var(--navy); padding: var(--s1) 12px; border-radius: var(--r-sm); background: var(--navy-soft); }
-.sheet-fit { font-size: 0.9375rem; }
-.sheet-card .card-actions { margin-top: var(--s1); }
-.sheet-card .card-call { width: 100%; }
-.sheet-listings > h2 { margin-top: var(--s1); }
-.voucher-ready.sheet-listings { padding: var(--s3) var(--s2); background: transparent; border: 0; box-shadow: none; }
-.voucher-ready.sheet-listings > p { color: var(--muted); max-width: var(--measure); }
 .pills { display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: var(--s1) 0 0; list-style: none; }
 .pill { padding: 2px 10px; border-radius: var(--r-pill); font-size: 0.8125rem; font-weight: 650; }
 
@@ -3215,18 +3193,8 @@ body { background: var(--bg); color: var(--navy); font-size: var(--fs-body); lin
 .home-search .program-chips button[aria-pressed="true"] { background: var(--navy); border-color: var(--navy); color: #fff; box-shadow: 0 6px 16px rgba(28, 45, 66, 0.22); }
 .home-search .program-chips button[aria-pressed="true"]::before { content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 8px; border-radius: 50%; background: #F2A900; vertical-align: middle; }
 /* Section rhythm below the hero: clear headings with a short gold rule. */
-.sheet-listings > h2, .results-bar + * h2, .voucher-ready > h2 { font-size: var(--fs-h2); letter-spacing: -0.015em; }
-.sheet-listings > h2::after, .voucher-ready > h2::after { content: ""; display: block; width: 32px; height: 3px; margin-top: var(--s1); border-radius: 3px; background: #F2A900; }
-
-/* ---- Tighter listing cards: notice and fit lines in compact small type. ---- */
-.sheet-card .card-body { gap: 6px; }
-.sheet-card h3 { font-size: 1rem; margin: 0; }
-.sheet-card .sheet-label { margin: 4px 0 0; padding: 0; background: none; border: 0; font-size: 0.8125rem; font-weight: 600; color: var(--muted); }
-.sheet-card .sheet-fit { margin: 2px 0 0; padding: 0; display: grid; gap: 2px; }
-.sheet-card .sheet-fit li { margin: 0; font-size: 0.875rem; line-height: 1.35; }
-.sheet-card .fine { margin: 2px 0 0; font-size: 0.8125rem; line-height: 1.35; }
-.sheet-card .card-actions { margin-top: var(--s1); }
-.sheet-card .card-call { min-height: 48px; }
+.results-bar + * h2, .voucher-ready > h2 { font-size: var(--fs-h2); letter-spacing: -0.015em; }
+.voucher-ready > h2::after { content: ""; display: block; width: 32px; height: 3px; margin-top: var(--s1); border-radius: 3px; background: #F2A900; }
 
 @media (prefers-reduced-motion: reduce) {
   .hero-text > *, .home-search { animation: none; }
@@ -3305,10 +3273,10 @@ body { background: var(--bg); color: var(--navy); font-size: var(--fs-body); lin
 .card-open { display: flex; flex-direction: column; min-height: 0; }
 .card { position: relative; }
 .card .facade { width: 100%; height: auto; min-height: 0; aspect-ratio: 16 / 9; }
-.card-body, .sheet-card .card-body { padding: var(--s2); padding-right: var(--s2); min-width: 0; }
+.card-body { padding: var(--s2); padding-right: var(--s2); min-width: 0; }
 .card-top { flex-wrap: wrap; row-gap: 4px; }
-.card .rent, .sheet-rent { white-space: nowrap; flex: 0 0 auto; }
-.card .beds, .card .card-size, .sheet-meta { flex-basis: 100%; overflow-wrap: anywhere; }
+.card .rent { white-space: nowrap; flex: 0 0 auto; }
+.card .beds, .card .card-size { flex-basis: 100%; overflow-wrap: anywhere; }
 .card h2, .card h3, .card-area { overflow-wrap: break-word; hyphens: auto; }
 .card .pills { display: flex; flex-wrap: wrap; gap: 6px; }
 .save { top: 10px; right: 10px; z-index: 2; }
@@ -3540,3 +3508,68 @@ body { background: var(--bg); color: var(--navy); font-size: var(--fs-body); lin
 .rented-card h2, .takedown-card h2 { margin: 0; }
 .rented-list { display: grid; gap: 10px; margin: 8px 0 0; padding: 0; list-style: none; }
 .rented-list li { padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
+
+/* ---- Landlord / broker pitch and search empty state ---- */
+.landlord-pitch {
+  margin: 0;
+  padding: var(--s3) var(--s2);
+  background: var(--navy);
+  color: #fff;
+}
+.landlord-pitch .eyebrow { color: var(--gold); margin: 0 0 var(--s1); }
+.landlord-pitch h2 {
+  margin: 0 0 var(--s2);
+  color: #fff;
+  font-size: var(--fs-h2, 1.45rem);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  max-width: 22ch;
+}
+.landlord-pitch h2::after {
+  content: "";
+  display: block;
+  width: 32px;
+  height: 3px;
+  margin-top: var(--s1);
+  border-radius: 3px;
+  background: #F2A900;
+}
+.landlord-pitch p { margin: 0 0 var(--s2); color: #d7dee8; max-width: 62ch; line-height: 1.5; }
+.landlord-pitch .button-row { margin-top: var(--s1); }
+.landlord-pitch .button { background: var(--gold); color: var(--navy); }
+.landlord-pitch .button-quiet { background: transparent; color: #fff; border-color: rgba(255, 255, 255, 0.35); }
+.landlord-pitch.is-compact {
+  background: var(--gold-soft);
+  color: var(--navy);
+  border-left: 4px solid var(--gold);
+  padding: var(--s2);
+  margin-top: var(--s3);
+  border-radius: var(--r-md, 14px);
+}
+.landlord-pitch.is-compact .eyebrow { color: var(--brick); }
+.landlord-pitch.is-compact h2 { color: var(--navy); max-width: none; font-size: 1.2rem; }
+.landlord-pitch.is-compact h2::after { display: none; }
+.landlord-pitch.is-compact p { color: var(--muted); margin-bottom: var(--s2); }
+.landlord-pitch.is-compact .button-quiet { color: var(--navy); border-color: var(--line); background: #fff; }
+
+.search-empty { padding: var(--s3) var(--s2); }
+.search-empty > h2 { font-size: var(--fs-h2, 1.45rem); letter-spacing: -0.015em; margin: 0 0 var(--s1); }
+.search-empty > h2::after {
+  content: "";
+  display: block;
+  width: 32px;
+  height: 3px;
+  margin-top: var(--s1);
+  border-radius: 3px;
+  background: #F2A900;
+}
+.search-empty > p, .search-empty > h3 { max-width: var(--measure, 62ch); }
+.search-empty > p { margin: 0 0 var(--s2); color: var(--muted); line-height: 1.5; }
+.search-empty > h3 { margin: var(--s3) 0 var(--s1); font-size: 1.05rem; }
+.search-empty-limit { margin: 0 0 var(--s2); font-weight: 600; }
+.search-empty .popular-search-chips { margin: 0 0 var(--s1); }
+.search-empty .button-row { margin: 0 0 var(--s1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .landlord-pitch .button, .search-empty .button { transition: none; }
+}

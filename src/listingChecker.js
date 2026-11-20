@@ -1,4 +1,3 @@
-import { matchSheetListing } from './data/sheetListings.js'
 // On-device listing paste checker. Parses rent, beds, and borough from listing text,
 // compares against verified NYCHA Section 8 / CityFHEPS / FHEPS limits only
 // (no HPD, HCR, or HASA dollar checks), and flags common scam patterns.
@@ -273,7 +272,6 @@ export function checkListing(raw) {
     comparisons,
     flags,
     checklist,
-    sheetMatches: empty ? [] : matchSheetListing(text),
     questions: SUGGESTED_QUESTIONS,
     sizeLabel: sizeLabel(parsed),
   }

@@ -1,7 +1,7 @@
 import { SHOW_SAMPLE_LISTINGS } from './features.js'
 import { SAMPLE_LISTINGS } from './data/sampleListings.archive.js'
 
-/** Only the HRA-list apartments render; the sample listings are archived behind a flag. */
+/** Sample listings stay archived behind this flag. Live search shows landlord-submitted units only. */
 export const LISTINGS = SHOW_SAMPLE_LISTINGS ? SAMPLE_LISTINGS : []
 
 export const BOROUGHS = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island']

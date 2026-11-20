@@ -1,7 +1,7 @@
 // Bump CACHE_VERSION when this file's caching rules change. Hashed files under /assets/
 // are refreshed on every install, and old ones are pruned on activate.
 const CACHE_PREFIX = 'leasepath-shell-'
-const CACHE_VERSION = 'v13' // coming-soon pause: a cached shell must not outlive the switch
+const CACHE_VERSION = 'v14' // drop cached bundles that still held the HRA apartment list
 const CACHE_NAME = `${CACHE_PREFIX}${CACHE_VERSION}`
 
 // App shell + icons. Hash routes (#/resources, #/steps, #/plan, …) load from '/' once cached,

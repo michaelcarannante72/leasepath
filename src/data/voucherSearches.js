@@ -175,6 +175,28 @@ export function buildSearchPages() {
 
 export const SEARCH_PAGES = buildSearchPages()
 
+
+const BEDS_TO_SIZE = { Studio: 'studio', 1: '1br', 2: '2br', 3: '3br', '4+': '4br', SRO: 'sro' }
+const PROGRAM_TO_VOUCHER = { CityFHEPS: 'cityfheps', 'Section 8': 'nycha-section-8' }
+
+/** Popular-search pages that match the in-app filters, for empty-state Craigslist / StreetEasy links. */
+export function searchPagesForFilters(filters = {}) {
+  const boroughSlug = filters.borough && filters.borough !== 'All'
+    ? BOROUGHS.find((item) => item.name === filters.borough)?.slug
+    : null
+  const sizeSlug = BEDS_TO_SIZE[filters.beds] || null
+  const voucherSlug = PROGRAM_TO_VOUCHER[filters.program] || null
+
+  let pages = SEARCH_PAGES
+  if (voucherSlug) pages = pages.filter((page) => page.voucherSlug === voucherSlug)
+  if (boroughSlug) pages = pages.filter((page) => page.boroughSlug === boroughSlug)
+  if (sizeSlug) pages = pages.filter((page) => page.sizeSlug === sizeSlug)
+  if (!voucherSlug && !boroughSlug && !sizeSlug) {
+    pages = SEARCH_PAGES.filter((page) => page.voucherSlug === 'cityfheps' && page.sizeSlug === '1br')
+  }
+  return pages.slice(0, 8)
+}
+
 export function findSearchPage(voucherSlug, boroughSlug, sizeSlug) {
   return SEARCH_PAGES.find(
     (page) => page.voucherSlug === voucherSlug && page.boroughSlug === boroughSlug && page.sizeSlug === sizeSlug,

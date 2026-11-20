@@ -1,104 +1,115 @@
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
+import { join, relative } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import test from 'node:test'
-import { SHEET_LABEL, SHEET_LISTINGS, PUBLIC_SHEET_LISTINGS, filterSheetListings, isFilled, matchSheetListing, sheetListingsFor, telHref } from '../src/data/sheetListings.js'
-import { searchHtmlForPath } from '../server/searchPages.js'
+import { searchHtmlForPath, sitemapXml } from '../server/searchPages.js'
 import { checkListing } from '../src/listingChecker.js'
+import { SHOW_SAMPLE_LISTINGS } from '../src/features.js'
+import { LISTINGS } from '../src/data.js'
+import { SAMPLE_LISTINGS } from '../src/data/sampleListings.archive.js'
+import { searchPagesForFilters } from '../src/data/voucherSearches.js'
 import { UI_ES } from '../src/i18nUi.es.js'
 
-const csv = readFileSync('/workspace/leasepath/listings/sheet-2026-10-27.csv', 'utf8')
+const root = fileURLToPath(new URL('..', import.meta.url))
 
-test('35 rows, label is the HRA wording with no endorsement words', () => {
-  assert.equal(SHEET_LISTINGS.length, 35)
-  assert.equal(SHEET_LABEL, "From an HRA apartment list, Oct 2026. Call to confirm it's still available.")
-  const src = readFileSync(new URL('../src/components/SheetListings.jsx', import.meta.url), 'utf8') + readFileSync(new URL('../src/data/sheetListings.js', import.meta.url), 'utf8')
-  assert.doesNotMatch(src.replace(/^\/\/.*$/gm, ''), /HRA-approved|official|endorse|partner|accepts vouchers/i)
-  assert.ok(UI_ES[SHEET_LABEL])
-})
+const HRA_MARKERS = [
+  '1405 Vyse',
+  '2515 Olinville',
+  '785 Fairmount',
+  '293 Riverside Drive',
+  '167 Sands Street',
+  '35-16 28th Street',
+  '876 Greene Avenue',
+  '200 Marcy Place',
+  '917-563-2458',
+  '718-582-3710',
+  '718-313-3069',
+  '212-672-6350',
+  'hra-sheet-',
+  'Apartments from an HRA list',
+  'From an HRA apartment list',
+  'SHEET_LISTINGS',
+  'sheetListings.js',
+]
 
-test('rows match the saved transcription exactly', () => {
-  const lines = csv.trim().split('\n').slice(1)
-  assert.equal(lines.length, 35)
-  for (const [i, unit] of SHEET_LISTINGS.entries()) {
-    const line = lines[i]
-    assert.ok(line.startsWith(`${unit.number},${unit.rooms},${unit.street},${unit.unit || ''},${unit.borough},`), line)
-    assert.ok(line.includes(`,${unit.rent},${unit.contact}`), line)
+function walk(dir, out = []) {
+  for (const name of readdirSync(dir)) {
+    if (name === 'node_modules' || name === 'dist' || name === '.git' || name === '.wrangler' || name === 'social' || name === 'images' || name === 'fonts' || name === 'icons') continue
+    const path = join(dir, name)
+    const stat = statSync(path)
+    if (stat.isDirectory()) walk(path, out)
+    else if (/\.(js|jsx|css|html|xml|json|txt|md)$/.test(name)) out.push(path)
   }
-})
+  return out
+}
 
-test('Harlem rows are Manhattan with the neighborhood kept; Marcy Place stays Bronx', () => {
-  for (const n of [4, 5, 21, 22, 23]) assert.deepEqual([SHEET_LISTINGS[n - 1].borough, SHEET_LISTINGS[n - 1].neighborhood], ['Manhattan', 'Harlem'])
-  assert.deepEqual([SHEET_LISTINGS[10].borough, SHEET_LISTINGS[10].neighborhood], ['Manhattan', 'West Harlem'])
-  assert.equal(SHEET_LISTINGS[32].borough, 'Bronx')
-})
-
-test('row 8 short phone gets no tel link; all others do', () => {
-  assert.equal(SHEET_LISTINGS[7].tel, null)
-  assert.ok(SHEET_LISTINGS[7].phoneFlag)
-  assert.equal(SHEET_LISTINGS.filter((u) => !u.tel).length, 1)
-  assert.equal(telHref('(917) 563-2458'), 'tel:+19175632458')
-})
-
-test('voucher fit uses the verified limits; #13 is over for a 1BR', () => {
-  const limits = { studio: [2604, 2604, 2646], '1br': [2734, 2734, 2762], '2br': [2997, 2997, 3058], '3br': [3753, 3753, 3811] }
-  for (const unit of SHEET_LISTINGS) {
-    assert.deepEqual(unit.fit.map((r) => r.limit), limits[unit.sizeSlug], unit.id)
-    for (const r of unit.fit) assert.equal(r.over, unit.rent > r.limit)
+test('HRA apartment list files and units are gone from the current tree', () => {
+  assert.equal(existsSync(new URL('../src/data/sheetListings.js', import.meta.url)), false)
+  assert.equal(existsSync(new URL('../src/components/SheetListings.jsx', import.meta.url)), false)
+  const hits = []
+  for (const file of walk(root)) {
+    const text = readFileSync(file, 'utf8')
+    // This test file names a few markers on purpose; skip it.
+    if (file.endsWith('sheet-listings.test.js')) continue
+    for (const marker of HRA_MARKERS) {
+      if (text.includes(marker)) hits.push(`${relative(root, file)}: ${marker}`)
+    }
   }
-  assert.ok(SHEET_LISTINGS[12].fit.every((r) => r.over && r.overBy >= 738))
-  assert.ok(SHEET_LISTINGS[1].fit.every((r) => !r.over))
+  assert.deepEqual(hits, [], hits.join('\n'))
 })
 
-test('search filters apply to sheet listings', () => {
-  assert.deepEqual(filterSheetListings({ borough: 'Bronx', beds: '2' }).map((u) => u.number), [17, 20, 19, 18, 16])
-  assert.equal(filterSheetListings({}).length, 33)
-  assert.ok(filterSheetListings({ q: 'harlem' }).length === 6)
-  assert.ok(filterSheetListings({ maxRent: '2000' }).every((u) => u.rent <= 2000))
-  assert.deepEqual(filterSheetListings({ savedOnly: true }), [])
-  assert.equal(filterSheetListings({ beds: 'SRO' }).length, 0)
+test('archived sample listings do not contain HRA-list addresses or phones', () => {
+  const text = readFileSync(new URL('../src/data/sampleListings.archive.js', import.meta.url), 'utf8')
+  for (const marker of HRA_MARKERS) assert.equal(text.includes(marker), false, marker)
+  assert.ok(SAMPLE_LISTINGS.length > 0, 'archived sample listings are kept for tests')
 })
 
-test('units a landlord told us are rented are hidden from everything public, and nothing is deleted', () => {
-  assert.equal(SHEET_LISTINGS.length, 35, 'the full transcription is kept')
-  assert.equal(PUBLIC_SHEET_LISTINGS.length, 33)
-  assert.deepEqual(PUBLIC_SHEET_LISTINGS.filter((u) => isFilled(u.number)), [])
-  for (const number of [27, 29]) {
-    const unit = SHEET_LISTINGS[number - 1]
-    assert.ok(unit, `row ${number} is still in the transcript`)
-    assert.equal(isFilled(number), true)
-    assert.equal(filterSheetListings({ q: unit.street }).length, 0, `${unit.street} is not searchable`)
-    assert.deepEqual(matchSheetListing(unit.street), [], `${unit.street} does not match in the checker`)
-    assert.deepEqual(matchSheetListing(unit.contact), [], `${unit.contact} does not match in the checker`)
-  }
-  assert.equal(isFilled(13), false)
-})
-
-test('SEO pages list matching units with you-may-qualify / over wording', () => {
-  const html = searchHtmlForPath('/search/nycha-section-8/manhattan/1br')
-  assert.match(html, /293 Riverside Drive #5C/)
-  assert.match(html, /Over the NYCHA Section 8 limit \(\$2,734\) by \$766/)
-  assert.match(html, /You may qualify with NYCHA Section 8/)
-  assert.match(html, /tel:\+12126726350/)
-  assert.doesNotMatch(searchHtmlForPath('/search/cityfheps/staten-island/1br'), /HRA list/)
-  assert.equal(sheetListingsFor('bronx', 'studio').length, 3)
-  assert.match(searchHtmlForPath('/search/fheps/bronx/1br'), /Contact as printed: \(212\) 729-815/)
-})
-
-test('listing checker notes a pasted ad that names a listed address or phone', () => {
-  assert.deepEqual(checkListing('Nice 1br, 293 Riverside Drive, $3500').sheetMatches.map((u) => u.number), [13])
-  assert.deepEqual(matchSheetListing('call 718-313-3069').map((u) => u.number), [33])
-  assert.deepEqual(checkListing('2br in Queens $2400 call 555 0100').sheetMatches, [])
-})
-
-test('only HRA-list apartments render: sample listings are archived behind SHOW_SAMPLE_LISTINGS', async () => {
-  const { SHOW_SAMPLE_LISTINGS } = await import('../src/features.js')
-  const { LISTINGS } = await import('../src/data.js')
-  const { SAMPLE_LISTINGS } = await import('../src/data/sampleListings.archive.js')
+test('sample listings stay archived; search shows the empty state and landlord pitch', () => {
   assert.equal(SHOW_SAMPLE_LISTINGS, false)
   assert.deepEqual(LISTINGS, [])
-  assert.ok(SAMPLE_LISTINGS.length > 0, 'archived, not deleted')
   const page = readFileSync(new URL('../src/components/SearchPage.jsx', import.meta.url), 'utf8')
-  assert.match(page, /<SheetListings filters=\{filters\} primary onChange=\{onChange\} \/>/)
-  const sheet = readFileSync(new URL('../src/components/SheetListings.jsx', import.meta.url), 'utf8')
-  assert.match(sheet, /No HRA-list apartment matches these filters\./)
+  assert.match(page, /<LandlordPitch \/>/)
+  assert.match(page, /<SearchEmptyState filters=\{filters\} \/>/)
+  assert.doesNotMatch(page, /SheetListings/)
+  const pitch = readFileSync(new URL('../src/components/LandlordPitch.jsx', import.meta.url), 'utf8')
+  const empty = readFileSync(new URL('../src/components/SearchEmptyState.jsx', import.meta.url), 'utf8')
+  const headline = 'Place your apartment on LeasePath and reach voucher-ready tenants.'
+  assert.match(pitch, /Place your apartment on LeasePath and reach voucher-ready tenants/)
+  assert.match(empty, /Search listings at this limit/)
+  assert.match(empty, /Housing Connect lotteries/)
+  assert.ok(UI_ES[headline])
+  assert.notEqual(UI_ES[headline], headline)
+})
+
+test('SEO pages no longer embed HRA units and include the landlord pitch plus search links', () => {
+  const html = searchHtmlForPath('/search/nycha-section-8/manhattan/1br')
+  assert.doesNotMatch(html, /293 Riverside|1405 Vyse|2515 Olinville|HRA list|HRA apartment/)
+  assert.match(html, /Place your apartment on LeasePath and reach voucher-ready tenants/)
+  assert.match(html, /\/#\/list-unit/)
+  assert.match(html, /Craigslist/)
+  assert.match(html, /StreetEasy/)
+  assert.match(html, /Housing Connect/)
+  assert.doesNotMatch(searchHtmlForPath('/search/cityfheps/staten-island/1br'), /HRA list|1405 Vyse/)
+  const sitemap = sitemapXml()
+  for (const marker of ['1405 Vyse', '2515 Olinville', 'hra-sheet-', 'HRA list']) {
+    assert.equal(sitemap.includes(marker), false, marker)
+  }
+})
+
+test('listing checker no longer matches former HRA-list addresses or phones', () => {
+  const result = checkListing('Nice 1br, 293 Riverside Drive, $3500')
+  assert.equal('sheetMatches' in result, false)
+  assert.ok(result.parsed.rent === 3500)
+})
+
+test('searchPagesForFilters returns prefilled Craigslist and StreetEasy pages', () => {
+  const all = searchPagesForFilters({})
+  assert.ok(all.length > 0)
+  assert.ok(all.every((page) => page.voucherSlug === 'cityfheps' && page.sizeSlug === '1br'))
+  const exact = searchPagesForFilters({ program: 'CityFHEPS', borough: 'Bronx', beds: '1' })
+  assert.equal(exact.length, 1)
+  assert.match(exact[0].craigslist, /craigslist\.org/)
+  assert.match(exact[0].streeteasy, /streeteasy\.com/)
+  assert.equal(exact[0].borough.name, 'Bronx')
 })

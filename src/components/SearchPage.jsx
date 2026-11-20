@@ -5,7 +5,8 @@ import { Icon } from './Icon.jsx'
 import { LandingExtras, LandingHero } from './LandingHero.jsx'
 import { ACCESS_HRA_URL, BOROUGHS, HOMEBASE_URL } from '../data.js'
 import { VoucherReadyUnits } from './VoucherReadyUnits.jsx'
-import { SheetListings } from './SheetListings.jsx'
+import { LandlordPitch } from './LandlordPitch.jsx'
+import { SearchEmptyState } from './SearchEmptyState.jsx'
 import { SponsoredSlot } from './SponsoredSlot.jsx'
 import { PROGRAMS, cardFlags, cardLabel, cardText, money, sizeLabel, utilityLabel } from '../fit.js'
 import { useLanguage } from './languageContext.js'
@@ -87,6 +88,7 @@ export function SearchPage({
   return (
     <div className="landing">
       <LandingHero />
+      <LandlordPitch />
       {/* One compact search panel. The pitch and the 3-step strip now open the Steps page. */}
       <section className="home-search" aria-labelledby="search-title">
         <div className="home-search-head">
@@ -300,11 +302,9 @@ export function SearchPage({
         )}
       </div>
       ) : (
-        /* Sample listings are archived (SHOW_SAMPLE_LISTINGS); the HRA-list apartments are the results. */
-        <SheetListings filters={filters} primary onChange={onChange} />
+        /* No sample listings and no HRA list: show a friendly empty state with search links and a list-unit pitch. */
+        <SearchEmptyState filters={filters} />
       )}
-      {/* Landlord-submitted units and the sponsor slot sit after the listings. */}
-      {SHOW_SAMPLE_LISTINGS && <SheetListings filters={filters} />}
       <VoucherReadyUnits compact />
       <LandingExtras />
       <SponsoredSlot placement="search" />

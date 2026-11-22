@@ -18,7 +18,6 @@ export const LEASEBOT_ONLY = true
 /** Paths listed on the live /sitemap.xml while LEASEBOT_ONLY is on. */
 export const LEASEBOT_SITEMAP_PATHS = [
   'https://leasepath.app/',
-  'https://leasepath.app/leasebot',
   'https://leasepath.app/privacy',
   'https://leasepath.app/terms',
 ]

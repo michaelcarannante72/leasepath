@@ -41,6 +41,20 @@ export function Header({ canInstall, onInstall, planCurrent, session, signingIn,
         </nav>
       )}
       <div className="topbar-actions">
+        {LEASEBOT_ONLY && (
+          <button
+            type="button"
+            className="help-now-link"
+            onClick={() => {
+              const box = document.getElementById('need-help-now')
+              if (!box) return
+              box.scrollIntoView({ behavior: 'smooth', block: 'start' })
+              box.focus({ preventScroll: true })
+            }}
+          >
+            {t('resources.helpNow')}
+          </button>
+        )}
         {SPANISH_UI_ENABLED && <LanguageToggle />}
         {!LEASEBOT_ONLY && canInstall && (
           <button type="button" className="install-button" onClick={onInstall}>

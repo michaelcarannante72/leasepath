@@ -4190,3 +4190,22 @@ body { background: var(--bg); color: var(--navy); font-size: var(--fs-body); lin
   background: #f2a900;
   color: var(--navy);
 }
+
+/* Top-bar shortcut to the "Need help now?" box (Leasebot home). */
+.help-now-link {
+  background: transparent;
+  border: 1.5px solid #f2a900;
+  color: inherit;
+  border-radius: 999px;
+  padding: 0.45rem 0.8rem;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.help-now-link:hover, .help-now-link:focus-visible { background: #f2a900; color: #1c2d42; }
+.leasebot-help-now:focus { outline: 3px solid #f2a900; outline-offset: 4px; }
+@media (max-width: 380px) { .help-now-link { padding: 0.4rem 0.6rem; font-size: 0.78rem; } }
+.leasebot-help-now { scroll-margin-top: 96px; }
+@media (max-width: 420px) { .is-leasebot-only .topbar .brand-name { display: none; } }

@@ -44,7 +44,7 @@ export function LeasebotMascot({ size = 96, className = 'leasebot-mascot' } = {}
 export function LeasebotHelpNow({ headingId = 'leasebot-help-now' } = {}) {
   const { t } = useLanguage()
   return (
-    <aside className="help-now leasebot-help-now" aria-labelledby={headingId}>
+    <aside id="need-help-now" tabIndex={-1} className="help-now leasebot-help-now" aria-labelledby={headingId}>
       <h2 id={headingId}>{t('resources.helpNow')}</h2>
       <ul>
         <li>

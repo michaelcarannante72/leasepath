@@ -37,6 +37,17 @@ export async function checkRateLimit(limiter, ip) {
   }
 }
 
+/** Same as checkRateLimit but with a caller-chosen key. Fails open if the binding is missing or errors. */
+export async function checkRateLimitKey(limiter, key) {
+  if (!limiter?.limit) return true
+  try {
+    const { success } = await limiter.limit({ key })
+    return Boolean(success)
+  } catch {
+    return true
+  }
+}
+
 const encoder = new TextEncoder()
 const b64url = (bytes) => btoa(String.fromCharCode(...new Uint8Array(bytes))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
 

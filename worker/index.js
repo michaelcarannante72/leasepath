@@ -5,6 +5,8 @@ import { AccountBook, durableAccounts } from './accountBook.js'
 import { UsageMeter, durableUsage } from './usageMeter.js'
 import { SECURITY_HEADERS } from './security.js'
 import { guardChat } from './chatGuard.js'
+import { handleWaitlist } from '../server/waitlist.js'
+import { checkRateLimitKey, networkKey } from './chatGuard.js'
 import { guardListingSubmit } from './listingsGuard.js'
 import { comingSoonHtml, isApiPath, isAssetPath, PAUSED_ROBOTS, PAUSED_SITEMAP, sitePaused } from './pause.js'
 import { MAX_PHOTOS_TOTAL_BYTES } from '../src/data/listingForm.js'
@@ -170,6 +172,16 @@ async function route(request, env) {
         return badRequest(400)
       }
     }
+  }
+
+  if (url.pathname === '/api/waitlist') {
+    if (request.method === 'POST') {
+      const allowed = await checkRateLimitKey(env.WAITLIST_LIMITER, `waitlist:${networkKey(request.headers.get('cf-connecting-ip') || '')}`)
+      if (!allowed) {
+        return jsonResponse({ status: 429, json: { error: 'rate_limited', message: 'Too many tries. Wait a minute and try again.' }, cookies: [] })
+      }
+    }
+    return jsonResponse({ ...(await handleWaitlist({ method: request.method, body, db: env.WAITLIST_DB })), cookies: [] })
   }
 
   let guardCookie = null

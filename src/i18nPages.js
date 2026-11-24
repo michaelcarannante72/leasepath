@@ -5,7 +5,7 @@ export const PAGE_EN = {
   'notFound.cta': 'Back to search',
 
   'consent.title': 'Cookies and analytics',
-  'consent.body': 'We use cookies to keep you signed in. Allow lets Google Analytics count page views. It never runs on HASA pages or in Ruby’s chat, and never sees your voucher or income. No ad cookies.',
+  'consent.body': 'We use cookies to keep you signed in. Allow lets Google Analytics count page views. It never runs on HASA pages or in any chat, and never sees your voucher or income. No ad cookies.',
   'consent.privacy': 'Privacy notice',
   'consent.details': 'Cookie details',
   'consent.deny': 'No thanks',
@@ -86,7 +86,7 @@ export const PAGE_ES = {
   'notFound.cta': 'Volver a la búsqueda',
 
   'consent.title': 'Cookies y analítica',
-  'consent.body': 'Usamos cookies para mantener tu sesión. Si tocas Permitir, Google Analytics cuenta las páginas vistas. Nunca corre en páginas de HASA ni en el chat de Ruby, y nunca ve tu cupón ni tus ingresos. Sin cookies de publicidad.',
+  'consent.body': 'Usamos cookies para mantener tu sesión. Si tocas Permitir, Google Analytics cuenta las páginas vistas. Nunca corre en páginas de HASA ni en ningún chat, y nunca ve tu vale ni tus ingresos. Sin cookies de publicidad.',
   'consent.privacy': 'Aviso de privacidad',
   'consent.details': 'Detalles de cookies',
   'consent.deny': 'No, gracias',

@@ -44,7 +44,7 @@ test('Section 8 does not borrow the CityFHEPS dollar chart', () => {
 
 test('HASA on a Section 8-only sample is a watch', () => {
   const flags = assessListing(twoBed, { program: 'HASA' })
-  assert.ok(flags.some((flag) => flag.text.includes('not marked for HASA')))
+  assert.ok(flags.some((flag) => flag.text === 'This sample is not marked for your voucher.'))
 })
 
 test('a CityFHEPS room uses the $1,100 cap', () => {
@@ -73,9 +73,10 @@ test('filters keep the voucher, the borough, and the rent ceiling', () => {
   assert.deepEqual(result.map((listing) => listing.id), ['mott-haven-studio', 'fordham-1br'])
 })
 
-test('starter message names the program and the asking rent', () => {
-  const text = starterMessage(oneBed, { program: 'CityFHEPS', letterRent: 2700 })
-  assert.match(text, /CityFHEPS/)
+test('starter message never names the program, and gives the asking rent', () => {
+  const text = starterMessage(oneBed, { program: 'HASA', letterRent: 2700 })
+  assert.doesNotMatch(text, /HASA|CityFHEPS|Section 8|FHEPS/)
+  assert.match(text, /housing voucher/)
   assert.match(text, /\$2,650/)
   assert.match(text, /\$2,700/)
   assert.doesNotMatch(text, /case number|Social Security/i)
@@ -93,7 +94,7 @@ test('the card shows the program result even when the letter says "within"', () 
   assert.equal(cardLabel(lines[0]), 'Check utilities')
   assert.equal(cardText(lines[0]), 'Asking rent may fit the CityFHEPS limit before any utility is subtracted. Open it for the figure and source.')
   assert.equal(lines[1].kind, 'letter')
-  assert.equal(cardLabel(lines[1]), 'CityFHEPS letter')
+  assert.equal(cardLabel(lines[1]), 'Your letter')
   assert.doesNotMatch(lines.map(cardText).join(' '), /Fits the letter/)
 })
 
@@ -124,18 +125,16 @@ test('an ask-your-caseworker program result stays on the card as its own line', 
   assert.equal(lines[1].kind, 'letter')
 })
 
-test('with no program selected the letter line says so and names no program', () => {
-  const flags = assessListing(oneBed, { program: '', household: 1, letterRent: 2700 })
-  const letter = flags.find((flag) => flag.kind === 'letter')
-  assert.match(letter.text, /^No program selected\. Your letter says \$2,700\./)
-  assert.equal(cardLabel(letter), 'No program selected')
-  assert.doesNotMatch(letter.text, /HASA|CityFHEPS|Section 8/)
-  const named = assessListing(oneBed, { program: 'HASA', household: 1, letterRent: 2700 }).find((flag) => flag.kind === 'letter')
-  assert.match(named.text, /^Your HASA letter says/)
-  assert.equal(cardLabel(named), 'HASA letter')
-  assert.deepEqual(cardFlags(flags).map(cardLabel), ['No program selected'])
+test('the letter line never names the program, chosen or not', () => {
+  for (const program of ['', 'HASA', 'CityFHEPS', 'FHEPS']) {
+    const flags = assessListing(oneBed, { program, household: 1, letterRent: 2700 })
+    const letter = flags.find((flag) => flag.kind === 'letter')
+    assert.match(letter.text, /^Your letter says \$2,700\./)
+    assert.equal(cardLabel(letter), 'Your letter')
+    assert.doesNotMatch(letter.text, /HASA|CityFHEPS|Section 8|FHEPS/)
+    if (program !== 'FHEPS') assert.doesNotMatch(flags.filter((flag) => flag.kind === 'marked').map((flag) => flag.text).join(' '), /HASA|CityFHEPS|Section 8|FHEPS/)
+  }
 })
-
 test('screens: flags carry a text label and icon, source text is 14px or larger, the timer is a polite live region, no March 1 date', () => {
   const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8')
   const css = read('src/index.css')

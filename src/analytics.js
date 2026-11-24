@@ -38,10 +38,13 @@ export function writeConsent(value, storage = globalThis.localStorage) {
  * - the private edit page (#/edit-listing?t=...), whose query string is a credential. Nothing about that
  *   view — not even the path — goes to GTM, so a token cannot end up in a page_location.
  */
+// Routes that read the device-only voucher choice (program), plus Resources and the private edit page.
+const SENSITIVE_PATHS = ['/plan', '/resources', '/edit-listing', '/income-check', '/income-prescreen', '/match-alerts', '/caseworker-pack', '/docs-tracker']
+
 export function isSensitiveView({ hashPath = '', assistantOpen = false } = {}) {
   if (assistantOpen) return true
   const path = String(hashPath).split('?')[0].toLowerCase()
-  if (path === '/plan' || path === '/resources' || path === '/edit-listing') return true
+  if (SENSITIVE_PATHS.includes(path)) return true
   return /hasa/.test(path)
 }
 

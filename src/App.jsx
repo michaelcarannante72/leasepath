@@ -741,7 +741,7 @@ export default function App() {
           // Voucher details leave the phone only when the person has turned sharing on.
           plan: includePlan
             ? {
-                program: plan.program,
+                // The program choice stays on this device and is never sent, even when sharing is on.
                 household: plan.household,
                 letterRent: plan.letterRent,
                 utilities: plan.utilities,

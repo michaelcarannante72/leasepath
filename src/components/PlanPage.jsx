@@ -125,7 +125,7 @@ export function PlanPage({ plan, onChange, checks, onChecks, signedIn, onDeleteA
 
       {plan.program === 'FHEPS' && (
         <section className="panel">
-          <h2>{tx("Use the amount on your FHEPS letter")}</h2>
+          <h2>{tx("Use the amount on your letter")}</h2>
           <p>{tx("FHEPS is the state family supplement. LeasePath does not keep a FHEPS dollar chart. Type the figure from your paperwork above. Community applications go through Homebase.")}</p>
           <a className="button" href="https://www.nyc.gov/site/hra/help/fheps.page" target="_blank" rel="noreferrer">{tx("Open FHEPS")}</a>
         </section>

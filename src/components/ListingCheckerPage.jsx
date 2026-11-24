@@ -80,7 +80,7 @@ export function ListingCheckerPage({ checks = {}, onChecks = () => {} }) {
             <div className="lc-block">
               <h3>{tx("Rent vs verified limits")}</h3>
               <p className="lc-note">
-                {tx("Program limits are CityFHEPS and NYCHA Section 8 only, with utilities included. For any other program, type your own limit above. This is practice, not an approval. You may qualify under your own letter even when a row says over.")}
+                {tx("Program limits are CityFHEPS and NYCHA Section 8 only, with utilities included. For any other program, type your own limit above. This is practice, not an approval. Your own letter is what counts, even when a row says over.")}
               </p>
               <ul className="flag-list">
                 {result.ownLimitResult && (

@@ -34,28 +34,28 @@ export function assessListing(listing, plan, options = {}) {
     flags.push({
       kind: 'marked',
       level: 'good',
-      text: `Marked for ${program}. Confirm it with the broker and your worker before you visit or pay anyone.`,
+      text: 'Marked for your voucher. Confirm it with the broker and your worker before you visit or pay anyone.',
     })
   } else if (knownProgram) {
     flags.push({
       kind: 'marked',
       level: 'watch',
-      text: `This sample is not marked for ${program}.`,
+      text: 'This sample is not marked for your voucher.',
     })
   } else if (program === 'FHEPS') {
     flags.push({
       kind: 'marked',
       level: 'note',
-      text: 'Your plan says FHEPS. These samples are marked for CityFHEPS, HASA, or Section 8. LeasePath has no FHEPS rent figures. Compare the asking rent with the amount on your letter, then confirm the program with your worker.',
+      text: 'These samples are marked for CityFHEPS, HASA, or Section 8. LeasePath has no rent figures for your voucher. Compare the asking rent with the amount on your letter, then confirm the program with your worker.',
     })
   }
 
   const letter = Number(plan?.letterRent)
   if (letter > 0) {
     // The figure is the person's own. Without a program it says so, so it is not mistaken for a program limit.
-    const named = VOUCHER_PROGRAMS.includes(program)
-    const label = named ? `${program} letter` : 'No program selected'
-    const whose = named ? `Your ${program} letter` : 'No program selected. Your letter'
+    // No program name on screen: the program choice stays on the device and is not echoed back.
+    const label = 'Your letter'
+    const whose = 'Your letter'
     if (listing.rent > letter) {
       flags.push({
         kind: 'letter',
@@ -159,7 +159,8 @@ export function filterListings(listings, filters, savedIds) {
 }
 
 export function starterMessage(listing, plan) {
-  const program = VOUCHER_PROGRAMS.includes(plan?.program) ? plan.program : 'a housing voucher'
+  // The draft never names the program. It is text that can be copied and sent.
+  const program = 'a housing voucher'
   const letter = Number(plan?.letterRent)
   const letterLine = letter > 0 ? ` The amount on my current letter is ${money(letter)} a month.` : ''
   return `Hello, I'm interested in the ${sizeLabel(listing).toLowerCase()} near ${listing.crossStreets} in ${listing.neighborhood}. I have ${program} and would like to know if you consider applicants with this voucher. I understand the asking rent is ${money(listing.rent)}.${letterLine} Could you confirm the rent, which utilities are included, and what you need from me next? Thank you.`

@@ -46,7 +46,7 @@ export function HasaPanel({ checks, onChecks }) {
     <>
       <RentLimitPanel checks={checks} onChecks={onChecks} />
       <section className="panel">
-        <h2>{tx("HASA rent help")}</h2>
+        <h2>{tx("Your rent help")}</h2>
         <p>{tx("HASA is its own program. It is not CityFHEPS. Your caseworker approves the rent and the bedroom count for your household.")}</p>
         <Rule rule={HASA_RULES.notCityfheps} program={HASA_PROGRAM}>{tx("HASA rental assistance is not CityFHEPS. LeasePath keeps the two separate.")}</Rule>
         <Rule rule={HASA_RULES.bedroomExceptions} program={HASA_PROGRAM}>{tx("Bedroom exceptions are case by case.")}</Rule>

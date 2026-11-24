@@ -89,7 +89,7 @@ test('page, route, Resources link, and share path are wired; work stays on-devic
   assert.match(page, /Paste the listing text/)
   assert.match(page, /Stays on your phone/)
   assert.match(page, /source-of-income discrimination/)
-  assert.match(page, /you may qualify/i)
+  assert.doesNotMatch(page, /qualify/i)
   assert.doesNotMatch(page, /fetch\(|XMLHttpRequest|navigator\.sendBeacon/)
   assert.match(app, /listing-check/)
   assert.match(app, /ListingCheckerPage/)

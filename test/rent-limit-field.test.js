@@ -24,7 +24,7 @@ test('the typed-limit field and result wording is the approved text in English a
       assert.doesNotMatch(es, /cupón|cupon/i)
     }
     setTxLang('es')
-    assert.equal(tx('Asking rent {rent}, your limit {limit}.', { rent: '$2,400', limit: '$2,500' }), 'Renta pedida $2,400, tu límite $2,500.')
+    assert.equal(tx('Asking rent {rent}, your limit {limit}.', { rent: '$2,400', limit: '$2,500' }), 'Piden $2,400. Tu límite es $2,500.')
   } finally {
     setTxLang('en')
   }
@@ -49,4 +49,16 @@ test('the typed limit stays on the device: kept only in leasepath.checks, never 
   assert.doesNotMatch(read('src/analytics.js'), /rentLimit|checks/)
   assert.doesNotMatch(read('server/accounts.js'), /rentLimit/)
   assert.doesNotMatch(read('server/guide.js'), /rentLimit/)
+})
+
+test('the program choice is never echoed on screen as a heading, never in the Ruby request, never in a draft', async () => {
+  const app = read('src/App.jsx')
+  const guide = app.slice(app.indexOf("fetch('/api/guide', {\n        method: 'POST'"), app.indexOf('listing,\n        }),'))
+  assert.doesNotMatch(guide, /program:/)
+  assert.doesNotMatch(read('src/components/ProgramPanels.jsx'), /<h2>\{tx\("HASA|<h2>\{tx\("Use the amount on your FHEPS/)
+  assert.doesNotMatch(read('src/components/PlanPage.jsx'), /on your FHEPS letter/)
+  const { starterMessage } = await import('../src/fit.js')
+  assert.doesNotMatch(starterMessage({ unitKind: 'apartment', bedrooms: 1, rent: 2000, crossStreets: 'A and B', neighborhood: 'X', borough: 'Bronx' }, { program: 'HASA' }), /HASA/)
+  const { isSensitiveView } = await import('../src/analytics.js')
+  for (const hashPath of ['/plan', '/income-check', '/match-alerts', '/caseworker-pack', '/docs-tracker', '/resources']) assert.equal(isSensitiveView({ hashPath }), true, hashPath)
 })

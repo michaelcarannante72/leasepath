@@ -24,7 +24,7 @@ export function housingConnectItems(version = '2026-10') {
     programs: ['CityFHEPS', 'FHEPS', 'HASA', 'Section 8'],
     title: `Check NYC Housing Connect lotteries in ${borough}`,
     detail:
-      'Open lotteries change. LeasePath does not scrape Housing Connect. This alert is a reminder to check the official portal for your borough and household size. You may qualify for some lotteries — Housing Connect and HPD decide.',
+      'Open lotteries change. LeasePath does not scrape Housing Connect. This alert is a reminder to check the official portal for your borough and household size. Some lotteries might apply to you. Housing Connect and HPD decide.',
     href: HOUSING_CONNECT.href,
     sourceLabel: 'NYC Housing Connect (HPD)',
     sourceHref: HOUSING_CONNECT.hpd,

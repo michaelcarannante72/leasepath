@@ -19,7 +19,7 @@ export function PartnerDirectoryPage() {
       <p className="eyebrow">{tx("Partners")}</p>
       <h1>{tx("Legal aid and nonprofit partners")}</h1>
       <p className="lede">
-        {tx("Vetted groups that help NYC tenants and voucher holders. Phones and links are copied from the official pages named on each card. You may qualify for free legal help — the provider decides. LeasePath is not a law firm and does not take your case.")}
+        {tx("Vetted groups that help NYC tenants and voucher holders. Phones and links are copied from the official pages named on each card. You might be able to get free legal help. The provider decides. LeasePath is not a law firm and does not take your case.")}
       </p>
 
       <div className="resource-search" role="search">

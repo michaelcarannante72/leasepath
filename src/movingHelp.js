@@ -26,13 +26,13 @@ export const SOURCES = {
 }
 
 export const INTRO =
-  'Moving with a voucher is stressful. You may qualify for emergency cash help, moving expenses, or furniture help through HRA — eligibility is case by case. Start at ACCESS HRA or ask your worker. Do not invent numbers from a friend; only HRA decides.'
+  'Moving with a voucher is stressful. You might be able to get emergency cash help, moving expenses, or furniture help through HRA. HRA decides. Start at ACCESS HRA or ask your worker. Do not invent numbers from a friend; only HRA decides.'
 
 export const SECTIONS = [
   {
     id: 'one-shot',
     title: 'One Shot Deal / Emergency Assistance',
-    body: 'You may qualify for a One Shot Deal (Emergency Assistance) if you cannot pay bills after a job loss, pay cut, or another emergency. ACCESS NYC says this can help if you are homeless or will lose housing, if utilities were shut off or will be, if you lost clothes or furniture to theft, fire, or a natural disaster, if you are affected by domestic violence, or if other issues threaten health and safety. HRA may ask you to pay some or all of it back. You still need an interview after you apply.',
+    body: 'A One Shot Deal (Emergency Assistance) might help if you cannot pay bills after a job loss, pay cut, or another emergency. ACCESS NYC says this can help if you are homeless or will lose housing, if utilities were shut off or will be, if you lost clothes or furniture to theft, fire, or a natural disaster, if you are affected by domestic violence, or if other issues threaten health and safety. HRA may ask you to pay some or all of it back. You still need an interview after you apply.',
     sources: ['oneShot', 'accessHra'],
   },
   {
@@ -56,4 +56,4 @@ export const SECTIONS = [
 ]
 
 export const CAVEAT =
-  'LeasePath does not decide eligibility and does not file for you. Amounts and rules change. Confirm every figure with HRA or your worker.'
+  'LeasePath does not decide who gets help and does not file for you. Amounts and rules change. Confirm every figure with HRA or your worker.'

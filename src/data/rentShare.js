@@ -69,7 +69,7 @@ export function estimateRentShare({ program, monthlyIncome } = {}) {
     return {
       kind: 'hud-estimate',
       title: 'Section 8 estimate (practice only)',
-      body: `HUD’s Housing Choice Voucher rules generally set the family’s minimum payment around 30% of monthly adjusted income (the Total Tenant Payment is the greatest of several HUD formulas). At first lease-up, your total share usually cannot go over 40% of monthly adjusted income if the rent is above the payment standard. You may qualify for a different share — NYCHA, HPD, or HCR decides from your paperwork.`,
+      body: `HUD’s Housing Choice Voucher rules generally set the family’s minimum payment around 30% of monthly adjusted income (the Total Tenant Payment is the greatest of several HUD formulas). At first lease-up, your total share usually cannot go over 40% of monthly adjusted income if the rent is above the payment standard. A different share might apply to you. NYCHA, HPD, or HCR decides from your paperwork.`,
       estimate: thirty,
       estimateLabel: `About ${money(thirty)} / month (30% of ${money(parsed.dollars)})`,
       fortyCap: Math.floor(parsed.dollars * 0.4),

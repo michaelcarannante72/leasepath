@@ -106,7 +106,7 @@ export function DocsDeadlinePage() {
       <p className="eyebrow">{tx("Steps")}</p>
       <h1>{tx("Documents and deadlines")}</h1>
       <p className="lede">
-        {tx("Checklist for your shopping packet, plus dates for the letter, inspection, and lease signing. You may qualify for help from your worker — this page does not decide that.")}
+        {tx("Checklist for your shopping packet, plus dates for the letter, inspection, and lease signing. You might be able to get help from your worker. This page does not decide that.")}
       </p>
       <aside className="docs-privacy" role="note">
         <p>{PRIVACY_NOTE}</p>

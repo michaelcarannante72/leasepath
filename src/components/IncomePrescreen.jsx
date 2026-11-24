@@ -20,7 +20,7 @@ import { SourceLine } from './SourceLine.jsx'
 const TAGS = {
   under: { icon: '✓', label: 'Under the line' },
   at: { icon: '✓', label: 'At the line' },
-  over: { icon: 'i', label: 'May not qualify' },
+  over: { icon: 'i', label: 'May not fit' },
   missing: { icon: 'i', label: 'Needs details' },
   invalid: { icon: 'i', label: 'Check the amount' },
   ask: { icon: 'i', label: 'Ask' },

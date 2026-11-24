@@ -231,24 +231,24 @@ test('under the line: the approved wording, no approval', () => {
   }
 })
 
-test('over the line is calm: may not qualify, ask your caseworker, never a rejection', () => {
+test('over the line is calm: may not fit, ask your caseworker, never a rejection', () => {
   const rejecting = /denied|reject|ineligible|not eligible|disqualif|fail|error|do not qualify|don’t qualify|cannot qualify/i
   for (const program of ['HASA', 'CityFHEPS']) {
     const result = incomePrescreen(program, { household: 1, income: 5000, period: 'month' })
     assert.equal(result.status, 'over')
-    assert.equal(result.headline, 'Your income is over the 200% pre-screen line, so you may not qualify. Ask your caseworker.')
+    assert.equal(result.headline, 'Your income is over the 200% pre-screen line, so this program may not fit. Ask your caseworker.')
     assert.doesNotMatch([result.headline, ...result.details].join(' '), rejecting)
   }
   // The equal-to-the-line HASA result is calm too.
   const equal = incomePrescreen('HASA', { household: 1, income: 31920, period: 'year' })
-  assert.match(equal.headline, /may not qualify\. Ask your caseworker\.$/)
+  assert.match(equal.headline, /may not fit\. Ask your caseworker\.$/)
   assert.doesNotMatch(equal.headline, rejecting)
 })
 
 test('the minimum-wage exception is shown only on an over-the-line CityFHEPS result', () => {
   const over = { household: 1, income: 5000, period: 'month' }
   const cityOver = incomePrescreen('CityFHEPS', over).details.join(' ')
-  assert.match(cityOver, /single adult who earns minimum wage and works 35 or more hours a week may be over the line and still be eligible/)
+  assert.match(cityOver, /single adult who earns minimum wage and works 35 or more hours a week may be over the line and still get help/)
   assert.doesNotMatch(incomePrescreen('HASA', over).details.join(' '), /minimum wage/)
   assert.doesNotMatch(incomePrescreen('CityFHEPS', { household: 1, income: 1000, period: 'month' }).details.join(' '), /minimum wage/)
 })
@@ -344,7 +344,7 @@ test('the screen is calm and accessible: no error styling, an icon plus text, a 
   assert.doesNotMatch(screen, /error|danger|flag-watch|role="alert"|aria-invalid|disabled|(?<!aria-)hidden/i)
   assert.match(screen, /aria-live="polite"/)
   assert.match(screen, /<span aria-hidden="true">\{tag\.icon\}<\/span> \{tag\.label\}/)
-  assert.match(screen, /May not qualify/)
+  assert.match(screen, /May not fit/)
   const css = read('src/index.css')
   const start = css.indexOf('/* Income pre-screen.')
   const next = css.indexOf('\n/* ', start + 1)

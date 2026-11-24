@@ -18,7 +18,7 @@ test('checklist has ask, inspect, and red-flag items', () => {
 test('page wires print and related tools', () => {
   const page = read('src/components/ViewingChecklistPage.jsx')
   assert.match(page, /window\.print/)
-  assert.match(page, /you may qualify/i)
+  assert.match(page, /might apply to you/i)
   assert.match(read('src/App.jsx'), /ViewingChecklistPage/)
   assert.match(read('worker/index.js'), /'viewing-checklist'/)
 })

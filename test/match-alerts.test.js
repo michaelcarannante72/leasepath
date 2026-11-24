@@ -39,7 +39,7 @@ test('Housing Connect feed cites official HPD / Housing Connect URLs and hotline
   for (const item of items) {
     assert.equal(item.kind, 'lottery')
     assert.equal(item.href, HOUSING_CONNECT.href)
-    assert.match(item.detail, /you may qualify/i)
+    assert.match(item.detail, /might apply to you/i)
   }
 })
 

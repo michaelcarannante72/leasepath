@@ -95,7 +95,7 @@ test('BoroughGuidesPage and App wire /guides and /guides/:slug', () => {
   assert.match(page, /BoroughGuidesIndex/)
   assert.match(page, /BoroughGuidePage/)
   assert.match(page, /#\/guides\/\$\{guide\.slug\}/)
-  assert.match(page, /you may qualify/i)
+  assert.match(page, /might apply to you/i)
   assert.match(page, /HRA/)
   assert.doesNotMatch(page, /HIV|medical history|collect/i)
 
@@ -121,6 +121,6 @@ test('copy stays plain NYC and does not invent eligibility dollars', () => {
   const data = read('src/data/boroughGuides.js')
   assert.doesNotMatch(data, /\$\d{3,}/)
   assert.doesNotMatch(data, /you qualify(?! for more)/i)
-  assert.match(data, /you may qualify/i)
+  assert.match(data, /might apply to you/i)
   assert.match(data, /Resource Navigator|shopping letter|ACCESS HRA/i)
 })

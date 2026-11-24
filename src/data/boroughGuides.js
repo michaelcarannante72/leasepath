@@ -103,7 +103,7 @@ export const BOROUGH_GUIDES = {
       'Bring your shopping letter, ID, and a list of questions for the broker. Do not hand over a deposit because of a sample listing.',
       'Many voucher searches in Brooklyn compete fast. Call the same day you see a fit.',
       'Use ACCESS HRA online when you can. Center lines move slowly.',
-      'You may qualify for more than one program. Your worker decides what applies to your case.',
+      'More than one program might apply to you. Only your worker decides.',
     ],
     offices: [
       {
@@ -193,7 +193,7 @@ export const BOROUGH_GUIDES = {
     tips: [
       'Neighborhoods vary widely on rent. Filter LeasePath Search by borough and bedroom size before you ride out.',
       'Keep a paper or phone copy of your shopping letter for every viewing.',
-      'You may qualify for CityFHEPS, FHEPS, HASA, or Section 8 depending on your case — only your worker decides.',
+      'More than one program might apply to you. Only your worker decides.',
       'For a full list of HRA offices, use the official HRA locations page linked below.',
     ],
     offices: [

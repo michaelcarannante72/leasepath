@@ -20,7 +20,7 @@ export function PlanPage({ plan, onChange, checks, onChecks, signedIn, onDeleteA
       <p className="eyebrow">{tx("My voucher")}</p>
       <h1>{tx("The figures on your letter")}</h1>
       <p className="lede">
-        {tx("LeasePath keeps this on this phone so search can compare sample rents with it. The shopping letter date and the other check answers below stay on this phone only. If you sign in, the same figures stay on your account. It does not decide eligibility.")}
+        {tx("LeasePath keeps this on this phone so search can compare sample rents with it. The shopping letter date and the other check answers below stay on this phone only. If you sign in, the same figures stay on your account. It does not decide who gets help.")}
       </p>
       <p className="after-link"><a href="#/caseworker-pack">{tx("Build a caseworker share pack from this phone →")}</a></p>
       <p className="next-action">

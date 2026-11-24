@@ -39,7 +39,7 @@ const LETTER_REPLIES = [
 ]
 
 const SUGGESTIONS = [
-  'How do I qualify for a voucher?',
+  'How do I get a voucher?',
   'What should I ask a broker?',
   'What food help can I get?',
   'A landlord refused my voucher. What now?',

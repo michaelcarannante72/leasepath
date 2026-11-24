@@ -14,7 +14,7 @@ test('Section 8 estimate is 30% of monthly income with HUD sources', () => {
   assert.equal(r.estimate, 600)
   assert.equal(r.fortyCap, 800)
   assert.ok(r.sources.some((s) => /hud\.gov|ecfr\.gov/i.test(s.href)))
-  assert.match(r.body, /you may qualify/i)
+  assert.match(r.body, /might apply to you/i)
 })
 
 test('CityFHEPS never hard-codes 30%', () => {

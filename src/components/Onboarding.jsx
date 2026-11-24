@@ -45,7 +45,7 @@ export function Onboarding({ plan, onSave, onSkip, preset }) {
         </button>
         <p className="eyebrow">{tx("Your voucher")}</p>
         <h2 id="onboard-title">{preset === 'account' ? 'Save your letter on this account' : preset === 'letter' || draft.receiving === 'has' ? 'What’s on your shopping letter?' : 'Which voucher do you have?'}</h2>
-        <p className="setup-intro">{preset === 'account' ? 'You signed up without Google. This account can open the same letter on another phone. It does not decide whether you qualify.' : 'This stays on this phone. If you sign in, it also stays on your account. It does not decide whether you qualify.'}</p>
+        <p className="setup-intro">{preset === 'account' ? 'You signed up without Google. This account can open the same letter on another phone. Only your worker decides what applies to you.' : 'This stays on this phone. If you sign in, it also stays on your account. Only your worker decides what applies to you.'}</p>
         <form
           className="setup-fields"
           onSubmit={(event) => {
@@ -83,7 +83,7 @@ export function Onboarding({ plan, onSave, onSkip, preset }) {
           )}
 
           {draft.receiving === 'unsure' && (
-            <p className="setup-note">{tx("If a letter already names a program, pick it below. If you do not have one, use ACCESS HRA. LeasePath cannot tell you whether you qualify.")}</p>
+            <p className="setup-note">{tx("If a letter already names a program, pick it below. If you do not have one, use ACCESS HRA. LeasePath cannot tell you what applies to you. Only your worker decides.")}</p>
           )}
 
           {showProgram && (

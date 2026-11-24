@@ -62,9 +62,9 @@ export function MovingHelpPage() {
       ))}
 
       <aside className="notice-card" aria-labelledby="moving-may">
-        <h2 id="moving-may">{tx("You may qualify — HRA decides")}</h2>
+        <h2 id="moving-may">{tx("See if this applies to you")}</h2>
         <p>
-          {tx("Eligibility is case by case. Bring IDs, proof of income, rent bills, and your lease when HRA asks. Never send ACCESS HRA passwords to LeasePath — we do not collect them.")}
+          {tx("HRA decides. Bring IDs, proof of income, rent bills, and your lease when HRA asks. Never send ACCESS HRA passwords to LeasePath — we do not collect them.")}
         </p>
       </aside>
 

@@ -43,7 +43,7 @@ const EN = {
   'landing.step3.detail': 'Straight answers and your next step. Your worker still decides.',
 
   'search.applyTitle': 'Start the application in the right place',
-  'search.applyLede': 'LeasePath cannot tell you whether you qualify. These are the city doors for a new case.',
+  'search.applyLede': 'LeasePath cannot tell you what applies to you. Only your worker decides. These are the city doors for a new case.',
   'search.call': 'Call',
   'search.open': 'Open',
   'search.sort.rentAsc': 'Rent, low to high',
@@ -134,7 +134,7 @@ const ES = {
   'landing.step3.detail': 'Respuestas claras y el próximo paso. Tu trabajador de caso decide.',
 
   'search.applyTitle': 'Empieza la solicitud en el lugar correcto',
-  'search.applyLede': 'LeasePath no puede decirte si calificas. Estas son las puertas de la ciudad para un caso nuevo.',
+  'search.applyLede': 'LeasePath no puede decirte qué te aplica. Solo tu trabajador decide. Estas son las puertas de la ciudad para un caso nuevo.',
   'search.call': 'Llamar',
   'search.open': 'Abrir',
   'search.sort.rentAsc': 'Renta, de menor a mayor',

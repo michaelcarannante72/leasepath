@@ -82,7 +82,7 @@ describe('docs deadline tracker', () => {
     assert.match(page, /Delete all on this phone/)
     assert.match(page, /Export calendar \(\.ics\)/)
     assert.match(page, /Stays on your phone|PRIVACY_NOTE/)
-    assert.match(page, /you may qualify/i)
+    assert.match(page, /might be able to get help from your worker/i)
   })
 
   it('is routed from the app, Steps, Resources, and the Worker share list', () => {

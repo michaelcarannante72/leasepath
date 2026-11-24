@@ -55,7 +55,7 @@ export const PARTNERS = [
     id: 'ocj-tenants',
     name: 'NYC Office of Civil Justice — tenant legal services',
     blurb:
-      'HRA’s Office of Civil Justice funds free legal help for tenants facing eviction (Right to Counsel / Universal Access) and other civil matters. You may qualify regardless of immigration status — OCJ and the court providers decide. Email with your name, phone, and Housing Court index number if you have one.',
+      'HRA’s Office of Civil Justice funds free legal help for tenants facing eviction (Right to Counsel / Universal Access) and other civil matters. You might be able to get help regardless of immigration status. OCJ and the court providers decide. Email with your name, phone, and Housing Court index number if you have one.',
     boroughs: ['Bronx', 'Brooklyn', 'Manhattan', 'Queens', 'Staten Island'],
     email: 'civiljustice@hra.nyc.gov',
     href: 'https://www.nyc.gov/site/hra/help/legal-services-for-tenants.page',
@@ -91,7 +91,7 @@ export const PARTNERS = [
     id: 'legal-aid-manhattan',
     name: 'The Legal Aid Society — Manhattan',
     blurb:
-      'Free civil legal help for people who may qualify, including housing and homelessness matters. Borough office number from Legal Aid’s housing help page. For an upcoming Housing Court eviction case, go to your first court date for Right to Counsel intake.',
+      'You might be able to get free civil legal help, including housing and homelessness matters. The provider decides. Borough office number from Legal Aid’s housing help page. For an upcoming Housing Court eviction case, go to your first court date for Right to Counsel intake.',
     boroughs: ['Manhattan'],
     phones: [{ number: '212-426-3000' }],
     href: 'https://legalaidnyc.org/get-help/housing-problems/',
@@ -102,7 +102,7 @@ export const PARTNERS = [
     id: 'legal-aid-brooklyn',
     name: 'The Legal Aid Society — Brooklyn',
     blurb:
-      'Free civil legal help for people who may qualify, including housing and homelessness matters. Borough office number from Legal Aid’s housing help page.',
+      'You might be able to get free civil legal help, including housing and homelessness matters. The provider decides. Borough office number from Legal Aid’s housing help page.',
     boroughs: ['Brooklyn'],
     phones: [{ number: '718-722-3100' }],
     href: 'https://legalaidnyc.org/get-help/housing-problems/',
@@ -113,7 +113,7 @@ export const PARTNERS = [
     id: 'legal-aid-bronx',
     name: 'The Legal Aid Society — Bronx',
     blurb:
-      'Free civil legal help for people who may qualify, including housing and homelessness matters. Borough office number from Legal Aid’s housing help page.',
+      'You might be able to get free civil legal help, including housing and homelessness matters. The provider decides. Borough office number from Legal Aid’s housing help page.',
     boroughs: ['Bronx'],
     phones: [{ number: '718-991-4600' }],
     href: 'https://legalaidnyc.org/get-help/housing-problems/',
@@ -124,7 +124,7 @@ export const PARTNERS = [
     id: 'legal-aid-queens',
     name: 'The Legal Aid Society — Queens',
     blurb:
-      'Free civil legal help for people who may qualify, including housing and homelessness matters. Borough office number from Legal Aid’s housing help page.',
+      'You might be able to get free civil legal help, including housing and homelessness matters. The provider decides. Borough office number from Legal Aid’s housing help page.',
     boroughs: ['Queens'],
     phones: [{ number: '718-286-2450' }],
     href: 'https://legalaidnyc.org/get-help/housing-problems/',
@@ -135,7 +135,7 @@ export const PARTNERS = [
     id: 'legal-aid-si',
     name: 'The Legal Aid Society — Staten Island',
     blurb:
-      'Free civil legal help for people who may qualify, including housing and homelessness matters. Borough office number from Legal Aid’s housing help page.',
+      'You might be able to get free civil legal help, including housing and homelessness matters. The provider decides. Borough office number from Legal Aid’s housing help page.',
     boroughs: ['Staten Island'],
     phones: [{ number: '347-422-5333' }],
     href: 'https://legalaidnyc.org/get-help/housing-problems/',

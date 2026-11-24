@@ -8,7 +8,7 @@ import { isDisplayable, sourceFor } from './data/sourced.js'
 import { askFor, isLargeHousehold, money } from './rentCheck.js'
 
 export const PRESCREEN_TITLE = 'Income pre-screen'
-export const PRESCREEN_NOTE = 'This is a pre-screen only. LeasePath does not decide who qualifies. Your caseworker and DSS/HRA decide.'
+export const PRESCREEN_NOTE = 'This is a pre-screen only. LeasePath does not decide who gets help. Your caseworker and DSS/HRA decide.'
 export const PRESCREEN_EXPLAIN =
   'A pre-screen is a quick early look at one number. It is not an application and not an approval. Your caseworker and DSS/HRA look at your whole situation and make the decision.'
 export const PRESCREEN_TWICE = 'About twice the federal poverty income for your household size.'
@@ -73,7 +73,7 @@ export function annualIncome(amount, period) {
 }
 
 const MIN_WAGE_NOTE =
-  'DSS-7n says a single adult who earns minimum wage and works 35 or more hours a week may be over the line and still be eligible.'
+  'DSS-7n says a single adult who earns minimum wage and works 35 or more hours a week may be over the line and still get help.'
 
 function ruleSources(config) {
   return config.rules.filter(isDisplayable).map((rule) => sourceFor(rule, config.program))
@@ -133,9 +133,9 @@ export function incomePrescreen(program, input = {}) {
   } else if (status === 'at') {
     headline = `Your income is exactly at the 200% pre-screen line. ${program} says at or below the line, so this is within it. This is not an approval; DSS/HRA decides.`
   } else if (equal) {
-    headline = `Your income is exactly at the 200% pre-screen line. ${program} says below the line, so you may not qualify. ${askFor(program)}.`
+    headline = `Your income is exactly at the 200% pre-screen line. ${program} says below the line, so this program may not fit. ${askFor(program)}.`
   } else {
-    headline = `Your income is over the 200% pre-screen line, so you may not qualify. ${askFor(program)}.`
+    headline = `Your income is over the 200% pre-screen line, so this program may not fit. ${askFor(program)}.`
   }
 
   const details = [PRESCREEN_TWICE, lineSentence(config, line)]

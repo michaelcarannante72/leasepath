@@ -8,7 +8,7 @@ export function TenantRightsAfterMoveinPage() {
       <p className="eyebrow">{tx("After move-in")}</p>
       <h1>{tx("Tenant rights after you move in")}</h1>
       <p className="lede">
-        {tx("Repairs, heat season, 311 / HPD complaints, and Housing Court help. Phones and temperatures are from the official pages named on each card. You may qualify for free legal help — the provider decides.")}
+        {tx("Repairs, heat season, 311 / HPD complaints, and Housing Court help. Phones and temperatures are from the official pages named on each card. You might be able to get free legal help. The provider decides.")}
       </p>
 
       <section className="heat-card" aria-labelledby="heat-card-title">

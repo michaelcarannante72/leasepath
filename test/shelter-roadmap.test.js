@@ -16,7 +16,7 @@ test('roadmap covers shelter through move-in with in-app links', () => {
   for (const need of ['#/steps', '#/plan', '#/', '#/after-you-find', '#/inspection-prep', '#/scam-alerts', '#/moving-help']) {
     assert.ok(hrefs.includes(need), need)
   }
-  assert.match(ROADMAP_STEPS.map((s) => s.body).join(' '), /you may qualify/i)
+  assert.match(ROADMAP_STEPS.map((s) => s.body).join(' '), /might apply to you/i)
 })
 
 test('App and Resources wire /roadmap', () => {

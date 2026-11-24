@@ -130,7 +130,7 @@ test('the public privacy and terms pages are the same notice, with no script', (
   assert.match(terms, /Terms of Service/)
   assert.match(terms, /email and a password/)
   assert.match(terms, /source-of-income discrimination/)
-  assert.match(terms, /does not decide whether you qualify/)
+  assert.match(terms, /does not decide who gets CityFHEPS/)
   assert.match(terms, /do not require arbitration/)
   assert.equal(terms.includes('<script'), false)
 })

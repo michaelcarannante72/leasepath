@@ -4,7 +4,7 @@ export const ROADMAP_STEPS = [
   {
     id: 'shelter',
     title: 'In shelter / with a caseworker',
-    body: 'Work with your DHS or program caseworker on housing plans. Ask which voucher or shopping letter you may qualify for. Keep ID and paperwork together on this device until you share them with your worker.',
+    body: 'Work with your DHS or program caseworker on housing plans. Ask which voucher or shopping letter might apply to you. Keep ID and paperwork together on this device until you share them with your worker.',
     links: [
       { href: '#/resources', label: 'Resources' },
       { href: '#/plan', label: 'My voucher' },

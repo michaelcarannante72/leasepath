@@ -8,7 +8,7 @@ export function ShelterRoadmapPage() {
       <p className="eyebrow">{tx("Roadmap")}</p>
       <h1>{tx("Shelter to housing")}</h1>
       <p className="lede">
-        {tx("A plain timeline from shelter to keys. You may qualify for different paths — your caseworker and the program office decide. Links open tools already in LeasePath. Nothing here is sent to a server.")}
+        {tx("A plain timeline from shelter to keys. Different paths might apply to you. Your caseworker and the program office decide. Links open tools already in LeasePath. Nothing here is sent to a server.")}
       </p>
 
       <ol className="roadmap-timeline">

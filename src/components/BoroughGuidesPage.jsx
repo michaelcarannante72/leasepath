@@ -61,7 +61,7 @@ export function BoroughGuidePage({ slug }) {
       <p className="eyebrow">{tx("Borough guide")}</p>
       <h1>{guide.name} {tx("voucher-renter guide")}</h1>
       <p className="lede">
-        {tx("For people searching in")} {guide.the} {tx("with CityFHEPS, FHEPS, HASA, or Section 8. You may qualify for more than one program — your worker decides. Office details below are copied from HRA.")}
+        {tx("For people searching in")} {guide.the} {tx("with CityFHEPS, FHEPS, HASA, or Section 8. More than one program might apply to you. Only your worker decides. Office details below are copied from HRA.")}
       </p>
 
       <section className="borough-section" aria-labelledby="transit-title">

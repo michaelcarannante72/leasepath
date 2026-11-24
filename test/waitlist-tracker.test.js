@@ -49,6 +49,6 @@ test('upsert replaces by id', () => {
 test('App wires /waitlist with delete-all UI', () => {
   assert.match(read('src/App.jsx'), /WaitlistTrackerPage/)
   assert.match(read('src/components/WaitlistTrackerPage.jsx'), /Delete all/)
-  assert.match(read('src/components/WaitlistTrackerPage.jsx'), /you may qualify/i)
+  assert.match(read('src/components/WaitlistTrackerPage.jsx'), /might be able to get an opening/i)
   assert.match(read('worker/index.js'), /'waitlist'/)
 })

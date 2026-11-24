@@ -13,7 +13,7 @@ export function RentCalculatorPage() {
       <p className="eyebrow">{tx("Rent share")}</p>
       <h1>{tx("Estimate your part of the rent")}</h1>
       <p className="lede">
-        {tx("Practice math on this device only. Nothing is sent to a server. You may qualify for a different share — your shopping letter and your worker control the real case. This is not an approval.")}
+        {tx("Practice math on this device only. Nothing is sent to a server. A different share might apply to you. Your shopping letter and your worker control the real case. This is not an approval.")}
       </p>
 
       <form className="rent-share-form" onSubmit={(e) => e.preventDefault()}>
@@ -72,7 +72,7 @@ export function RentCalculatorPage() {
       <aside className="rent-share-disclaimer">
         <h2>{tx("Disclaimer")}</h2>
         <p>
-          {tx("LeasePath does not decide who qualifies. Deductions, utilities, minimum rent, welfare rent, and payment standards change the real number. Confirm with NYCHA, HPD, HCR, HRA, or your caseworker before you sign a lease.")}
+          {tx("LeasePath does not decide who gets help. Deductions, utilities, minimum rent, welfare rent, and payment standards change the real number. Confirm with NYCHA, HPD, HCR, HRA, or your caseworker before you sign a lease.")}
         </p>
       </aside>
 

@@ -12,7 +12,7 @@ export function YouthLgbtqResourcesPage() {
       <p className="eyebrow">{tx("Youth")}</p>
       <h1>{tx("Youth and LGBTQ+ housing help")}</h1>
       <p className="lede">
-        {tx("Runaway and homeless youth shelters (DYCD), LGBTQ+-affirming programs listed by the city, and ACS housing help for youth leaving foster care. Phones are copied from the official pages named on each card. You may qualify — the agency or provider decides. LeasePath never collects medical information.")}
+        {tx("Runaway and homeless youth shelters (DYCD), LGBTQ+-affirming programs listed by the city, and ACS housing help for youth leaving foster care. Phones are copied from the official pages named on each card. You might be able to get help. The agency or provider decides. LeasePath never collects medical information.")}
       </p>
 
       <ul className="youth-list">

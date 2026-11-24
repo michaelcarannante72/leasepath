@@ -81,7 +81,7 @@ export const SECTIONS = [
   {
     id: 'court',
     title: 'Housing Court help',
-    body: 'If you get court papers, go to your hearing date. You may qualify for free legal help under Right to Counsel. Call 311 and ask for the Tenant Helpline, or use HRA’s legal-services page. LeasePath is not a law firm.',
+    body: 'If you get court papers, go to your hearing date. You might be able to get free legal help under Right to Counsel. The provider decides. Call 311 and ask for the Tenant Helpline, or use HRA’s legal-services page. LeasePath is not a law firm.',
     links: [
       { href: SOURCES.housingCourt.href, label: 'NYC Housing Court', external: true },
       { href: SOURCES.hraLegal.href, label: 'HRA legal services for tenants', external: true },

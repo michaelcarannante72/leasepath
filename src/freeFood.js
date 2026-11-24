@@ -188,7 +188,7 @@ export const HOUSING = [
     offers: 'A 24-hour drop-in center for homeless LGBTQ+ youth, with free medical and mental health care and other services.',
     where: 'Drop-in center: 307 West 38th Street, 3rd floor, New York, NY 10018',
     when: 'New intakes Monday to Friday 8am to 8pm, Saturday and Sunday 10am to 6pm. Closed Wednesday 2 to 4pm.',
-    who: 'See their site for who qualifies.',
+    who: 'See their site for who they serve.',
     phone: '212-206-0574 ext. 100',
     link: 'https://www.aliforneycenter.org/',
   },

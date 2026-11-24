@@ -73,7 +73,7 @@ export function WaitlistTrackerPage() {
       <p className="eyebrow">{tx("Tracker")}</p>
       <h1>{tx("Waitlist and lottery tracker")}</h1>
       <p className="lede">
-        {tx("Track NYCHA, Housing Connect lotteries, and other applications on this device only. Add a reminder date and export a .ics calendar file. Nothing is sent to a server. You may qualify for openings — the agency decides.")}
+        {tx("Track NYCHA, Housing Connect lotteries, and other applications on this device only. Add a reminder date and export a .ics calendar file. Nothing is sent to a server. You might be able to get an opening. The agency decides.")}
       </p>
 
       <form className="waitlist-form" onSubmit={save}>

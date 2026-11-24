@@ -8,7 +8,7 @@ export function UtilityHelpPage() {
       <p className="eyebrow">{tx("Utilities")}</p>
       <h1>{tx("HEAP and utility help")}</h1>
       <p className="lede">
-        {tx("Official New York State HEAP links, HRA emergency assistance, and 311. Amounts and open dates change — confirm on the State page before you apply. You may qualify; OTDA and HRA decide. Nothing you type here is sent to a server.")}
+        {tx("Official New York State HEAP links, HRA emergency assistance, and 311. Amounts and open dates change — confirm on the State page before you apply. You might be able to get help. OTDA and HRA decide. Nothing you type here is sent to a server.")}
       </p>
 
       <aside className="utility-callout">

@@ -23,7 +23,7 @@ test('ACCESS HRA link is the official apply URL and One Shot is cited', () => {
 test('no invented dollar amounts for furniture or moving grants', () => {
   const all = read('src/movingHelp.js') + read('src/components/MovingHelpPage.jsx')
   assert.doesNotMatch(all, /\$\d{2,}|guaranteed allowance|pays \$/)
-  assert.match(all, /you may qualify/i)
+  assert.match(all, /might be able to get/i)
 })
 
 test('page is routed and linked from Resources, Steps, and After you find', () => {

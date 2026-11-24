@@ -29,7 +29,7 @@ export const PROGRAMS = [
   { program: 'Section 8 (NYS HCR)', agency: 'NYS Homes and Community Renewal (HCR)', serves: 'Federal Housing Choice Voucher issued by HCR.' },
   { program: 'CityFHEPS', agency: 'HRA / DSS', serves: 'City rental assistance, mostly for people in shelter or at risk of losing their home.', source: 'cityfheps' },
   { program: 'FHEPS', agency: 'HRA / DSS (state-authorized)', serves: 'Rental assistance for families with children who face eviction or are in shelter.', source: 'fheps' },
-  { program: 'HASA', agency: 'HRA (HIV/AIDS Services Administration)', serves: 'Housing and benefits help for New Yorkers living with HIV or AIDS who qualify.', source: 'hasa' },
+  { program: 'HASA', agency: 'HRA (HIV/AIDS Services Administration)', serves: 'Housing and benefits help for New Yorkers living with HIV or AIDS, if HASA decides.', source: 'hasa' },
   { program: 'HAVP', agency: 'HPD', serves: 'State Housing Access Voucher Program pilot. Referral only, for people who are homeless or at risk.', source: 'havp' },
   { program: 'Stability Vouchers (SV)', agency: 'NYCHA', serves: 'Referral only, through the NYC Continuum of Care or one of its providers.', source: 'nyccoc' },
   { program: 'CHAP', agency: 'HPD', serves: 'New city voucher. Applications open by January 2027 (reported). Not open yet.', source: 'cityLimits' },
@@ -101,7 +101,7 @@ export const CHAP = {
   label: 'Reported, not live. Press reporting until HPD posts official rules.',
   points: [
     'The City Housing Assistance Program is a new city voucher run by HPD, not HRA.',
-    'Applications are expected by January 2027, with first eligibility decisions in March 2027. It is not open yet.',
+    'Applications are expected by January 2027, with first decisions in March 2027. It is not open yet.',
     'It is reported to serve people in any city shelter or facing eviction from a rent-stabilized apartment, with an income cap of 50% of area median income (about $76,000 for a family of three). Buildings with a regulatory agreement are excluded (check ACRIS). Funding is capped at about 5,600 households, so a waitlist is possible.',
     'No rent check until HPD publishes. In shelter? Ask your housing specialist.',
   ],
@@ -145,7 +145,7 @@ export const SV = {
   title: 'Stability Vouchers (SV)',
   label: 'Run by NYCHA. Referral only.',
   points: [
-    'Who qualifies: people who are homeless or at risk of homelessness; people fleeing domestic violence, dating violence, stalking, or sexual assault; and veterans or families with a veteran who meet one of those.',
+    'Who it is for: people who are homeless or at risk of homelessness; people fleeing domestic violence, dating violence, stalking, or sexual assault; and veterans or families with a veteran who meet one of those.',
     'You can’t apply to NYCHA directly. You need a referral from the NYC Continuum of Care or one of its providers.',
     'LeasePath has no Stability Voucher rent check.',
   ],

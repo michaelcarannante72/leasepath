@@ -13,7 +13,7 @@ test('every resource cites DYCD or ACS and verified phones where listed', () => 
   for (const item of RESOURCES) {
     assert.ok(SOURCES[item.sourceId])
     assert.match(item.href, /nyc\.gov/)
-    assert.match(item.body, /you may qualify|ACS publishes|DYCD/i)
+    assert.match(item.body, /might be able to get help|ACS publishes|DYCD/i)
   }
   const phones = RESOURCES.flatMap((r) => (r.phones || []).map((p) => p.number))
   for (const need of ['212-206-0574', '212-613-0300', '917-507-1562', '212-676-2818']) {

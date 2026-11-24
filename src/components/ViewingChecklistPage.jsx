@@ -25,7 +25,7 @@ export function ViewingChecklistPage() {
       <p className="eyebrow">{tx("Showings")}</p>
       <h1>{tx("Apartment viewing checklist")}</h1>
       <p className="lede">
-        {tx("Questions to ask, things to inspect, and red flags. Check boxes stay on this device for this visit — print or screenshot before you go. You may qualify for different program rules; your shopping letter controls.")}
+        {tx("Questions to ask, things to inspect, and red flags. Check boxes stay on this device for this visit — print or screenshot before you go. Different program rules might apply to you; your shopping letter controls.")}
       </p>
 
       <p className="card-actions print-actions">

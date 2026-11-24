@@ -19,7 +19,7 @@ test('heat season matches HPD published rules', () => {
 
 test('sections cover repairs, heat, 311, housing court', () => {
   assert.deepEqual(SECTIONS.map((s) => s.id), ['repairs', 'heat', '311', 'court'])
-  assert.match(SECTIONS.map((s) => s.body).join(' '), /you may qualify/i)
+  assert.match(SECTIONS.map((s) => s.body).join(' '), /might be able to get free legal help/i)
 })
 
 test('App wires /after-movein', () => {

@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs'
 import test from 'node:test'
 import { RESOURCES } from '../src/data.js'
 
-const COPY = "HASA (part of NYC HRA) helps NYC residents living with HIV or AIDS with case management, housing help, and benefits. You don't need an AIDS diagnosis or symptoms to qualify. In most HASA rental help, you pay about 30% of your income and HASA pays the rest. HASA will ask for medical proof; LeasePath never asks for or stores it."
+const COPY = "HASA (part of NYC HRA) helps NYC residents living with HIV or AIDS with case management, housing help, and benefits. You don't need an AIDS diagnosis or symptoms to apply. In most HASA rental help, you pay about 30% of your income and HASA pays the rest. HASA will ask for medical proof; LeasePath never asks for or stores it."
 
 test('the HASA card uses the exact copy with the HRA link; the FAQ stays its own card, with no extra link row', () => {
   const card = RESOURCES.find((item) => item.title === 'HASA services')

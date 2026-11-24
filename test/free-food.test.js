@@ -78,7 +78,7 @@ test('Housing and drop-in help: Ali Forney Center, no age range', () => {
   assert.match(af.where, /307 West 38th Street, 3rd floor, New York, NY 10018/)
   assert.equal(af.when, 'New intakes Monday to Friday 8am to 8pm, Saturday and Sunday 10am to 6pm. Closed Wednesday 2 to 4pm.')
   assert.equal(af.phone, '212-206-0574 ext. 100')
-  assert.equal(af.who, 'See their site for who qualifies.')
+  assert.equal(af.who, 'See their site for who they serve.')
   assert.equal(af.link, 'https://www.aliforneycenter.org/')
   assert.doesNotMatch(JSON.stringify(af), /\bages?\b|years old|\b\d{2}\s*(to|-)\s*\d{2}\b/i)
 })

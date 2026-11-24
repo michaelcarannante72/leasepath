@@ -13,7 +13,7 @@ test('HEAP cites official NY State and OTDA pages with verified NYC phones', () 
   assert.match(SOURCES.otdaHeap.href, /otda\.ny\.gov/)
   assert.equal(HEAP.nycEmergencyPhone, '718-557-1399')
   assert.equal(HEAP.otdaHotline, '1-800-342-3009')
-  assert.match(HEAP.blurb, /you may qualify/i)
+  assert.match(HEAP.blurb, /might be able to get help/i)
 })
 
 test('sections cover HEAP, amounts note, HRA, HPD', () => {

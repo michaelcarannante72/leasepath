@@ -41,7 +41,7 @@ export const RESOURCES = [
     group: 'HASA voucher',
     title: 'HASA services',
     // Exact copy from the housing specialist. Do not edit without her.
-    detail: "HASA (part of NYC HRA) helps NYC residents living with HIV or AIDS with case management, housing help, and benefits. You don't need an AIDS diagnosis or symptoms to qualify. In most HASA rental help, you pay about 30% of your income and HASA pays the rest. HASA will ask for medical proof; LeasePath never asks for or stores it.",
+    detail: "HASA (part of NYC HRA) helps NYC residents living with HIV or AIDS with case management, housing help, and benefits. You don't need an AIDS diagnosis or symptoms to apply. In most HASA rental help, you pay about 30% of your income and HASA pays the rest. HASA will ask for medical proof; LeasePath never asks for or stores it.",
     href: 'https://www.nyc.gov/site/hra/help/hiv-aids-services.page',
     action: 'Open HASA services',
   },
@@ -188,9 +188,9 @@ export const RESOURCES = [
   {
     group: 'Jobs and training',
     title: 'Free online courses (NYS Department of Labor and Coursera)',
-    detail: 'Free Coursera courses and certificates through NYS DOL, in tech, business, and more. Who qualifies: New York residents over 18 who are unemployed or underemployed, or people outside New York who get New York unemployment benefits. Sign up from the DOL page with your NY.GOV ID, and use the same email for Coursera. Signing up on Coursera directly does not get you the free account. LeasePath is not affiliated with NYS DOL or Coursera.',
+    detail: 'Free Coursera courses and certificates through NYS DOL, in tech, business, and more. Who it is for: New York residents over 18 who are unemployed or underemployed, or people outside New York who get New York unemployment benefits. Sign up from the DOL page with your NY.GOV ID, and use the same email for Coursera. Signing up on Coursera directly does not get you the free account. LeasePath is not affiliated with NYS DOL or Coursera.',
     href: 'https://dol.ny.gov/online-learning-coursera',
-    action: 'See if you qualify',
+    action: 'See if this applies to you',
   },
   {
     group: 'Call',

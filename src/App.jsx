@@ -139,7 +139,7 @@ function loadChecks() {
 
 function parseHash() {
   const hash = window.location.hash.replace(/^#/, '') || '/'
-  // Taken down (the pages said "You may qualify"): old links land on the home page.
+  // Taken down (the pages made promises about who gets help): old links land on the home page.
   if (hash === '/quiz' || hash === '/start' || hash === '/housing-connect') {
     window.history.replaceState(null, '', '#/')
     return { name: LEASEBOT_ONLY ? 'leasebot' : 'search' }

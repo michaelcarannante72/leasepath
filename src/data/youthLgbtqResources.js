@@ -19,7 +19,7 @@ export const RESOURCES = [
   {
     id: 'dycd-crisis',
     title: 'DYCD crisis shelters for runaway and homeless youth',
-    body: 'DYCD-funded crisis programs provide emergency shelter and crisis help, including sites that welcome LGBTQ+ youth. DYCD’s crisis page lists borough programs and phones. You may qualify — the program decides intake.',
+    body: 'DYCD-funded crisis programs provide emergency shelter and crisis help, including sites that welcome LGBTQ+ youth. DYCD’s crisis page lists borough programs and phones. You might be able to get help. The program decides intake.',
     phones: [],
     href: SOURCES.dycdCrisis.href,
     sourceId: 'dycdCrisis',
@@ -64,7 +64,7 @@ export const RESOURCES = [
   {
     id: 'nyny3',
     title: 'New York / New York III supportive housing',
-    body: 'ACS describes NY/NY III supportive housing for youth leaving or recently leaving foster care (eligibility details, including ages ACS publishes, are on the ACS housing page). Apply only through your caseworker via HRA’s CAPS system — LeasePath cannot file it.',
+    body: 'ACS describes NY/NY III supportive housing for youth leaving or recently leaving foster care (details, including ages ACS publishes, are on the ACS housing page). Apply only through your caseworker via HRA’s CAPS system — LeasePath cannot file it.',
     phones: [],
     href: SOURCES.acsHousing.href,
     sourceId: 'acsHousing',

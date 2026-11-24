@@ -25,7 +25,7 @@ export const SOURCES = {
 
 export const HEAP = {
   blurb:
-    'HEAP (Home Energy Assistance Program) helps income-eligible New Yorkers with heating costs. You may qualify even if heat is included in your rent — OTDA and HRA decide. Regular benefits open on a seasonal schedule published by New York State; Emergency HEAP helps if you face a shutoff or are out of fuel.',
+    'HEAP (Home Energy Assistance Program) helps New Yorkers with low income pay heating costs. You might be able to get help even if heat is included in your rent. OTDA and HRA decide. Regular benefits open on a seasonal schedule published by New York State; Emergency HEAP helps if you face a shutoff or are out of fuel.',
   applyNyc: 'https://access.nyc.gov/',
   applyRestOfState: 'https://myBenefits.ny.gov/',
   nycEmergencyPhone: '718-557-1399',
@@ -36,7 +36,7 @@ export const HEAP = {
   regularAmountsNote:
     'On the NY State HEAP apply page, regular base benefits are listed for households that pay heat directly (for example electricity/natural gas, oil/kerosene/propane, or other deliverable fuels) and smaller amounts when heat is included in rent or in certain subsidized settings. Add-ons may apply. Figures change by season — confirm on the official page before you apply.',
   incomeNote:
-    'Monthly income limits by household size are published on the NY State HEAP apply page. You may also qualify if you receive SNAP, Temporary Assistance, or certain SSI. Bring proof of residency, income, ID, and a utility or landlord statement as listed on that page.',
+    'Monthly income limits by household size are published on the NY State HEAP apply page. You might also be able to get help if you receive SNAP, Temporary Assistance, or certain SSI. Bring proof of residency, income, ID, and a utility or landlord statement as listed on that page.',
 }
 
 export const SECTIONS = [
@@ -63,7 +63,7 @@ export const SECTIONS = [
   {
     id: 'hra',
     title: 'HRA One Shot Deal (emergency cash)',
-    body: 'ACCESS NYC describes the One Shot Deal as emergency cash assistance that can help with rent or utility arrears in a crisis. You may qualify — HRA decides after an interview. Apply through ACCESS HRA or a Benefits Access Center. LeasePath does not take applications.',
+    body: 'ACCESS NYC describes the One Shot Deal as emergency cash assistance that can help with rent or utility arrears in a crisis. See if this applies to you after an interview. Apply through ACCESS HRA or a Benefits Access Center. LeasePath does not take applications.',
     links: [
       { href: SOURCES.hraEmergency.href, label: 'HRA Emergency Assistance', external: true },
       { href: SOURCES.accessNyc.href, label: 'ACCESS HRA', external: true },

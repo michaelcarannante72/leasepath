@@ -1,5 +1,5 @@
 import { DurableObject } from 'cloudflare:workers'
-import { accountKey, decideAccount, emptyPlace } from '../server/accounts.js'
+import { accountKey, decideAccount, sanitizePlace } from '../server/accounts.js'
 
 export class AccountBook extends DurableObject {
   constructor(ctx, env) {
@@ -29,7 +29,7 @@ export class AccountBook extends DurableObject {
     try {
       return {
         email: rows[0].email,
-        place: JSON.parse(rows[0].place),
+        place: sanitizePlace(JSON.parse(rows[0].place)),
         secret: rows[0].secret || '',
         updatedAt: rows[0].updated_at,
       }
@@ -51,7 +51,7 @@ export class AccountBook extends DurableObject {
     if (current?.secret) return { ok: false, error: 'exists' }
     const record = {
       email: input.email,
-      place: current?.place || emptyPlace(),
+      place: sanitizePlace(current?.place),
       secret: String(input.secret || ''),
       updatedAt: input.now || '',
     }

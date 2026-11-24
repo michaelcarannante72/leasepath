@@ -1,4 +1,4 @@
-import { accountKey, emailAccountKey, emptyPlace, normalizeEmail, sessionRevoked } from './accounts.js'
+import { accountKey, emailAccountKey, normalizeEmail, sanitizePlace, sessionRevoked } from './accounts.js'
 import { checkPassword, hashPassword, passwordAccepted } from './passwords.js'
 import { openAuth, readCookie, validNonce, verifyGoogleIdToken, googleCerts } from './auth.js'
 import { MODEL, prepareGuide, completeGuide } from './guide.js'
@@ -573,7 +573,7 @@ async function handleAccount({ method, body, auth, accounts, usage, now }) {
     }
     if (method === 'GET') {
       const current = await accounts.read(accountKey(auth.sub))
-      return withAccess(200, { ok: true, place: current?.place || emptyPlace() }, auth)
+      return withAccess(200, { ok: true, place: sanitizePlace(current?.place) }, auth)
     }
     if (method !== 'POST' && method !== 'PUT') return withAccess(405, { error: 'method' }, auth)
     const place = body?.place
@@ -593,7 +593,7 @@ async function handleAccount({ method, body, auth, accounts, usage, now }) {
     return withAccess(200, {
       ok: true,
       adopted: method === 'POST' ? Boolean(decision.adopted) : undefined,
-      place: decision.record.place,
+      place: sanitizePlace(decision.record.place),
     }, auth)
   } catch {
     return withAccess(503, {

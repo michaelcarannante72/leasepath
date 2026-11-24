@@ -306,12 +306,11 @@ export default function App() {
     setPlan((current) => {
       const next = {
         ...current,
-        program: place.program || '',
+        // program and situation are device-only: keep this phone's own values, never take them from the account.
         household: normalizeHousehold(place.household),
         letterRent: place.letterRent || '',
         utilities: place.utilities || '',
         receiving: place.receiving || '',
-        situation: place.situation || '',
       }
       writeItem(PLAN_KEY, JSON.stringify(next))
       return next
@@ -326,7 +325,6 @@ export default function App() {
     setFilters((current) => ({
       ...current,
       q: place.neighborhood || '',
-      program: PROGRAMS.includes(place.program) ? place.program : 'All',
     }))
   }, [])
 
@@ -371,13 +369,11 @@ export default function App() {
     const storedSaved = loadJson(SAVED_KEY, [])
     const storedSteps = loadJson(STEPS_KEY, [])
     const place = {
-      program: storedPlan.program,
       neighborhood: readItem(NEIGHBORHOOD_KEY) || '',
       letterRent: storedPlan.letterRent,
       utilities: storedPlan.utilities,
       household: storedPlan.household,
       receiving: storedPlan.receiving,
-      situation: storedPlan.situation,
       savedIds: Array.isArray(storedSaved) ? storedSaved : [],
       steps: Array.isArray(storedSteps) ? storedSteps : [],
     }
@@ -418,13 +414,11 @@ export default function App() {
         signal: controller.signal,
         body: JSON.stringify({
           place: {
-            program: plan.program,
             neighborhood: filters.q,
             letterRent: plan.letterRent,
             utilities: plan.utilities,
             household: plan.household,
             receiving: plan.receiving,
-            situation: plan.situation,
             savedIds: saved,
             steps: checked,
           },
@@ -668,13 +662,11 @@ export default function App() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             place: {
-              program: plan.program,
               neighborhood: filters.q,
               letterRent: plan.letterRent,
               utilities: plan.utilities,
               household: plan.household,
               receiving: plan.receiving,
-              situation: plan.situation,
               savedIds: saved,
               steps: checked,
             },

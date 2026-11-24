@@ -67,7 +67,9 @@ test('the first sign-up moves this phone onto the account and drops case details
   const claimed = await accountCall(accounts, { method: 'POST', cookieHeader: cookieJar(signed), place: localPlace })
   assert.equal(claimed.status, 200)
   assert.equal(claimed.json.adopted, true)
-  assert.equal(claimed.json.place.program, 'HASA')
+  // A stale client that still sends program and situation: the server drops both.
+  assert.equal(claimed.json.place.program, undefined)
+  assert.equal(claimed.json.place.situation, undefined)
   assert.equal(claimed.json.place.neighborhood, 'Crown Heights')
   assert.equal(claimed.json.place.letterRent, '2100')
   assert.deepEqual(claimed.json.place.savedIds, ['crown-heights-1br'])
@@ -89,7 +91,7 @@ test('a second phone loads the account instead of replacing it', async () => {
     place: { program: 'Section 8', neighborhood: 'Harlem', letterRent: '900', savedIds: [], steps: [] },
   })
   assert.equal(claimed.json.adopted, false)
-  assert.equal(claimed.json.place.program, 'HASA')
+  assert.equal(claimed.json.place.program, undefined)
   assert.equal(claimed.json.place.neighborhood, 'Crown Heights')
   assert.equal(claimed.json.place.letterRent, '2100')
 })

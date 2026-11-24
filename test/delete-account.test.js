@@ -25,8 +25,9 @@ test('DELETE /api/account erases voucher type, housing situation, amount, househ
   const cookieHeader = jar(signed)
   const place = { program: 'HASA', situation: 'HASA SRO or supportive housing', letterRent: '$2,100', household: '2', utilities: 'All included', neighborhood: 'Harlem', savedIds: [], steps: [1] }
   const saved = await call(accounts, usage, { method: 'POST', pathname: '/api/account', body: { place }, cookieHeader })
-  assert.equal(saved.json.place.program, 'HASA')
-  assert.equal(saved.json.place.situation, 'HASA SRO or supportive housing')
+  assert.equal(saved.json.place.program, undefined)
+  assert.equal(saved.json.place.situation, undefined)
+  assert.equal(saved.json.place.letterRent, '2100')
   for (const key of accountUsageKeys('sub123', now).slice(0, 3)) usage.seed(key, 5)
 
   const deleted = await call(accounts, usage, { method: 'DELETE', pathname: '/api/account', cookieHeader })
@@ -146,8 +147,8 @@ test('after deletion, every existing session on every device is refused and cann
   const fresh = jar(await google('sub9'))
   const created = await call(accounts, usage, { method: 'POST', pathname: '/api/account', body: { place: { program: 'CityFHEPS' } }, cookieHeader: fresh })
   assert.equal(created.status, 200)
-  assert.equal(created.json.place.program, 'CityFHEPS')
-  assert.notEqual(created.json.place.situation, 'HASA SRO or supportive housing')
+  assert.equal(created.json.place.program, undefined)
+  assert.equal(created.json.place.situation, undefined)
 })
 
 test('legacy sessions without iat are judged by their expiry, and the Durable Object keeps a tombstone', async () => {
@@ -191,7 +192,7 @@ test('signing in again restores the account details onto an empty phone (claim d
   const restored = await call(accounts, usage, { method: 'POST', pathname: '/api/account', body: { place: empty }, cookieHeader: again })
   assert.equal(restored.status, 200)
   assert.equal(restored.json.adopted, false)
-  assert.equal(restored.json.place.program, 'HASA')
+  assert.equal(restored.json.place.program, undefined)
   assert.equal(restored.json.place.letterRent, '2200')
   assert.equal(restored.json.place.household, '2')
   assert.deepEqual(restored.json.place.savedIds, ['crown-heights-1br'])

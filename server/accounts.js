@@ -1,23 +1,15 @@
-const PROGRAMS = ['CityFHEPS', 'HASA', 'Section 8', 'FHEPS']
 const RECEIVING = ['has', 'none', 'unsure']
 const UTILITIES = ['All utilities are included', 'I would pay one or more utilities']
-const SITUATIONS = [
-  'Shelter or transitional housing',
-  'Doubled up with someone else',
-  'HASA SRO or supportive housing',
-  'Renting now',
-  'Unsure',
-]
+// The voucher program and housing situation (HASA implies HIV status) are never stored on the server.
+// sanitizePlace drops them from every write and every read, so an old saved value is stripped.
 
 export function emptyPlace() {
   return {
-    program: '',
     neighborhood: '',
     letterRent: '',
     utilities: '',
     household: '',
     receiving: '',
-    situation: '',
     savedIds: [],
     steps: [],
   }
@@ -54,13 +46,11 @@ export function sanitizePlace(input) {
     keptSteps.push(step)
   }
   return {
-    program: PROGRAMS.includes(source.program) ? source.program : '',
     neighborhood: cleanLine(source.neighborhood, 80),
     letterRent: String(source.letterRent || '').replace(/[^\d]/g, '').slice(0, 6),
     utilities: UTILITIES.includes(source.utilities) ? source.utilities : '',
     household: /^([1-8]|9\+)$/.test(household) ? household : '',
     receiving: RECEIVING.includes(source.receiving) ? source.receiving : '',
-    situation: SITUATIONS.includes(source.situation) ? source.situation : '',
     savedIds,
     steps: keptSteps,
   }
@@ -69,13 +59,11 @@ export function sanitizePlace(input) {
 export function placeHasContent(place) {
   if (!place) return false
   return Boolean(
-    place.program ||
-      place.neighborhood ||
+    place.neighborhood ||
       place.letterRent ||
       place.utilities ||
       place.household ||
       place.receiving ||
-      place.situation ||
       place.savedIds?.length ||
       place.steps?.length,
   )
@@ -112,7 +100,7 @@ export function decideAccount(current, input, mode) {
   const secret = keptSecret(current, input)
   if (mode === 'claim' && current && placeHasContent(current.place)) {
     return {
-      record: { ...current, email: nextEmail, secret },
+      record: { ...current, place: sanitizePlace(current.place), email: nextEmail, secret },
       adopted: false,
     }
   }
@@ -171,7 +159,7 @@ export function createMemoryAccounts() {
       if (current?.secret) return { ok: false, error: 'exists' }
       const record = {
         email: input.email,
-        place: current?.place || emptyPlace(),
+        place: sanitizePlace(current?.place),
         secret: input.secret,
         updatedAt: input.now,
       }

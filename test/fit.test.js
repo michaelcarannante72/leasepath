@@ -99,8 +99,9 @@ test('the card shows the program result even when the letter says "within"', () 
 
 test('card labels say what was compared and never read as an approval', () => {
   const labels = (flags) => cardFlags(flags).map(cardLabel)
-  const fits = assessListing(oneBed, { program: 'HASA', household: 1, letterRent: '' })
-  assert.ok(labels(fits).includes('May fit HASA limit'))
+  const fits = assessListing(oneBed, { program: 'HASA', household: 1, letterRent: '' }, { rentLimit: '5000' })
+  assert.ok(labels(fits).includes('May fit your limit'))
+  assert.ok(labels(assessListing({ ...oneBed, rent: 6000 }, { program: 'HASA', household: 1 }, { rentLimit: '5000' })).includes('Likely over your limit'))
   const over = assessListing({ ...oneBed, rent: 3000 }, { program: 'CityFHEPS', household: 1 })
   assert.equal(labels(over)[0], 'Above CityFHEPS limit')
   for (const flags of [fits, over]) for (const line of cardFlags(flags)) assert.notEqual(cardLabel(line), 'Fits the letter')

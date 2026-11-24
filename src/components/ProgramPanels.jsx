@@ -1,11 +1,12 @@
 import { tx } from '../i18nAuto.js'
 import { CITYFHEPS_2026_ROWS, CITYFHEPS_PROGRAM, CITYFHEPS_ROOM_MAX, CITYFHEPS_RULES, CITYFHEPS_UTILITY_ALLOWANCES_1BR } from '../data/cityfheps.js'
-import { HASA_PROGRAM, HASA_ROWS, HASA_RULES } from '../data/hasa.js'
+import { HASA_PROGRAM, HASA_RULES } from '../data/hasa.js'
 import { SECTION8_AGENCIES, SECTION8_NEW_RENTAL_ROWS, SECTION8_PROGRAM, SECTION8_RECERT_ROWS, SECTION8_RULES } from '../data/section8.js'
 import { ALLOWANCE_DATE_NOTE, isDisplayable, sourceFor } from '../data/sourced.js'
 import { askFor, money } from '../rentCheck.js'
 import { LETTER_DAYS, shoppingLetterDetail, shoppingLetterHeadline, shoppingLetterSource, shoppingLetterStatus } from '../shoppingLetter.js'
 import { RentTable } from './RentTable.jsx'
+import { RentLimitField } from './RentLimitField.jsx'
 import { SourceLine } from './SourceLine.jsx'
 import { NychaScamWarning } from './AfterYouFindPage.jsx'
 
@@ -30,32 +31,28 @@ function Rule({ rule, program, children }) {
 
 const DEVICE_NOTE = 'These answers stay on this phone. They are not sent to your account or to the assistant.'
 
-export function HasaPanel({ checks, onChecks }) {
+/** Where LeasePath has no verified dollar limit (HASA, state FHEPS): the renter types their own. Kept on this device only. */
+export function RentLimitPanel({ checks, onChecks }) {
   return (
     <section className="panel">
-      <h2>{tx("HASA rent schedule")}</h2>
-      <p>{tx("HASA is its own program. These are HASA figures, not CityFHEPS figures. Your caseworker approves the rent and the bedroom count for your household.")}</p>
-      <RentTable program={HASA_PROGRAM} rows={HASA_ROWS} columns={FAMILY_COLUMNS} caption="HASA maximum rent, every utility included" />
-      <Rule rule={HASA_RULES.notCityfheps} program={HASA_PROGRAM}>{tx("HASA rental assistance is not CityFHEPS. LeasePath keeps the two separate.")}</Rule>
-      <Rule rule={HASA_RULES.bedroomExceptions} program={HASA_PROGRAM}>{tx("The schedule has no SRO or room row. Bedroom exceptions are case by case.")}</Rule>
-      <Rule rule={HASA_RULES.heatHotWater} program={HASA_PROGRAM}>{tx("HASA needs heat and hot water in the lease, with limited exceptions such as housing lottery apartments.")}</Rule>
-      <p className="fine">{tx("HRA says its guidelines are not a guarantee and can change.")}</p>
-      <div className="stack">
-        <p className="device-note">{DEVICE_NOTE}</p>
-        <label>
-          <span>{tx("Monthly utility amount your caseworker gave you (optional)")}</span>
-          <input
-            inputMode="numeric"
-            value={checks.hasaDeduction}
-            onChange={(event) => onChecks({ hasaDeduction: event.target.value.replace(/[^\d]/g, '').slice(0, 5) })}
-            placeholder={tx("Leave blank if you do not know")}
-          />
-        </label>
-        <Rule rule={HASA_RULES.utilityDeduction} program={HASA_PROGRAM}>
-          {tx("If you pay a utility, HASA subtracts it from the maximum. HASA’s deduction amounts are not in the public schedule, so LeasePath does not assume one.")} {askFor(HASA_PROGRAM)} {tx("or use the HRA Landlord Utility Calculator.")}
-        </Rule>
-      </div>
+      <h2>{tx("Use the amount on your shopping letter, or ask your case manager.")}</h2>
+      <RentLimitField value={checks.rentLimit} onChange={(rentLimit) => onChecks({ rentLimit })} />
     </section>
+  )
+}
+
+export function HasaPanel({ checks, onChecks }) {
+  return (
+    <>
+      <RentLimitPanel checks={checks} onChecks={onChecks} />
+      <section className="panel">
+        <h2>{tx("HASA rent help")}</h2>
+        <p>{tx("HASA is its own program. It is not CityFHEPS. Your caseworker approves the rent and the bedroom count for your household.")}</p>
+        <Rule rule={HASA_RULES.notCityfheps} program={HASA_PROGRAM}>{tx("HASA rental assistance is not CityFHEPS. LeasePath keeps the two separate.")}</Rule>
+        <Rule rule={HASA_RULES.bedroomExceptions} program={HASA_PROGRAM}>{tx("Bedroom exceptions are case by case.")}</Rule>
+        <Rule rule={HASA_RULES.heatHotWater} program={HASA_PROGRAM}>{tx("HASA needs heat and hot water in the lease, with limited exceptions such as housing lottery apartments.")}</Rule>
+      </section>
+    </>
   )
 }
 

@@ -8,7 +8,6 @@ import {
   VOUCHERS,
   BOROUGHS,
   parseSearchPath,
-  FHEPS_2025_LIMITS,
 } from '../src/data/voucherSearches.js'
 import { searchHtmlForPath, sitemapXml } from '../server/searchPages.js'
 
@@ -33,7 +32,7 @@ const env = {
 
 test('popular search catalog covers only verified voucher × size rows across five boroughs', () => {
   assert.equal(SEARCH_PAGES.length, Object.keys(VERIFIED_LIMITS).length * BOROUGHS.length)
-  assert.equal(SEARCH_PAGES.length, 80)
+  assert.equal(SEARCH_PAGES.length, 55)
   for (const [key, limit] of Object.entries(VERIFIED_LIMITS)) {
     const [voucher, size] = key.split(':')
     const pages = SEARCH_PAGES.filter((page) => page.voucherSlug === voucher && page.sizeSlug === size)
@@ -49,9 +48,10 @@ test('no HPD, HCR, or HASA dollar search pages exist', () => {
     assert.doesNotMatch(page.h1, /\bHPD\b|\bHCR\b|\bHASA\b/)
   }
   for (const voucher of VOUCHERS) {
-    assert.ok(['cityfheps', 'nycha-section-8', 'fheps'].includes(voucher.slug))
+    assert.ok(['cityfheps', 'nycha-section-8'].includes(voucher.slug))
   }
-  assert.equal(FHEPS_2025_LIMITS['1br'], 2762)
+  // State FHEPS limits are unverified: no FHEPS search page exists.
+  assert.equal(SEARCH_PAGES.some((page) => /fheps/i.test(page.voucherSlug) && page.voucherSlug !== 'cityfheps'), false)
 })
 
 test('Worker serves /search index and a detail page with SEO tags and security headers', async () => {
@@ -106,9 +106,10 @@ test('sitemap.xml lists the index and every search page; robots.txt points at it
   for (const page of SEARCH_PAGES) {
     assert.match(xml, new RegExp(`<loc>https://leasepath\\.app${page.path.replaceAll('/', '\\/')}</loc>`))
   }
-  assert.equal(sitemapXml().split('<url>').length - 1, 84)
+  assert.equal(sitemapXml().split('<url>').length - 1, 59)
   assert.ok(parseSearchPath('/search'))
-  assert.ok(searchHtmlForPath('/search/fheps/brooklyn/2br').includes('$3,058'))
+  assert.equal(parseSearchPath('/search/fheps/brooklyn/2br'), null)
+  assert.doesNotMatch(xml, /\/search\/fheps\//)
 })
 
 test('footer chips and wrangler run_worker_first cover /search', () => {

@@ -1,9 +1,10 @@
 // On-device listing paste checker. Parses rent, beds, and borough from listing text,
-// compares against verified NYCHA Section 8 / CityFHEPS / FHEPS limits only
-// (no HPD, HCR, or HASA dollar checks), and flags common scam patterns.
+// compares against verified NYCHA Section 8 / CityFHEPS limits and the limit the renter typed
+// (no state FHEPS, HPD, HCR, or HASA dollar tables), and flags common scam patterns.
 // Nothing leaves the device.
 
 import { VOUCHERS, SIZES } from './data/voucherSearches.js'
+import { ownLimitAmount, ownLimitFlag } from './rentCheck.js'
 
 export const BOROUGH_NAMES = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island']
 
@@ -122,7 +123,7 @@ const RED_FLAG_RULES = [
 
 /**
  * Compare a parsed listing against verified rent limits.
- * Skips HPD, HCR, and HASA dollar checks on purpose.
+ * Skips state FHEPS, HPD, HCR, and HASA dollar checks on purpose.
  */
 export function compareRentLimits(parsed) {
   const comparisons = []
@@ -245,11 +246,13 @@ export const CHECKLIST_ITEMS = [
 /**
  * Full on-device check. Returns parsed fields, rent comparisons, flags, checklist, and questions.
  */
-export function checkListing(raw) {
+export function checkListing(raw, ownLimit = '') {
   const text = String(raw || '').trim()
   const parsed = parseListingText(text)
   const empty = !text
   const comparisons = empty ? [] : compareRentLimits(parsed)
+  // The renter's own limit, typed from their paperwork. Null when none was typed or no rent was found.
+  const ownLimitResult = empty || ownLimitAmount(ownLimit) == null || parsed.rent == null ? null : ownLimitFlag(parsed.rent, ownLimit)
   const flags = empty ? [] : findRedFlags(text, parsed)
   const checklist = CHECKLIST_ITEMS.map((item) => {
     let pass = null
@@ -262,7 +265,7 @@ export function checkListing(raw) {
     else if (item.id === 'accepts-voucher') pass = !flags.some((f) => f.id === 'no-programs')
     else if (item.id === 'no-wire') pass = !flags.some((f) => f.id === 'wire-crypto')
     else if (item.id === 'rent-vs-limit') {
-      pass = comparisons.some((c) => c.status === 'within' || c.status === 'over')
+      pass = comparisons.some((c) => c.status === 'within' || c.status === 'over') || ownLimitResult != null
     }
     return { ...item, pass }
   })
@@ -270,6 +273,7 @@ export function checkListing(raw) {
     empty,
     parsed,
     comparisons,
+    ownLimitResult,
     flags,
     checklist,
     questions: SUGGESTED_QUESTIONS,

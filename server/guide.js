@@ -136,6 +136,8 @@ function rentCheckBlock(plan, listing) {
   const rent = num(listing.rent)
   const bedrooms = Number.isInteger(listing.bedrooms) ? listing.bedrooms : null
   if (!unitKind || !(rent > 0)) return ''
+  // HASA and state FHEPS have no verified table. The person's own typed limit stays on their device, so there is nothing to check here.
+  if (program === 'HASA' || program === 'FHEPS') return `RENT CHECK\nThe app has no ${program} rent check. Say you do not have one and ${askFor(program).toLowerCase()}. Never quote a ${program} dollar limit.`
   const household = num(plan.household)
   const flags = rentFlags(
     { unitKind, bedrooms, rent, utilities: typeof listing.utilities === 'string' ? listing.utilities : '' },

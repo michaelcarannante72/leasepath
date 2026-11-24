@@ -380,7 +380,7 @@ test('the assistant pack gives the lines with program, year, effective date, sou
   assert.doesNotMatch(block, /\$3,607|\$6,447|\$9,287|about \$/, 'no rounded-up monthly figure')
   assert.doesNotMatch(block, /add \$11,360|each person after the eighth/)
   assert.match(block, /household of 9 or more there is no figure here: do not add up or extend the table/)
-  assert.match(pack, /household of 9 or more has no HASA or CityFHEPS rent comparison in this pack/)
+  assert.match(pack, /household of 9 or more has no CityFHEPS rent comparison in this pack/)
   assert.match(block, /Lead with the yearly figure, which is exact/)
   assert.match(block, /2026 HHS poverty guidelines/)
   assert.match(block, /effective January 13, 2026/)
@@ -463,7 +463,8 @@ test('the assistant is told a household of 9 or more has no figure, from 9+ or f
       const { input } = prepareGuide({ messages: [{ role: 'user', content: 'Is this OK?' }], includePlan: true, plan: { program, household }, listing })
       const text = input[input.length - 1].content
       assert.match(text, /Household size: 9 or more\. LeasePath shows no rent or income figure for this size\. Say to ask the caseworker\./)
-      assert.match(text, new RegExp(`LeasePath shows no ${program} rent comparison for a household of 9 or more\\. Ask your caseworker\\.`))
+      // HASA has no table at all now; CityFHEPS keeps its household-of-9 note.
+      assert.match(text, program === 'HASA' ? /The app has no HASA rent check\./ : /LeasePath shows no CityFHEPS rent comparison for a household of 9 or more\. Ask your caseworker\./)
       assert.doesNotMatch(text.slice(text.indexOf('RENT CHECK')), /\$\d/)
     }
   }

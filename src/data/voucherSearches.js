@@ -1,5 +1,5 @@
 // Popular voucher × borough × bedroom SEO pages. Limits match the verified table only
-// (NYCHA Section 8 new-rental, CityFHEPS 2026, FHEPS 2025). No HPD, HCR, or HASA dollar pages.
+// (NYCHA Section 8 new-rental, CityFHEPS 2026). No state FHEPS, HPD, HCR, or HASA dollar pages.
 
 import { CITYFHEPS_2026_ROWS } from './cityfheps.js'
 import { SECTION8_NEW_RENTAL_ROWS } from './section8.js'
@@ -21,15 +21,6 @@ export const SIZES = [
   { slug: '4br', label: '4-bedroom', shortLabel: '4BR', beds: 4, unitKind: 'apartment' },
 ]
 
-/** Verified FHEPS 2025 limits (all utilities included). Not in the CityFHEPS/NYCHA schedules. */
-export const FHEPS_2025_LIMITS = {
-  studio: 2646,
-  '1br': 2762,
-  '2br': 3058,
-  '3br': 3811,
-  '4br': 4111,
-}
-
 const CITYFHEPS_SOURCE = {
   name: 'DSS / HRA',
   title: 'DSS CityFHEPS Payment Standards (DSS-8r)',
@@ -40,12 +31,6 @@ const NYCHA_SOURCE = {
   name: 'NYCHA',
   title: 'NYCHA Voucher Payment Standards',
   url: 'https://www.nyc.gov/site/nycha/section-8/voucher-payment-standards-utility-allowance-schedules.page',
-}
-
-const FHEPS_SOURCE = {
-  name: 'DSS / HRA',
-  title: 'FHEPS (HRA)',
-  url: 'https://www.nyc.gov/site/hra/help/fheps.page',
 }
 
 function cityfhepsLimit(sizeSlug) {
@@ -91,16 +76,6 @@ export const VOUCHERS = [
     limitFor: nychaLimit,
     source: NYCHA_SOURCE,
     note: 'NYCHA Section 8 payment standard for a new rental or transfer, all utilities included. HPD and HCR use different standards. Your voucher paperwork still controls.',
-  },
-  {
-    slug: 'fheps',
-    name: 'FHEPS',
-    h1Program: 'FHEPS',
-    chipProgram: 'FHEPS',
-    sizes: ['studio', '1br', '2br', '3br', '4br'],
-    limitFor: (sizeSlug) => FHEPS_2025_LIMITS[sizeSlug] ?? null,
-    source: FHEPS_SOURCE,
-    note: 'FHEPS 2025 maximum rent with all utilities included. Your letter and HRA still control the real case.',
   },
 ]
 
@@ -226,9 +201,4 @@ export const VERIFIED_LIMITS = {
   'nycha-section-8:2br': 2997,
   'nycha-section-8:3br': 3753,
   'nycha-section-8:4br': 4077,
-  'fheps:studio': 2646,
-  'fheps:1br': 2762,
-  'fheps:2br': 3058,
-  'fheps:3br': 3811,
-  'fheps:4br': 4111,
 }

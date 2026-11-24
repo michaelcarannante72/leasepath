@@ -2,6 +2,7 @@ import { tx } from '../i18nAuto.js'
 import { useMemo, useState } from 'react'
 import { checkListing } from '../listingChecker.js'
 import { Icon } from './Icon.jsx'
+import { RentLimitField } from './RentLimitField.jsx'
 
 function money(value) {
   return `$${Number(value).toLocaleString('en-US')}`
@@ -16,21 +17,23 @@ function FlagCard({ flag }) {
   )
 }
 
-export function ListingCheckerPage() {
+export function ListingCheckerPage({ checks = {}, onChecks = () => {} }) {
   const [text, setText] = useState('')
-  const result = useMemo(() => checkListing(text), [text])
+  const result = useMemo(() => checkListing(text, checks.rentLimit), [text, checks.rentLimit])
 
   return (
     <div className="panel lc-page">
       <p className="eyebrow">{tx("ON YOUR PHONE")}</p>
       <h1>{tx("Check a listing")}</h1>
       <p className="lede">
-        {tx("Paste a Craigslist, StreetEasy, or Facebook Marketplace ad. LeasePath reads the rent, size, and borough on this device, compares them to verified CityFHEPS, FHEPS, and NYCHA Section 8 limits, and flags common scam lines. Nothing is sent to a server.")}
+        {tx("Paste a Craigslist, StreetEasy, or Facebook Marketplace ad. LeasePath reads the rent, size, and borough on this device, compares them to verified CityFHEPS and NYCHA Section 8 limits and to the limit you type, and flags common scam lines. Nothing is sent to a server.")}
       </p>
       <p className="lc-privacy">
         <Icon name="pin" size={14} />
         <span>{tx("Stays on your phone. Clear the box when you are done. LeasePath never stores the paste.")}</span>
       </p>
+
+      <RentLimitField id="lc-rent-limit" value={checks.rentLimit} onChange={(rentLimit) => onChecks({ rentLimit })} />
 
       <label className="field">
         <span>{tx("Paste the listing text")}</span>
@@ -73,13 +76,19 @@ export function ListingCheckerPage() {
             </li>
           </ul>
 
-          {result.comparisons.length > 0 && (
+          {(result.comparisons.length > 0 || result.ownLimitResult) && (
             <div className="lc-block">
               <h3>{tx("Rent vs verified limits")}</h3>
               <p className="lc-note">
-                {tx("Limits are CityFHEPS, FHEPS, and NYCHA Section 8 only, with utilities included. HPD, HCR, and HASA dollar checks are not in this tool — ask your worker for those. This is practice, not an approval. You may qualify under your own letter even when a row says over.")}
+                {tx("Program limits are CityFHEPS and NYCHA Section 8 only, with utilities included. For any other program, type your own limit above. This is practice, not an approval. You may qualify under your own letter even when a row says over.")}
               </p>
               <ul className="flag-list">
+                {result.ownLimitResult && (
+                  <li className={`flag flag-${result.ownLimitResult.level}`}>
+                    <span className="flag-tag">{tx("Your limit")}</span>
+                    <p>{tx(result.ownLimitResult.summary)}. {tx("Asking rent {rent}, your limit {limit}.", { rent: money(result.parsed.rent), limit: money(checks.rentLimit) })}</p>
+                  </li>
+                )}
                 {result.comparisons.map((row) => (
                   <li key={row.program} className={`flag flag-${row.status === 'within' ? 'good' : row.status === 'over' ? 'watch' : 'note'}`}>
                     <span className="flag-tag">{row.program}</span>

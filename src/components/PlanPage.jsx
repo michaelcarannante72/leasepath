@@ -3,7 +3,7 @@ import { useLanguage } from './languageContext.js'
 import { ACCESS_HRA_URL, HOMEBASE_URL } from '../data.js'
 import { VOUCHER_PROGRAMS } from '../fit.js'
 import { HOUSEHOLD_CHOICES, LARGE_HOUSEHOLD } from '../rentCheck.js'
-import { CityfhepsPanel, HasaPanel, Section8Panel } from './ProgramPanels.jsx'
+import { CityfhepsPanel, HasaPanel, RentLimitPanel, Section8Panel } from './ProgramPanels.jsx'
 
 const SITUATIONS = [
   'Shelter or transitional housing',
@@ -120,6 +120,8 @@ export function PlanPage({ plan, onChange, checks, onChecks, signedIn, onDeleteA
       {plan.program === 'CityFHEPS' && <CityfhepsPanel checks={checks} onChecks={onChecks} />}
 
       {plan.program === 'HASA' && <HasaPanel checks={checks} onChecks={onChecks} />}
+
+      {plan.program === 'FHEPS' && <RentLimitPanel checks={checks} onChecks={onChecks} />}
 
       {plan.program === 'FHEPS' && (
         <section className="panel">

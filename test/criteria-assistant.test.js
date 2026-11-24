@@ -31,24 +31,24 @@ test('the assistant prompt tells it to cite program, effective date and source, 
   assert.match(text, /Never use a CityFHEPS or Section 8 figure for a HASA voucher/)
 })
 
-test('the policy pack lists each program’s figures separately with effective date, date copied, and source link', () => {
+test('the policy pack lists CityFHEPS and Section 8 figures with effective date, date copied, and source link, and no HASA or state FHEPS dollar limit', () => {
   const block = programFiguresBlock()
   assert.ok(HRA_KNOWLEDGE.includes(block))
   const parts = block.split('\n\n')
-  const hasa = parts.find((part) => part.startsWith('HASA rent schedule'))
   const city = parts.find((part) => part.startsWith('CityFHEPS payment standards'))
   const s8 = parts.find((part) => part.startsWith('Section 8 NYCHA'))
-  assert.ok(hasa && city && s8)
-  assert.match(hasa, /HASA · SPSVC-17 \(E\) · effective September 10, 2025 · figures copied on October 18, 2026 · https:\/\//)
+  assert.ok(city && s8)
+  assert.equal(parts.some((part) => part.startsWith('HASA rent schedule')), false)
+  assert.match(block, /LeasePath has no verified dollar limit for either/)
+  // The NYCHA annual-recertification column legitimately has $2,646 to $6,579. Only the HASA/FHEPS part must have no dollars.
+  const hasaPart = block.slice(block.indexOf('HASA and state FHEPS'), block.indexOf('CityFHEPS payment standards'))
+  assert.ok(hasaPart.length > 100)
+  assert.doesNotMatch(hasaPart, /\$\d{1,3},\d{3}/)
+  assert.doesNotMatch(block, /\$2,387/)
   assert.match(city, /CityFHEPS · DSS-8r \(E\) · effective April 1, 2026 · figures copied on October 18, 2026 · https:\/\//)
   assert.match(s8, /Section 8 · .* · effective January 1, 2026 · figures copied on October 18, 2026 · https:\/\//)
-  assert.match(hasa, /1 bedroom \(1-2 people\) \$2,762/)
   assert.match(city, /1 bedroom \(1-2 people\) \$2,734/)
-  assert.doesNotMatch(hasa, /\$2,734|\$2,997|\$1,953/)
   assert.doesNotMatch(city, /\$2,762|\$3,058|\$1,985/)
-  assert.match(hasa, /no SRO or room row/)
-  assert.match(hasa, /never a CityFHEPS allowance/)
-  assert.match(hasa, /also hold CityFHEPS has not been confirmed\. Do not say they can or cannot\. Ask your caseworker\./)
   assert.match(city, /\$1,100/)
   assert.match(city, /up to 15% of the annual rent/)
   assert.match(city, /valid 120 days/)
@@ -70,13 +70,13 @@ test('the policy pack leaves out what the criteria say not to hard-code or cite'
   assert.match(text, /expansion that has been reported is not in effect/)
 })
 
-test('a HASA rent check goes to the assistant from HASA data only, with program, date and source', () => {
-  const text = turn({ ...ask, plan: { program: 'HASA', household: '1' }, listing: SAMPLE })
-  const check = text.slice(Math.max(0, text.indexOf('RENT CHECK')))
-  assert.match(check, /^RENT CHECK \(HASA, from the app’s separate HASA data\)/)
-  assert.match(check, /HASA schedule, 1 bedroom, all utilities included: \$2,762/)
-  assert.match(check, /HASA · SPSVC-17 \(E\) · effective September 10, 2025 · figures copied on October 18, 2026 · https:\/\//)
-  assert.doesNotMatch(check, /\$2,734/)
+test('a HASA or state FHEPS plan gets no rent check and no dollar figure; the assistant is told to say so', () => {
+  for (const program of ['HASA', 'FHEPS']) {
+    const text = turn({ ...ask, plan: { program, household: '1' }, listing: SAMPLE })
+    const check = text.slice(Math.max(0, text.indexOf('RENT CHECK')))
+    assert.match(check, new RegExp(`The app has no ${program} rent check\\. Say you do not have one and ask your caseworker\\. Never quote a ${program} dollar limit\\.`))
+    assert.doesNotMatch(check, /\$\d/)
+  }
 })
 
 test('the same listing under CityFHEPS gets the CityFHEPS figure, not the HASA figure', () => {
@@ -99,10 +99,6 @@ test('a plan the person did not share, or a bad listing, produces no rent check'
   assert.doesNotMatch(turn({ ...ask, plan: { program: 'HASA', household: '1' }, listing: { ...SAMPLE, rent: 'lots' } }), /RENT CHECK/)
 })
 
-test('an unknown program has no rent check and the assistant is told to say so', () => {
-  const text = turn({ ...ask, plan: { program: 'FHEPS', household: '1' }, listing: SAMPLE })
-  assert.match(text, /The app has no FHEPS rent check\. Say you do not have one and ask your caseworker\./)
-})
 
 test('device-only answers are never sent to the assistant or saved to the account', () => {
   const secret = { letterDate: '2026-06-20', hasaDeduction: '123', section8Agency: 'NYCHA', voucherBedrooms: '2', cityfhepsAllowance: 'heat pump' }

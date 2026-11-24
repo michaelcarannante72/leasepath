@@ -111,7 +111,7 @@ export function Onboarding({ plan, onSave, onSkip, preset }) {
           )}
 
           {draft.program === 'HASA' && (
-            <p className="setup-note">{tx("LeasePath has the HASA rent schedule on My voucher, as HASA’s own figures. Your caseworker sets the rent that applies to you. You can still save the amount on your letter.")}</p>
+            <p className="setup-note">{tx("LeasePath does not keep a HASA rent chart. Type your own limit on My voucher. Your caseworker sets the rent that applies to you.")}</p>
           )}
           {draft.program === 'FHEPS' && (
             <p className="setup-note">{tx("LeasePath does not keep a FHEPS rent chart. Save the amount on your letter if you have it.")}</p>

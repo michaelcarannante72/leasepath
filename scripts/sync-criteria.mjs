@@ -16,8 +16,8 @@ const to = new URL('../src/data/criteria/', import.meta.url).pathname
 export const USED_RULE_IDS = [
   'hasa-rent-cap-by-bedroom', 'hasa-heat-hot-water-in-lease', 'hasa-utility-deduction', 'hasa-bedroom-size-exceptions',
   'hasa-not-cityfheps', 'hasa-broker-fee-city-pays-brokers', 'hasa-broker-fee-2013-historical-50pct',
-  'hasa-security-voucher-use-not-found', 'hasa-superseded-2023-schedule-1br',
-  'cityfheps-payment-standards-2026', 'cityfheps-payment-standards-2025', 'cityfheps-bedroom-standard',
+  'hasa-security-voucher-use-not-found',
+  'cityfheps-payment-standards-2026', 'cityfheps-bedroom-standard',
   'cityfheps-room-max-rent-1100', 'cityfheps-room-max-two-adults', 'cityfheps-sro-one-adult',
   'cityfheps-utility-allowance', 'cityfheps-landlord-declare-utilities', 'cityfheps-broker-fee-15pct-annual',
   'cityfheps-broker-no-fee-lottery-referral', 'cityfheps-landlord-accepts-security-voucher',
@@ -41,14 +41,22 @@ const missing = USED_RULE_IDS.filter((id) => !byId.has(id))
 if (missing.length) throw new Error(`rules.json is missing: ${missing.join(', ')}`)
 
 mkdirSync(to, { recursive: true })
-for (const file of ['hasa', 'cityfheps-2026', 'cityfheps-2025', 'section8-nycha-2026']) {
+// HASA dollar schedule is not copied: its figures are unverified, so src/data/criteria/hasa.json stays empty.
+// The CityFHEPS 2025 column is not copied either: nothing uses it, and its numbers equal the unverified state FHEPS / HASA ones.
+for (const file of ['cityfheps-2026', 'section8-nycha-2026']) {
   copyFileSync(join(from, 'rent-schedules', `${file}.json`), join(to, `${file}.json`))
 }
 // HHS poverty guidelines. The file is copied as is, plus one app note so the re-check date travels with the data.
 export const POVERTY_RECHECK_NOTE = 'Re-check in January 2027 when new HHS guidelines are published'
 const poverty = JSON.parse(readFileSync(join(from, 'poverty-guidelines.json'), 'utf8'))
 writeFileSync(join(to, 'poverty-guidelines.json'), `${JSON.stringify({ app_note: POVERTY_RECHECK_NOTE, ...poverty }, null, 2)}\n`)
-writeFileSync(join(to, 'rules.json'), `${JSON.stringify(USED_RULE_IDS.map((id) => byId.get(id)), null, 2)}\n`)
+// HASA dollar figures are unverified: keep them out of the copied rule text.
+const stripDate = (rule) => rule.program !== 'HASA' ? rule : { ...rule, effective_date: rule.effective_date === '2025-09-10' ? null : rule.effective_date, source_title: rule.source_title?.replace(' effective 9/10/2025', ''), notes: rule.notes?.replace(/Guidelines 'effective 9\/10\/2025'; doc date 10\/24\/2025\. /, '').replace('HASA 9/10/2025 figures equal 2025 CityFHEPS figures and exceed 2026 CityFHEPS figures; do not treat as interchangeable.', 'Do not treat HASA and CityFHEPS as interchangeable.') }
+const copied = USED_RULE_IDS.map((id) => byId.get(id)).map((rule) => rule.id === 'hasa-rent-cap-by-bedroom'
+  ? { ...rule, rule: 'LeasePath does not show HASA dollar limits. The renter types the limit from their own paperwork.', applies_to: null, app_check: 'Use only the limit the renter typed on their device.', notes: 'HASA dollar figures were removed from LeasePath until the housing specialist verifies them.' }
+  : rule.notes && /HASA 9\/10\/2025/.test(rule.notes) ? { ...rule, notes: rule.notes.replace('HASA 9/10/2025 and ', '').replace('Equal to ', 'Equal to the ') }
+  : stripDate(rule))
+writeFileSync(join(to, 'rules.json'), `${JSON.stringify(copied, null, 2)}\n`)
 writeFileSync(
   join(to, 'meta.json'),
   `${JSON.stringify({ checked: checkedAt, rulesInSource: rules.length, rulesCopied: USED_RULE_IDS.length, note: 'Copied from the housing specialist criteria. The app prints this date as "figures copied on".' }, null, 2)}\n`,

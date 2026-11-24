@@ -4,17 +4,13 @@ import { assessListing } from '../src/fit.js'
 import { SAMPLE_LISTINGS as LISTINGS } from '../src/data/sampleListings.archive.js'
 import { ASK, ASK_SPECIALIST, askFor, cityfhepsCap, rentFlags, sourceText } from '../src/rentCheck.js'
 import { CITYFHEPS_2026_ROWS, CITYFHEPS_RULES } from '../src/data/cityfheps.js'
-import { HASA_ROWS, HASA_RULES } from '../src/data/hasa.js'
+import { HASA_RULES } from '../src/data/hasa.js'
 import { SECTION8_NEW_RENTAL_ROWS, SECTION8_NYCHA_ROWS, SECTION8_RULES } from '../src/data/section8.js'
 import { sourceFor } from '../src/data/sourced.js'
 
 const unit = (patch) => ({ id: 'x', unitKind: 'apartment', bedrooms: 1, rent: 1000, utilities: 'all', programs: [], ...patch })
 
 // Typed here on purpose, independent of the data files, from the housing specialist's schedules.
-const HASA_EXPECTED = [
-  ['studio', 0, 1, 2646], ['apartment', 1, 1, 2762], ['apartment', 2, 3, 3058], ['apartment', 3, 5, 3811], ['apartment', 4, 7, 4111],
-  ['apartment', 5, 9, 4728], ['apartment', 6, 11, 5345], ['apartment', 7, 13, 5962], ['apartment', 8, 15, 6579],
-]
 const CITYFHEPS_EXPECTED = [
   ['sro', 0, 1, 1953], ['studio', 0, 1, 2604], ['apartment', 1, 1, 2734], ['apartment', 2, 3, 2997], ['apartment', 3, 5, 3753],
   ['apartment', 4, 7, 4077], ['apartment', 5, 9, 4689], ['apartment', 6, 11, 5301], ['apartment', 7, 13, 5913], ['apartment', 8, 15, 6524],
@@ -26,21 +22,6 @@ const fmt = (n) => `$${n.toLocaleString('en-US')}`
 function primary(flags) {
   return flags.find((flag) => flag.source && /^(good|watch|note)$/.test(flag.level) && flag.summary)
 }
-
-test('HASA rent check uses the HASA schedule for every bedroom size', () => {
-  for (const [unitKind, bedrooms, people, cap] of HASA_EXPECTED) {
-    const plan = { program: 'HASA', household: people }
-    const within = primary(rentFlags(unit({ unitKind, bedrooms, rent: cap }), plan))
-    assert.equal(within.level, 'good', `${unitKind} ${bedrooms}`)
-    assert.ok(within.text.includes(fmt(cap)))
-    assert.ok(within.text.includes('HASA schedule'))
-    assert.equal(within.source.program, 'HASA')
-    assert.equal(within.source.effectiveDate, '2025-09-10')
-    const over = primary(rentFlags(unit({ unitKind, bedrooms, rent: cap + 1 }), plan))
-    assert.equal(over.level, 'watch')
-    assert.match(over.text, /\$1 higher/)
-  }
-})
 
 test('CityFHEPS rent check uses the CityFHEPS 2026 standards for every size', () => {
   for (const [unitKind, bedrooms, people, cap] of CITYFHEPS_EXPECTED) {
@@ -70,53 +51,6 @@ test('Section 8 NYCHA check uses the NYCHA new-rental standard for the voucher b
     assert.equal(primary(rentFlags(unit({ ...shape, rent: cap + 1 }), plan, options)).level, 'watch')
   }
   assert.equal(SECTION8_NEW_RENTAL_ROWS.length, NYCHA_NEW_EXPECTED.length)
-})
-
-test('the same 1 bedroom gets a different answer under HASA and CityFHEPS', () => {
-  const listing = unit({ bedrooms: 1, rent: 2750 })
-  const hasa = primary(rentFlags(listing, { program: 'HASA', household: 1 }))
-  const city = primary(rentFlags(listing, { program: 'CityFHEPS', household: 1 }))
-  assert.equal(hasa.level, 'good')
-  assert.ok(hasa.text.includes('$2,762'))
-  assert.ok(!hasa.text.includes('$2,734'))
-  assert.equal(city.level, 'watch')
-  assert.ok(city.text.includes('$2,734'))
-  assert.ok(!city.text.includes('$2,762'))
-})
-
-test('HASA never falls back to another program’s row, and has no SRO or room row', () => {
-  for (const kind of ['sro', 'room']) {
-    const flags = rentFlags(unit({ unitKind: kind, bedrooms: 0, rent: 1500 }), { program: 'HASA', household: 1 })
-    assert.equal(flags.length, 1)
-    assert.ok(flags[0].text.endsWith(`${ASK}.`))
-    assert.doesNotMatch(flags[0].text, /\$\d/)
-  }
-  // A HASA household with only an SRO-shaped sample still gets no CityFHEPS SRO figure.
-  assert.equal(HASA_ROWS.some((row) => row.unitKind === 'sro'), false)
-})
-
-test('HASA utility deduction is user-entered and never assumed', () => {
-  const listing = unit({ bedrooms: 1, rent: 2700, utilities: 'tenant-electric' })
-  const plan = { program: 'HASA', household: 1 }
-  const none = rentFlags(listing, plan, {})
-  const note = none.find((flag) => /does not know your amount/.test(flag.text))
-  assert.ok(note)
-  assert.equal(none.some((flag) => /limit is/.test(flag.text)), false)
-  assert.ok(none.some((flag) => /deductions are not in the public schedule/.test(flag.text)))
-  const entered = rentFlags(listing, plan, { hasaDeduction: '100' })
-  const result = entered.find((flag) => flag.level === 'watch')
-  assert.match(result.text, /\$100 utility amount you entered, the limit is \$2,662/)
-  const fits = rentFlags({ ...listing, rent: 2600 }, plan, { hasaDeduction: '100' }).find((flag) => flag.level === 'good')
-  assert.match(fits.text, /within it/)
-  // The CityFHEPS allowance selection never changes a HASA check.
-  const mixed = rentFlags(listing, plan, { cityfhepsAllowance: 'electric heat+hot water' })
-  assert.deepEqual(mixed.map((flag) => flag.text), none.map((flag) => flag.text))
-})
-
-test('HASA household range mismatch is a note for the caseworker, not a denial', () => {
-  const flags = rentFlags(unit({ bedrooms: 1, rent: 2700 }), { program: 'HASA', household: 3 })
-  assert.ok(flags.some((flag) => /lists the 1 bedroom row for 1-2 people/.test(flag.text)))
-  assert.equal(primary(flags).level, 'good')
 })
 
 test('CityFHEPS follows the bedroom standard for larger and smaller units', () => {
@@ -182,7 +116,6 @@ test('Section 8 gives no figure until the agency is chosen, and none for HPD or 
 
 test('a row with no source link or unverified confidence gives "Ask your caseworker" and no number, in every program', () => {
   const cases = [
-    [HASA_ROWS, 'HASA', { unitKind: 'apartment', bedrooms: 1 }, {}],
     [CITYFHEPS_2026_ROWS, 'CityFHEPS', { unitKind: 'apartment', bedrooms: 1 }, {}],
     [SECTION8_NYCHA_ROWS, 'Section 8', { unitKind: 'apartment', bedrooms: 1 }, { section8Agency: 'NYCHA', voucherBedrooms: '1' }],
   ]
@@ -209,7 +142,7 @@ test('a row with no source link or unverified confidence gives "Ask your casewor
 
 test('every rent flag that carries a figure also carries program, effective date, date copied, and a source link', () => {
   const programs = [
-    ['HASA', {}], ['CityFHEPS', { cityfhepsAllowance: 'heat pump' }], ['Section 8', { section8Agency: 'NYCHA', voucherBedrooms: '1' }],
+    ['CityFHEPS', { cityfhepsAllowance: 'heat pump' }], ['Section 8', { section8Agency: 'NYCHA', voucherBedrooms: '1' }],
   ]
   let figures = 0
   for (const listing of LISTINGS) {
@@ -234,7 +167,7 @@ test('every rent flag that carries a figure also carries program, effective date
       }
     }
   }
-  assert.ok(figures > 20)
+  assert.ok(figures > 10)
 })
 
 test('sourceText names the program and says when the effective date is not stated', () => {
@@ -246,7 +179,13 @@ test('sourceText names the program and says when the effective date is not state
 
 test('an unknown or missing program produces no rent figure', () => {
   assert.deepEqual(rentFlags(unit({}), { program: '', household: 2 }), [])
-  assert.deepEqual(rentFlags(unit({}), { program: 'FHEPS', household: 2 }), [])
+  // HASA and state FHEPS have no table: the only flag is the typed-limit note, with no dollar figure and no source.
+  for (const program of ['HASA', 'FHEPS']) {
+    const flags = rentFlags(unit({}), { program, household: 2 })
+    assert.ok(flags.length >= 1)
+    for (const flag of flags) assert.doesNotMatch(flag.text, /\$\d/)
+    assert.equal(flags[0].text, 'Use the amount on your shopping letter, or ask your case manager.')
+  }
   assert.deepEqual(rentFlags(unit({}), null), [])
 })
 
@@ -292,22 +231,9 @@ test('every Section 8 result says housing specialist and never caseworker', () =
   }
 })
 
-test('HASA SRO and room are ask-only and cite the SPSVC-17 gap, not the bedroom exceptions', () => {
-  for (const [unitKind, what] of [['sro', 'SRO row'], ['room', 'room row']]) {
-    const [flag] = rentFlags(unit({ unitKind, bedrooms: 0, rent: 1500 }), { program: 'HASA', household: 1 })
-    assert.equal(flag.text, `The public HASA schedule page has no ${what}. Ask your caseworker.`)
-    assert.equal(flag.source.program, 'HASA')
-    assert.equal(flag.source.effectiveDate, '2025-09-10')
-    assert.match(flag.source.url, /Rent_Payment_Guidelines\.pdf$/)
-    assert.equal(flag.source.document, 'SPSVC-17 (E)')
-  }
-})
-
 test('rule text falls back to "Ask your caseworker" when its row fails, in every program', () => {
   const cases = [
     [HASA_RULES.heatHotWater, 'HASA', unit({ bedrooms: 1, rent: 2000 }), { program: 'HASA', household: 1 }, {}, /heat and hot water/],
-    [HASA_RULES.utilityDeduction, 'HASA', unit({ bedrooms: 1, rent: 2000, utilities: 'tenant-electric' }), { program: 'HASA', household: 1 }, {}, /deductions are not in the public schedule/],
-    [HASA_RULES.bedroomExceptions, 'HASA', unit({ bedrooms: 1, rent: 2000 }), { program: 'HASA', household: 3 }, {}, /Your caseworker decides/],
     [CITYFHEPS_RULES.roomTwoAdults, 'CityFHEPS', unit({ unitKind: 'room', bedrooms: 0, rent: 900 }), { program: 'CityFHEPS', household: 3 }, {}, /no more than two adults/],
     [CITYFHEPS_RULES.utilityAllowance, 'CityFHEPS', unit({ bedrooms: 2, rent: 2000, utilities: 'tenant-electric' }), { program: 'CityFHEPS', household: 3 }, {}, /not yet loaded/],
     [SECTION8_RULES.nychaUtilityAllowance, 'Section 8', unit({ bedrooms: 1, rent: 2000, utilities: 'tenant-electric' }), { program: 'Section 8', household: 1 }, { section8Agency: 'NYCHA', voucherBedrooms: '1' }, /utility allowance for tenant-paid/],
@@ -327,23 +253,9 @@ test('rule text falls back to "Ask your caseworker" when its row fails, in every
   }
 })
 
-test('a size with no displayable row makes no claim about the program', () => {
-  const row = HASA_ROWS.find((item) => item.bedrooms === 1)
-  const before = { ...row }
-  row.confidence = 'unverified'
-  try {
-    const [flag] = rentFlags(unit({ bedrooms: 1 }), { program: 'HASA', household: 1 })
-    assert.equal(flag.text, 'LeasePath cannot show a HASA figure for this size. Ask your caseworker.')
-    assert.equal(flag.source, undefined)
-  } finally {
-    Object.assign(row, before)
-  }
-})
-
 test('a within-limit result with a tenant-paid utility carries the "before any utility is subtracted" caveat', () => {
   const tenantPays = unit({ bedrooms: 1, rent: 2000, utilities: 'tenant-electric' })
   const cases = [
-    [{ program: 'HASA', household: 1 }, {}],
     [{ program: 'CityFHEPS', household: 1 }, {}],
     [{ program: 'Section 8', household: 1 }, { section8Agency: 'NYCHA', voucherBedrooms: '1' }],
   ]
@@ -356,4 +268,31 @@ test('a within-limit result with a tenant-paid utility carries the "before any u
     assert.equal(allIn.level, 'good')
     assert.doesNotMatch(allIn.summary, /before any utility/)
   }
+})
+
+test('HASA and state FHEPS compare the asking rent only with the limit the person typed', () => {
+  for (const program of ['HASA', 'FHEPS']) {
+    const plan = { program, household: 1 }
+    const within = rentFlags(unit({ rent: 2000 }), plan, { rentLimit: '2100' })[0]
+    assert.equal(within.level, 'good')
+    assert.equal(within.summary, 'May fit your limit')
+    assert.match(within.text, /^May fit your limit\. Asking rent \$2,000, your limit \$2,100\.$/)
+    const edge = rentFlags(unit({ rent: 2100 }), plan, { rentLimit: '2100' })[0]
+    assert.equal(edge.summary, 'May fit your limit')
+    const over = rentFlags(unit({ rent: 2101 }), plan, { rentLimit: '2100' })[0]
+    assert.equal(over.level, 'watch')
+    assert.equal(over.summary, 'Likely over your limit')
+    assert.doesNotMatch(`${within.text} ${over.text}`, /guarantee|approved|eligible|handles everything/i)
+    assert.equal(within.source, undefined)
+    // Nothing typed, or junk typed: ask, never a figure.
+    for (const rentLimit of ['', undefined, 'abc', '0', '12']) {
+      const [none] = rentFlags(unit({ rent: 2000 }), plan, { rentLimit })
+      assert.equal(none.text, 'Use the amount on your shopping letter, or ask your case manager.')
+    }
+  }
+})
+
+test('the typed limit never changes a CityFHEPS or NYCHA Section 8 check', () => {
+  const listing = unit({ bedrooms: 1, rent: 2000 })
+  assert.deepEqual(rentFlags(listing, { program: 'CityFHEPS', household: 1 }, { rentLimit: '999' }), rentFlags(listing, { program: 'CityFHEPS', household: 1 }, {}))
 })

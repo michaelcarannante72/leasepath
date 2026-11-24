@@ -3,17 +3,17 @@
     "id": "hasa-rent-cap-by-bedroom",
     "program": "HASA",
     "category": "rent-cap",
-    "rule": "Maximum rent with all utilities included (cooking, electricity, heat, hot water), by bedroom size: Studio (1 person) $2,646; 1BR (1-2) $2,762; 2BR (3-4) $3,058; 3BR (5-6) $3,811; 4BR (7-8) $4,111; 5BR (9-10) $4,728; 6BR (11-12) $5,345; 7BR (13-14) $5,962; 8BR (15-16) $6,579; 9BR (17-18) $7,196; 10BR (19-20) $7,812. No SRO row.",
-    "applies_to": "Bedroom size / household size (see rent-schedules/hasa.json)",
+    "rule": "LeasePath does not show HASA dollar limits. The renter types the limit from their own paperwork.",
+    "applies_to": null,
     "figure": null,
     "unit": null,
-    "effective_date": "2025-09-10",
-    "source_title": "HRA Special Services Rent Payment Guidelines effective 9/10/2025",
+    "effective_date": null,
+    "source_title": "HRA Special Services Rent Payment Guidelines",
     "source_doc_number": "SPSVC-17 (E)",
     "source_url": "https://www.nyc.gov/assets/hra/downloads/pdf/HRA_SpecialServices_Rent_Payment_Guidelines.pdf",
     "confidence": "official",
-    "app_check": "Rent cap check for HASA households from rent-schedules/hasa.json, labelled 'all utilities included'. Never fall back to the CityFHEPS table.",
-    "notes": "Guidelines 'effective 9/10/2025'; doc date 10/24/2025. Public PDF has page 2 of 3 only. HRA says guidelines are not a guarantee and subject to change. Replaces the 1/1/2023 schedule (1BR $2,387)."
+    "app_check": "Use only the limit the renter typed on their device.",
+    "notes": "HASA dollar figures were removed from LeasePath until the housing specialist verifies them."
   },
   {
     "id": "hasa-heat-hot-water-in-lease",
@@ -23,8 +23,8 @@
     "applies_to": null,
     "figure": null,
     "unit": null,
-    "effective_date": "2025-09-10",
-    "source_title": "HRA Special Services Rent Payment Guidelines effective 9/10/2025",
+    "effective_date": null,
+    "source_title": "HRA Special Services Rent Payment Guidelines",
     "source_doc_number": "SPSVC-17 (E)",
     "source_url": "https://www.nyc.gov/assets/hra/downloads/pdf/HRA_SpecialServices_Rent_Payment_Guidelines.pdf",
     "confidence": "official",
@@ -39,8 +39,8 @@
     "applies_to": null,
     "figure": null,
     "unit": null,
-    "effective_date": "2025-09-10",
-    "source_title": "HRA Special Services Rent Payment Guidelines effective 9/10/2025",
+    "effective_date": null,
+    "source_title": "HRA Special Services Rent Payment Guidelines",
     "source_doc_number": "SPSVC-17 (E)",
     "source_url": "https://www.nyc.gov/assets/hra/downloads/pdf/HRA_SpecialServices_Rent_Payment_Guidelines.pdf",
     "confidence": "official",
@@ -55,8 +55,8 @@
     "applies_to": null,
     "figure": null,
     "unit": null,
-    "effective_date": "2025-09-10",
-    "source_title": "HRA Special Services Rent Payment Guidelines effective 9/10/2025",
+    "effective_date": null,
+    "source_title": "HRA Special Services Rent Payment Guidelines",
     "source_doc_number": "SPSVC-17 (E)",
     "source_url": "https://www.nyc.gov/assets/hra/downloads/pdf/HRA_SpecialServices_Rent_Payment_Guidelines.pdf",
     "confidence": "official",
@@ -77,7 +77,7 @@
     "source_url": "https://www.nyc.gov/assets/hra/HASA/SPSVC-18-E.pdf",
     "confidence": "official",
     "app_check": "Separate HASA vs CityFHEPS code paths and tables.",
-    "notes": "Source doc date 2026-06-12. HASA 9/10/2025 figures equal 2025 CityFHEPS figures and exceed 2026 CityFHEPS figures; do not treat as interchangeable."
+    "notes": "Source doc date 2026-06-12. Do not treat HASA and CityFHEPS as interchangeable."
   },
   {
     "id": "hasa-broker-fee-city-pays-brokers",
@@ -128,22 +128,6 @@
     "notes": "See open-questions.md."
   },
   {
-    "id": "hasa-superseded-2023-schedule-1br",
-    "program": "HASA",
-    "category": "rent-cap",
-    "rule": "OUTDATED: HRA Special Services guidelines effective 1/1/2023 listed 1BR at $2,387 (all utilities), with partial-utility columns no longer in the 9/10/2025 schedule.",
-    "applies_to": "1BR",
-    "figure": 2387,
-    "unit": "USD/month",
-    "effective_date": "2023-01-01",
-    "source_title": "HRA Special Services Rent Payment Guidelines effective 1/1/2023 (SUPERSEDED)",
-    "source_doc_number": null,
-    "source_url": "https://www.nyc.gov/assets/hra/HASA/HRA_SpecialServices_Rent_Payment_Guidelines_08302023.pdf",
-    "confidence": "official",
-    "app_check": "Do not use. If a user supplies a 2023 letter, show 'outdated; current 1BR is $2,762'.",
-    "notes": "SUPERSEDED by the schedule effective 2025-09-10. Only the 1BR figure is given in the report."
-  },
-  {
     "id": "cityfheps-payment-standards-2026",
     "program": "CityFHEPS",
     "category": "rent-cap",
@@ -158,22 +142,6 @@
     "confidence": "official",
     "app_check": "Max-rent check by bedroom from rent-schedules/cityfheps-2026.json, labelled 'all utilities included'.",
     "notes": "Doc date 2026-10-14 (DSS-8r). Statewide (outside NYC) amounts are not covered."
-  },
-  {
-    "id": "cityfheps-payment-standards-2025",
-    "program": "CityFHEPS",
-    "category": "rent-cap",
-    "rule": "2025 payment standards apply to renewals and packages submitted through 2026-02-28 unless lease starts 2026-04-01 or later.",
-    "applies_to": "Bedroom size / household size / SRO (see rent-schedules/cityfheps-2025.json)",
-    "figure": null,
-    "unit": null,
-    "effective_date": null,
-    "source_title": "DSS CityFHEPS Payment Standards (with utility allowance schedules)",
-    "source_doc_number": "DSS-8r (E)",
-    "source_url": "https://www.nyc.gov/assets/hra/downloads/pdf/cityfheps-documents/DSS-8r-(E).pdf",
-    "confidence": "official",
-    "app_check": "Use cityfheps-2025.json only for older packages/renewals.",
-    "notes": "2025 effective date not stated in the report. 2025 CityFHEPS figures equal the HASA schedule effective 2025-09-10 but remain a separate program."
   },
   {
     "id": "cityfheps-bedroom-standard",
@@ -461,7 +429,7 @@
     "source_url": "https://www.nyc.gov/site/nycha/section-8/voucher-payment-standards-utility-allowance-schedules.page",
     "confidence": "official",
     "app_check": "Use for recertification only.",
-    "notes": "Equal to HASA 9/10/2025 and CityFHEPS 2025 numbers; separate programs."
+    "notes": "Equal to the CityFHEPS 2025 numbers; separate programs."
   },
   {
     "id": "section8-nycha-utility-allowance",

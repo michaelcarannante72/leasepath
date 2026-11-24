@@ -2,7 +2,6 @@
 // Every figure carries its program, effective date, date copied, and source link.
 // Nothing here is typed by hand, so the assistant cannot drift from the screens.
 import { CITYFHEPS_2026_ROWS, CITYFHEPS_ROOM_MAX, CITYFHEPS_RULES, CITYFHEPS_UTILITY_ALLOWANCES_1BR, BROKER_FEE_PERCENT, SHOPPING_LETTER_DAYS } from '../src/data/cityfheps.js'
-import { HASA_ROWS } from '../src/data/hasa.js'
 import { SECTION8_NEW_RENTAL_ROWS, SECTION8_RECERT_ROWS, SECTION8_RULES } from '../src/data/section8.js'
 import { ALLOWANCE_DATE_NOTE, COPIED_ON, isDisplayable, sourceFor } from '../src/data/sourced.js'
 import { CONCURRENT_RULE, FARE_RULES, SECURITY_VOUCHER_RULES } from '../src/data/notices.js'
@@ -55,26 +54,22 @@ export function incomeLinesBlock() {
 }
 
 export function programFiguresBlock() {
-  const hasa = HASA_ROWS.find(isDisplayable)
   const city = CITYFHEPS_2026_ROWS.find(isDisplayable)
   const nycha = SECTION8_NEW_RENTAL_ROWS.find(isDisplayable)
   const nychaRecert = SECTION8_RECERT_ROWS.find(isDisplayable)
   const lines = [
-    `PROGRAM RENT FIGURES, figures copied on ${COPIED_ON}. HASA, CityFHEPS, and Section 8 are three separate programs with three separate tables. Never use one program's row for another, even when two dollar figures match.`,
-    `A household of 9 or more has no HASA or CityFHEPS rent comparison in this pack. For that size, give no rent figure or verdict and say ${ASK.toLowerCase()}.`,
+    `PROGRAM RENT FIGURES, figures copied on ${COPIED_ON}. CityFHEPS and Section 8 are separate programs with separate tables. LeasePath has no verified HASA or state FHEPS dollar limit. Never use one program's row for another, even when two dollar figures match.`,
+    `A household of 9 or more has no CityFHEPS rent comparison in this pack. For that size, give no rent figure or verdict and say ${ASK.toLowerCase()}.`,
     `Every time you give a rent figure: name the program, give its effective date, and give its source link. If a figure is not below, or the person's program is not chosen, or a line below says "${ASK}", say "${ASK.toLowerCase()}" (for Section 8, "${ASK_SPECIALIST.toLowerCase()}") and do not guess a number.`,
     '',
   ]
-  if (hasa) {
+  {
     lines.push(
-      `HASA rent schedule. Maximum rent, all utilities included. ${cite(hasa, 'HASA')}:`,
-      `- ${list(HASA_ROWS, true)}.`,
-      '- The public HASA schedule page has no SRO or room row. The caseworker decides the approved bedroom count, and exceptions are case by case.',
+      'HASA and state FHEPS: LeasePath has no verified dollar limit for either. Never quote a HASA or FHEPS rent limit or payment standard, from memory or otherwise. Tell the person to use the amount on their shopping letter, or ask their case manager. If they type their limit to you, use only that number.',
       `- HASA needs heat and hot water in the lease, with exceptions such as housing lottery apartments. If the tenant pays a utility, HASA subtracts it, but HASA deduction amounts are not in the public schedule. Use only an amount the person typed or their caseworker gave, never a CityFHEPS allowance. HRA says the guidelines are not a guarantee and can change.`,
       `- HASA broker fee: no HASA fee amount or form was found. ${ASK}. Do not quote any older HASA broker percentage.`,
       `- HASA security voucher: nothing is confirmed for HASA. Do not say the W-147N applies to HASA. ${ASK}.`,
       `- Whether a HASA client can also hold CityFHEPS has not been confirmed${isDisplayable(CONCURRENT_RULE) ? '' : '. Do not say they can or cannot'}. ${ASK}.`,
-      `- The 1/1/2023 HASA schedule is out of date. A letter showing a different figure than the table needs a caseworker check.`,
     )
   }
   if (city) {

@@ -120,7 +120,7 @@ function loadPlan() {
 }
 
 function emptyChecks() {
-  return { letterDate: '', section8Agency: '', voucherBedrooms: '', hasaDeduction: '', cityfhepsAllowance: '', incomeAmount: '', incomePeriod: 'month' }
+  return { letterDate: '', section8Agency: '', voucherBedrooms: '', hasaDeduction: '', rentLimit: '', cityfhepsAllowance: '', incomeAmount: '', incomePeriod: 'month' }
 }
 
 function loadChecks() {
@@ -132,6 +132,7 @@ function loadChecks() {
     section8Agency: SECTION8_AGENCIES.includes(stored.section8Agency) ? stored.section8Agency : empty.section8Agency,
     voucherBedrooms: ['0', '1', '2', '3', '4', '5', '6', '7', '8'].includes(String(stored.voucherBedrooms)) ? String(stored.voucherBedrooms) : empty.voucherBedrooms,
     hasaDeduction: stored.hasaDeduction ? String(stored.hasaDeduction).replace(/[^\d]/g, '').slice(0, 5) : empty.hasaDeduction,
+    rentLimit: stored.rentLimit ? String(stored.rentLimit).replace(/[^\d]/g, '').slice(0, 5) : empty.rentLimit,
     cityfhepsAllowance: typeof stored.cityfhepsAllowance === 'string' && cityfhepsAllowance(stored.cityfhepsAllowance) ? stored.cityfhepsAllowance : empty.cityfhepsAllowance,
     incomeAmount: storedIncome(stored.incomeAmount),
     incomePeriod: incomePeriod(stored.incomePeriod),
@@ -904,7 +905,7 @@ export default function App() {
         {route.name === 'housing-connect' && <HousingConnectPage />}
         {route.name === 'leasebot' && <LeasebotPage />}
         {route.name === 'sponsor' && <SponsorPage />}
-        {route.name === 'listing-check' && <ListingCheckerPage />}
+        {route.name === 'listing-check' && <ListingCheckerPage checks={checks} onChecks={updateChecks} />}
         {route.name === 'docs' && <DocsDeadlinePage />}
         {route.name === 'guides' && <BoroughGuidesIndex />}
         {route.name === 'guide' && <BoroughGuidePage slug={route.id} />}

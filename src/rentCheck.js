@@ -3,7 +3,7 @@
 // A row without a source link, or one that is not an official source, produces "Ask your caseworker" instead
 // ("Ask your housing specialist" for Section 8, which is not run by HRA).
 import { formatDate } from './dates.js'
-import { HASA_PROGRAM, HASA_RULES, hasaRow } from './data/hasa.js'
+import { HASA_PROGRAM, HASA_RULES } from './data/hasa.js'
 import {
   CITYFHEPS_2026_ROWS,
   CITYFHEPS_PROGRAM,
@@ -45,7 +45,7 @@ function unitName(listing) {
   return `a ${listing.bedrooms}-bedroom apartment`
 }
 
-/** "HASA · SPSVC-17 (E) · effective September 10, 2025 · figures copied on October 18, 2026" */
+/** "CityFHEPS · DSS-8r · effective April 1, 2026 · figures copied on October 18, 2026" */
 export function sourceText(source) {
   if (!source) return ''
   const parts = [source.program]
@@ -130,58 +130,37 @@ function utilitiesNote(listing) {
   return listing.utilities && listing.utilities !== 'all'
 }
 
-// ---------------------------------------------------------------- HASA
+// ---------------------------------------------------------------- Typed limit (HASA, state FHEPS, anything unverified)
 
-function checkHasa(listing, plan, options) {
-  const flags = []
-  const row = hasaRow(listing)
-  if (listing.unitKind === 'sro' || listing.unitKind === 'room') {
-    // Only the public schedule page was read. Say that page has no SRO row, not that the whole document has none.
-    const what = listing.unitKind === 'sro' ? 'SRO row' : 'room row'
-    flags.push(askFlag(HASA_RULES.rentCap, `The public HASA schedule page has no ${what}.`, HASA_PROGRAM))
-    return flags
-  }
-  if (!row || !isDisplayable(row)) {
-    flags.push(unavailable(HASA_PROGRAM, 'LeasePath cannot show a HASA figure for this size.'))
-    return flags
-  }
-  const source = sourceFor(row, HASA_PROGRAM)
-  const size = Number(plan?.household)
-  const label = bedroomLabel(row)
-  const head = `HASA schedule, ${label}, all utilities included: ${money(row.maxRent)}.`
-  const deduction = Number(options.hasaDeduction)
-  const hasDeduction = Number.isFinite(deduction) && deduction > 0
+export const OWN_LIMIT_ASK = 'Use the amount on your shopping letter, or ask your case manager.'
 
-  if (listing.rent > row.maxRent) {
-    flags.push(verdict('watch', `${head} This asking rent is ${money(listing.rent - row.maxRent)} higher, even before any utility is subtracted.`, source))
-  } else if (utilitiesNote(listing) && hasDeduction) {
-    const adjusted = row.maxRent - deduction
-    flags.push(
-      listing.rent > adjusted
-        ? verdict('watch', `${head} With the ${money(deduction)} utility amount you entered, the limit is ${money(adjusted)}. This asking rent is higher.`, source)
-        : verdict('good', `${head} With the ${money(deduction)} utility amount you entered, the limit is ${money(adjusted)}. This asking rent is within it.`, source),
-    )
-  } else if (utilitiesNote(listing)) {
-    flags.push(verdict('note', `${head} This asking rent is within it before any utility is subtracted. You would pay a utility here, and HASA subtracts that amount. LeasePath does not know your amount: enter the one your caseworker gives you.`, source))
-  } else {
-    flags.push(verdict('good', `${head} This asking rent is within it.`, source))
-  }
+/** The limit the person typed on this device: digits only, 3 to 5 of them, or null. */
+export function ownLimitAmount(value) {
+  const digits = String(value ?? '').replace(/[^\d]/g, '').slice(0, 5)
+  const amount = Number(digits)
+  return digits.length >= 3 && amount > 0 ? amount : null
+}
 
-  if (utilitiesNote(listing)) {
-    const ded = HASA_RULES.utilityDeduction
-    flags.push(ruleFlag(ded, HASA_PROGRAM, 'HASA utility deductions are not in the public schedule. Use the amount from your caseworker or the HRA Landlord Utility Calculator.'))
+/**
+ * Compare an asking rent with the limit the person typed from their own paperwork.
+ * No program table is used, so there is no program figure, source link, or program name here.
+ */
+export function ownLimitFlag(rent, limitValue) {
+  const limit = ownLimitAmount(limitValue)
+  if (limit == null) return flag('note', OWN_LIMIT_ASK)
+  const rentValue = Number(rent)
+  if (!Number.isFinite(rentValue) || rentValue <= 0) return flag('note', OWN_LIMIT_ASK)
+  if (rentValue <= limit) {
+    return { ...flag('good', `May fit your limit. Asking rent ${money(rentValue)}, your limit ${money(limit)}.`), summary: 'May fit your limit', label: 'May fit your limit' }
   }
-  if (size && !inRange(size, row.householdSize)) {
-    flags.push(
-      ruleFlag(
-        HASA_RULES.bedroomExceptions,
-        HASA_PROGRAM,
-        `HASA lists the ${label} row for ${row.householdSize} ${row.householdSize === '1' ? 'person' : 'people'}. Your caseworker decides the approved bedroom count.`,
-      ),
-    )
+  return { ...flag('watch', `Likely over your limit. Asking rent ${money(rentValue)}, your limit ${money(limit)}.`), summary: 'Likely over your limit', label: 'Likely over your limit' }
+}
+
+function checkOwnLimit(listing, plan, options) {
+  const flags = [ownLimitFlag(listing.rent, options.rentLimit)]
+  if (plan?.program === HASA_PROGRAM) {
+    flags.push(ruleFlag(HASA_RULES.heatHotWater, HASA_PROGRAM, 'HASA needs heat and hot water in the lease, except for NYC Housing Connect and other housing lottery apartments.'))
   }
-  const heat = HASA_RULES.heatHotWater
-  flags.push(ruleFlag(heat, HASA_PROGRAM, 'HASA needs heat and hot water in the lease, except for NYC Housing Connect and other housing lottery apartments.'))
   return flags
 }
 
@@ -356,7 +335,7 @@ export function rentFlags(listing, plan, options = {}) {
   if (isLargeHousehold(plan?.household) && (program === HASA_PROGRAM || program === CITYFHEPS_PROGRAM)) {
     return [unavailable(program, `LeasePath shows no ${program} rent comparison for a household of 9 or more.`)]
   }
-  if (program === HASA_PROGRAM) return checkHasa(listing, plan, options)
+  if (program === HASA_PROGRAM || program === 'FHEPS') return checkOwnLimit(listing, plan, options)
   if (program === CITYFHEPS_PROGRAM) return checkCityfheps(listing, plan, options)
   if (program === SECTION8_PROGRAM) return checkSection8(listing, plan, options)
   return []

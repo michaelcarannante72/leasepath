@@ -2,8 +2,8 @@ import assert from 'node:assert/strict'
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import test from 'node:test'
-import { CITYFHEPS_2025_HISTORICAL_ROWS, CITYFHEPS_2026_ROWS, CITYFHEPS_PROGRAM, CITYFHEPS_RULES, CITYFHEPS_UTILITY_ALLOWANCES_1BR } from '../src/data/cityfheps.js'
-import { HASA_PROGRAM, HASA_ROWS, HASA_RULES } from '../src/data/hasa.js'
+import { CITYFHEPS_2026_ROWS, CITYFHEPS_PROGRAM, CITYFHEPS_RULES, CITYFHEPS_UTILITY_ALLOWANCES_1BR } from '../src/data/cityfheps.js'
+import { HASA_PROGRAM, HASA_RULES } from '../src/data/hasa.js'
 import { SECTION8_NYCHA_ROWS, SECTION8_PROGRAM } from '../src/data/section8.js'
 import { COPIED_ON, allRuleIds, isDisplayable, ruleRow, scheduleRows } from '../src/data/sourced.js'
 import { dayNumber } from '../src/dates.js'
@@ -12,7 +12,6 @@ const root = new URL('..', import.meta.url).pathname
 
 test('each program has its own rows, program name, effective date, last-checked date, and source link', () => {
   const sets = [
-    [HASA_PROGRAM, HASA_ROWS, 11, '2025-09-10'],
     [CITYFHEPS_PROGRAM, CITYFHEPS_2026_ROWS, 10, '2026-04-01'],
     [SECTION8_PROGRAM, SECTION8_NYCHA_ROWS, 18, '2026-01-01'],
   ]
@@ -32,31 +31,16 @@ test('each program has its own rows, program name, effective date, last-checked 
 })
 
 test('no row object is shared between programs, and a program cannot load another program’s rows', () => {
-  const all = [...HASA_ROWS, ...CITYFHEPS_2026_ROWS, ...SECTION8_NYCHA_ROWS, ...CITYFHEPS_2025_HISTORICAL_ROWS]
+  const all = [...CITYFHEPS_2026_ROWS, ...SECTION8_NYCHA_ROWS]
   assert.equal(new Set(all).size, all.length)
   assert.throws(() => scheduleRows(HASA_PROGRAM, CITYFHEPS_2026_ROWS.map((row) => ({ program: row.program, scheduleId: row.scheduleId }))), /not HASA/)
 })
 
-test('HASA and CityFHEPS differ for the same bedroom size', () => {
-  const hasa1 = HASA_ROWS.find((row) => row.bedrooms === 1)
-  const city1 = CITYFHEPS_2026_ROWS.find((row) => row.bedrooms === 1)
-  assert.equal(hasa1.maxRent, 2762)
-  assert.equal(city1.maxRent, 2734)
-  for (const bedrooms of [0, 1, 2, 3, 4, 5, 6, 7, 8]) {
-    const hasa = HASA_ROWS.find((row) => row.bedrooms === bedrooms && row.unitKind !== 'sro')
-    const city = CITYFHEPS_2026_ROWS.find((row) => row.bedrooms === bedrooms && row.unitKind !== 'sro')
-    assert.notEqual(hasa.maxRent, city.maxRent, `${bedrooms} bedrooms`)
-    assert.notEqual(hasa.effectiveDate, city.effectiveDate)
-  }
+test('the CityFHEPS 2025 column is not bundled: its numbers equal the unverified state FHEPS and HASA ones and nothing reads it', () => {
+  assert.deepEqual(JSON.parse(readFileSync(join(root, 'src/data/criteria/cityfheps-2025.json'), 'utf8')), [])
+  assert.equal(JSON.parse(readFileSync(join(root, 'src/data/criteria/rules.json'), 'utf8')).some((rule) => rule.id === 'cityfheps-payment-standards-2025'), false)
+  assert.equal('standards2025' in CITYFHEPS_RULES, false)
 })
-
-test('the CityFHEPS 2025 column is historical: it has no effective date and no current check reads it', () => {
-  assert.equal(CITYFHEPS_2025_HISTORICAL_ROWS.length, 10)
-  for (const row of CITYFHEPS_2025_HISTORICAL_ROWS) assert.equal(row.effectiveDate, null)
-  const users = ['src/rentCheck.js', 'src/fees.js', 'server/figures.js', 'server/guide.js', 'src/components/ProgramPanels.jsx']
-  for (const file of users) assert.doesNotMatch(readFileSync(join(root, file), 'utf8'), /2025_HISTORICAL|standards2025/, file)
-})
-
 test('the six CityFHEPS 1-bedroom utility allowance examples are loaded and nothing else is', () => {
   assert.deepEqual(
     CITYFHEPS_UTILITY_ALLOWANCES_1BR.map((item) => [item.label, item.amount]),
@@ -115,7 +99,7 @@ test('the app never reads /workspace at runtime and does not hard-code the barre
 })
 
 test('criteria copies match the housing specialist files when that folder is present', { skip: !existsSync('/workspace/criteria/rules.json') }, () => {
-  for (const file of ['hasa', 'cityfheps-2026', 'cityfheps-2025', 'section8-nycha-2026']) {
+  for (const file of ['cityfheps-2026', 'section8-nycha-2026']) {
     assert.equal(
       readFileSync(join(root, 'src/data/criteria', `${file}.json`), 'utf8'),
       readFileSync(`/workspace/criteria/rent-schedules/${file}.json`, 'utf8'),
@@ -124,6 +108,15 @@ test('criteria copies match the housing specialist files when that folder is pre
   }
   const source = JSON.parse(readFileSync('/workspace/criteria/rules.json', 'utf8'))
   for (const copy of JSON.parse(readFileSync(join(root, 'src/data/criteria/rules.json'), 'utf8'))) {
+    // HASA rules (dollar figures and the 9/10/2025 schedule date removed) and one Section 8 note are the deliberate differences.
+    if (copy.program === 'HASA' || copy.id === 'section8-nycha-payment-standards-recert-2026') continue
     assert.deepEqual(copy, source.find((rule) => rule.id === copy.id), copy.id)
   }
+})
+
+test('no HASA dollar schedule or HASA rent figure is bundled: the HASA rows are empty and the rent-cap rule text has no dollars', () => {
+  assert.deepEqual(JSON.parse(readFileSync(join(root, 'src/data/criteria/hasa.json'), 'utf8')), [])
+  const rules = JSON.parse(readFileSync(join(root, 'src/data/criteria/rules.json'), 'utf8'))
+  for (const rule of rules.filter((item) => item.program === 'HASA')) assert.doesNotMatch(JSON.stringify(rule), /\$\d|2,?762|2,?646|3,?058|3,?811|4,?111|2,?387/, rule.id)
+  assert.equal(rules.some((rule) => rule.id === 'hasa-superseded-2023-schedule-1br'), false)
 })

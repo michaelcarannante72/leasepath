@@ -273,8 +273,6 @@ export function searchLinksFor(boroughSlug) {
     ['cityfheps', '2br'],
     ['nycha-section-8', '1br'],
     ['nycha-section-8', '2br'],
-    ['fheps', '1br'],
-    ['fheps', '2br'],
   ]
   const links = []
   for (const [voucherSlug, sizeSlug] of prefer) {

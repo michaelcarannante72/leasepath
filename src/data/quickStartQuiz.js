@@ -27,7 +27,7 @@ export const BOROUGH_OPTIONS = [
 
 const VOUCHER_TO_SEARCH = {
   cityfheps: 'cityfheps',
-  fheps: 'fheps',
+  fheps: null, // no verified state FHEPS limit; the person types their own
   section8: 'nycha-section-8',
   hasa: null,
   none: null,

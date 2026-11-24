@@ -29,15 +29,15 @@ test('parses studio, SRO, and worded bedroom counts', () => {
   assert.equal(parseListingText('1 bed near Fordham, Bronx $1800/month').borough, 'Bronx')
 })
 
-test('rent comparison uses only CityFHEPS, FHEPS, and NYCHA Section 8', () => {
+test('rent comparison uses only CityFHEPS and NYCHA Section 8', () => {
   const parsed = parseListingText(sample)
   const rows = compareRentLimits(parsed)
-  assert.deepEqual(rows.map((r) => r.program).sort(), ['CityFHEPS', 'FHEPS', 'NYCHA Section 8'].sort())
+  assert.deepEqual(rows.map((r) => r.program).sort(), ['CityFHEPS', 'NYCHA Section 8'].sort())
   assert.equal(rows.length, VOUCHERS.length)
   for (const row of rows) {
     assert.ok(row.status === 'within' || row.status === 'over' || row.status === 'skipped')
     assert.ok(row.source?.url)
-    assert.doesNotMatch(row.summary, /HASA|HPD|HCR/)
+    assert.doesNotMatch(row.summary, /HASA|HPD|HCR|FHEPS 2025/)
   }
 })
 
@@ -103,4 +103,18 @@ test('Ruby points pasted ads to the on-device checker', () => {
   const guide = readFileSync(new URL('../server/guide.js', import.meta.url), 'utf8')
   assert.match(guide, /listing-check/)
   assert.match(guide, /on their phone/)
+})
+
+test('the typed limit feeds the checker: May fit / Likely over, no program name, and nothing without a typed number', () => {
+  const none = checkListing(sample)
+  assert.equal(none.ownLimitResult, null)
+  const fits = checkListing(sample, '2500')
+  assert.equal(fits.ownLimitResult.summary, 'May fit your limit')
+  assert.match(fits.ownLimitResult.text, /Asking rent \$2,400, your limit \$2,500/)
+  const over = checkListing(sample, '2399')
+  assert.equal(over.ownLimitResult.summary, 'Likely over your limit')
+  assert.equal(checkListing(sample, 'abc').ownLimitResult, null)
+  assert.equal(checkListing('', '2500').ownLimitResult, null)
+  assert.equal(checkListing(sample, '2500').checklist.find((item) => item.id === 'rent-vs-limit').pass, true)
+  assert.doesNotMatch(JSON.stringify([fits.ownLimitResult, over.ownLimitResult]), /HASA|FHEPS|guarantee|approved|eligible/i)
 })

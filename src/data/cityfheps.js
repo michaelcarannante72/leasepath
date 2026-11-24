@@ -1,7 +1,6 @@
 // CityFHEPS rent data. CityFHEPS is its own program: these rows are never used for HASA or Section 8,
 // even where a dollar figure happens to match.
 import schedule2026 from './criteria/cityfheps-2026.json' with { type: 'json' }
-import schedule2025 from './criteria/cityfheps-2025.json' with { type: 'json' }
 import { ruleRow, scheduleRows } from './sourced.js'
 
 export const CITYFHEPS_PROGRAM = 'CityFHEPS'
@@ -9,15 +8,8 @@ export const CITYFHEPS_PROGRAM = 'CityFHEPS'
 /** DSS-8r payment standards, effective 2026-04-01. Maximum rent, all utilities included. */
 export const CITYFHEPS_2026_ROWS = scheduleRows(CITYFHEPS_PROGRAM, schedule2026)
 
-/**
- * Historical column, no effective date in the source. Only for packages submitted through 2026-02-28.
- * The app never uses it for a current check. It is exported so tests can prove that.
- */
-export const CITYFHEPS_2025_HISTORICAL_ROWS = scheduleRows(CITYFHEPS_PROGRAM, schedule2025)
-
 export const CITYFHEPS_RULES = {
   standards2026: ruleRow('cityfheps-payment-standards-2026', 'CityFHEPS'),
-  standards2025: ruleRow('cityfheps-payment-standards-2025', 'CityFHEPS'),
   bedroomStandard: ruleRow('cityfheps-bedroom-standard', 'CityFHEPS'),
   // Income: DSS-7r (community) and DSS-7n (shelter) both say "at or below" 200% of the federal poverty level.
   incomeCommunity: ruleRow('cityfheps-eligibility-community-200fpl', 'CityFHEPS'),

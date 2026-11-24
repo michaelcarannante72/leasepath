@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { tx } from '../i18nAuto.js'
 import { LanguageSwitch } from './LanguageToggle.jsx'
+import { useLanguage } from './languageContext.js'
 import { SPONSOR_CONTACT } from '../data/sponsors.js'
 import {
   LEASEBOT_HEADLINE,
@@ -112,19 +113,49 @@ function ChatPreview() {
 }
 
 function WaitlistForm({ variant = 'hero' } = {}) {
+  const { lang } = useLanguage()
   const [email, setEmail] = useState('')
+  const [website, setWebsite] = useState('')
   const [error, setError] = useState('')
+  const [unavailable, setUnavailable] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [done, setDone] = useState(false)
   const hero = variant === 'hero'
 
-  const submit = (event) => {
+  const submit = async (event) => {
     event.preventDefault()
+    if (sending) return
     const value = email.trim()
     if (!isEmail(value)) {
       setError(tx('Enter an email address.'))
       return
     }
     setError('')
-    window.location.href = waitlistMailto(value)
+    setUnavailable(false)
+    setSending(true)
+    try {
+      // The address goes only to our own /api/waitlist.
+      const response = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ email: value, lang: lang === 'es' ? 'es' : 'en', website }),
+      })
+      if (response.ok) {
+        setDone(true)
+      } else if (response.status === 400) {
+        setError(tx('Enter an email address.'))
+      } else if (response.status === 429) {
+        setError(tx('Too many tries. Wait a minute and try again.'))
+      } else {
+        setUnavailable(true)
+        setError(tx('The waitlist is not working right now.'))
+      }
+    } catch {
+      setUnavailable(true)
+      setError(tx('The waitlist is not working right now.'))
+    } finally {
+      setSending(false)
+    }
   }
 
   return (
@@ -140,25 +171,40 @@ function WaitlistForm({ variant = 'hero' } = {}) {
       ) : (
         <h2 id="leasebot-waitlist-title">{tx('Join the waitlist')}</h2>
       )}
-      <label htmlFor="leasebot-email">{tx('Your email')}</label>
-      <div className="leasebot-waitlist-row">
-        <input
-          id="leasebot-email"
-          name="email"
-          type="email"
-          autoComplete="email"
-          inputMode="email"
-          value={email}
-          onChange={(event) => {
-            setEmail(event.target.value)
-            if (error) setError('')
-          }}
-          required
-        />
-        <button type="submit" className="button">{tx(hero ? 'Get early access' : 'Join the waitlist')}</button>
+      <div aria-live="polite">
+        {done ? <p className="form-success" role="status">{tx("You're on the list.")}</p> : null}
       </div>
-      {error ? <p className="form-error" role="alert">{error}</p> : null}
-      <p className="fine">{tx('This opens an email to LeasePath. We only use the address to tell you when Leasebot is ready. We do not store it on this page.')}</p>
+      {done ? null : (
+        <>
+          <label htmlFor="leasebot-email">{tx('Your email')}</label>
+          <div className="leasebot-waitlist-row">
+            <input
+              id="leasebot-email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              inputMode="email"
+              value={email}
+              onChange={(event) => {
+                setEmail(event.target.value)
+                if (error) setError('')
+              }}
+              required
+            />
+            <button type="submit" className="button" disabled={sending}>{tx(hero ? 'Get early access' : 'Join the waitlist')}</button>
+          </div>
+          {/* Honeypot: hidden from people and screen readers; bots tend to fill it. */}
+          <div className="leasebot-hp" aria-hidden="true">
+            <label htmlFor="leasebot-website">{'Website'}</label>
+            <input id="leasebot-website" name="website" type="text" tabIndex={-1} autoComplete="off" value={website} onChange={(event) => setWebsite(event.target.value)} />
+          </div>
+          {error ? <p className="form-error" role="alert">{error}</p> : null}
+          {unavailable ? (
+            <p className="fine"><a href={waitlistMailto(email.trim())}>{tx('Email us instead')}</a></p>
+          ) : null}
+          <p className="fine">{tx("We'll only use your email to tell you when Leasebot is ready.")}</p>
+        </>
+      )}
     </form>
   )
 }

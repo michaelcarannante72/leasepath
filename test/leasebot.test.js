@@ -95,7 +95,7 @@ test('Need help now box is on the launch page, not only the footer', () => {
   assert.doesNotMatch(read('src/components/Footer.jsx'), /LeasebotHelpNow/)
 })
 
-test('hero waitlist collects email only, uses mailto, and sends nothing to analytics', () => {
+test('hero waitlist collects email only, posts to /api/waitlist, and sends nothing to analytics', () => {
   const src = all()
   assert.match(src, /type="email"/)
   assert.match(src, /htmlFor="leasebot-email"/)
@@ -105,9 +105,8 @@ test('hero waitlist collects email only, uses mailto, and sends nothing to analy
   assert.doesNotMatch(src, /which voucher|voucher program/i)
   assert.doesNotMatch(src, /from ['"].*analytics/)
   assert.doesNotMatch(src, /trackView|gtag|trackEvent/)
-  assert.match(src, /SPONSOR_CONTACT/)
+  assert.match(src, /fetch\('\/api\/waitlist'/)
   assert.match(src, /waitlistMailto/)
-  assert.match(src, /mailto:\$\{SPONSOR_CONTACT\}/)
   assert.equal(SPONSOR_CONTACT, 'michaelcarannante@yahoo.com')
 })
 

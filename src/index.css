@@ -4218,3 +4218,7 @@ body { background: var(--bg); color: var(--navy); font-size: var(--fs-body); lin
 @media (max-width: 380px) { .help-now-link { padding: 0.4rem 0.6rem; font-size: 0.78rem; } }
 .leasebot-help-now { scroll-margin-top: 96px; }
 @media (max-width: 420px) { .is-leasebot-only .topbar .brand-name { display: none; } }
+
+/* Leasebot waitlist: honeypot is off-screen, success line matches the form's muted palette. */
+.leasebot-hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+.leasebot-waitlist .form-success { margin: 0; font-weight: 700; font-size: 1.15rem; color: #fff; }

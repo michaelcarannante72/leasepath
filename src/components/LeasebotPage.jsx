@@ -172,7 +172,7 @@ function WaitlistForm({ variant = 'hero' } = {}) {
         <h2 id="leasebot-waitlist-title">{tx('Join the waitlist')}</h2>
       )}
       <div aria-live="polite">
-        {done ? <p className="form-success" role="status">{tx("You're on the list.")}</p> : null}
+        {done ? <p className="form-success" role="status">{tx("You're on the list. We'll email you when Leasebot is ready.")}</p> : null}
       </div>
       {done ? null : (
         <>

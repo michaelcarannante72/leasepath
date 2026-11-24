@@ -139,7 +139,7 @@ test('page: real form posts to the API; mailto is only the fallback; no analytic
   assert.doesNotMatch(src, /analytics|trackView|gtag|dataLayer/)
   assert.doesNotMatch(src, /do not store it|This opens an email/)
   const es = read('src/i18nUi.es.js')
-  for (const key of ["You're on the list.", "We'll only use your email to tell you when Leasebot is ready.", 'Email us instead', 'The waitlist is not working right now.', 'Too many tries. Wait a minute and try again.']) {
+  for (const key of ["You're on the list. We'll email you when Leasebot is ready.", "We'll only use your email to tell you when Leasebot is ready.", 'Email us instead', 'The waitlist is not working right now.', 'Too many tries. Wait a minute and try again.']) {
     assert.ok(es.includes(`"${key}":`), key)
   }
   assert.match(es, /"Get early access": "Recibir acceso anticipado"/)

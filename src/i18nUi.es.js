@@ -955,7 +955,7 @@ export const UI_ES = {
   "Leasebot is coming soon. Leave your email and we will tell you when it is ready. LeasePath is a new startup, and this is not a government service.": "Leasebot está por salir. Deja tu correo y te avisamos cuando esté listo. LeasePath es una startup nueva, y esto no es un servicio del gobierno.",
   "Your email": "Tu correo",
   "We'll only use your email to tell you when Leasebot is ready.": "Solo usaremos tu correo para avisarte cuando Leasebot esté listo.",
-  "You're on the list.": "Ya estás en la lista.",
+  "You're on the list. We'll email you when Leasebot is ready.": "Ya estás en la lista. Te escribiremos cuando Leasebot esté listo.",
   "Too many tries. Wait a minute and try again.": "Demasiados intentos. Espera un minuto e inténtalo de nuevo.",
   "The waitlist is not working right now.": "La lista de espera no funciona en este momento.",
   "Email us instead": "Escríbenos por correo",

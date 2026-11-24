@@ -114,11 +114,12 @@ test('GET is refused', async () => {
   assert.equal(res.status, 405)
 })
 
-test('config: D1 binding with placeholder id and TODO, migration stores only email, lang, created_at', () => {
+test('config: D1 binding with a real database id, migration stores only email, lang, created_at', () => {
   const config = read('wrangler.jsonc')
   assert.match(config, /"binding": "WAITLIST_DB"/)
   assert.match(config, /"database_name": "leasepath-waitlist"/)
-  assert.match(config, /TODO\(deploy\)/)
+  assert.doesNotMatch(config, /TODO\(deploy\)|00000000-0000-0000-0000-000000000000/)
+  assert.match(config, /"database_id": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"/)
   assert.match(config, /"name": "WAITLIST_LIMITER"[^}]*"limit": 5, "period": 60/)
   const sql = read('migrations/0001_waitlist.sql')
   assert.match(sql, /email TEXT UNIQUE NOT NULL COLLATE NOCASE/)

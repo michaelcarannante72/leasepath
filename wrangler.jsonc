@@ -52,14 +52,12 @@
     { "name": "WAITLIST_LIMITER", "namespace_id": "1003", "simple": { "limit": 5, "period": 60 } }
   ],
   // Leasebot waitlist (email, language, timestamp only). See DEPLOY-NOTES-waitlist.md.
-  // TODO(deploy): the database_id below is a PLACEHOLDER. Run `npx wrangler d1 create leasepath-waitlist`
-  // at deploy time, paste the real id here, and apply migrations/0001_waitlist.sql with --remote.
-  // Until then POST /api/waitlist answers 503 and the page falls back to the email link.
+  // Created Nov 23, 2026. If the binding is missing, POST /api/waitlist answers 503 and the page falls back to the email link.
   "d1_databases": [
     {
       "binding": "WAITLIST_DB",
       "database_name": "leasepath-waitlist",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "3a0ad610-4d1a-4823-95b4-9ab9a1c77b4b",
       "migrations_dir": "migrations"
     }
   ],

@@ -2622,6 +2622,15 @@ th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 /* Single consent bar sits above the dock in the app grid. */
 .consent-bar { grid-template-columns: minmax(0, 1fr); }
 .consent-links { margin-top: 6px !important; font-size: 0.875rem !important; }
+/* Phones: short copy, links inline, equal buttons side by side; the title stays for screen readers. */
+@media (max-width: 480px) {
+  .consent-bar { display: grid; gap: 8px; padding: 10px 12px; }
+  .consent-bar h2 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; margin: 0; }
+  .consent-bar p { font-size: 0.8rem; line-height: 1.35; }
+  .consent-bar .consent-links { margin-top: 2px !important; font-size: 0.8rem !important; }
+  .consent-bar .consent-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .consent-bar .consent-actions .button { width: 100%; min-height: 44px; padding: 8px 10px; justify-content: center; border: 2px solid var(--navy); }
+}
 @media (min-width: 720px) {
   .consent-bar { grid-template-columns: minmax(0, 1fr) auto; width: min(960px, calc(100% - 16px)); }
 }

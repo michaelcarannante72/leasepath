@@ -5,7 +5,7 @@ export const PAGE_EN = {
   'notFound.cta': 'Back to search',
 
   'consent.title': 'Cookies and analytics',
-  'consent.body': 'LeasePath uses cookies to keep you signed in, to protect Google sign-in, and to count free questions to Ruby. They are not used to sell information. Allow lets Google Analytics (_ga cookies) count which pages are opened. It never runs on HASA pages or in Ruby’s chat, and never sees your voucher, income, or questions. No advertising cookies.',
+  'consent.body': 'We use cookies to keep you signed in. Allow lets Google Analytics count page views. It never runs on HASA pages or in Ruby’s chat, and never sees your voucher or income. No ad cookies.',
   'consent.privacy': 'Privacy notice',
   'consent.details': 'Cookie details',
   'consent.deny': 'No thanks',
@@ -86,7 +86,7 @@ export const PAGE_ES = {
   'notFound.cta': 'Volver a la búsqueda',
 
   'consent.title': 'Cookies y analítica',
-  'consent.body': 'LeasePath usa cookies para mantener tu sesión, proteger el inicio con Google y contar tus preguntas gratis a Ruby. No se usan para vender información. Si tocas Permitir, Google Analytics (cookies _ga) cuenta qué páginas se abren. Nunca corre en páginas de HASA ni en el chat de Ruby, y nunca ve tu cupón, tus ingresos ni tus preguntas. No hay cookies de publicidad.',
+  'consent.body': 'Usamos cookies para mantener tu sesión. Si tocas Permitir, Google Analytics cuenta las páginas vistas. Nunca corre en páginas de HASA ni en el chat de Ruby, y nunca ve tu cupón ni tus ingresos. Sin cookies de publicidad.',
   'consent.privacy': 'Aviso de privacidad',
   'consent.details': 'Detalles de cookies',
   'consent.deny': 'No, gracias',

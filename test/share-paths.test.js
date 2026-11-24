@@ -10,7 +10,9 @@ test('every fixed hash page in App.jsx has a clean /path that 301s to it', () =>
   const worker = readFileSync(new URL('../worker/index.js', import.meta.url), 'utf8')
   const list = worker.match(/const SHARE_PAGES = \[([^\]]*)\]/)[1]
   const shared = new Set([...list.matchAll(/'([a-z0-9-]+)'/g)].map((m) => m[1]))
-  const missing = [...new Set(pages)].filter((page) => page !== 'search' && !shared.has(page))
+  // Taken down on purpose: these hash links just land on the home page and have no clean path.
+  const TAKEN_DOWN = new Set(['quiz', 'start', 'housing-connect'])
+  const missing = [...new Set(pages)].filter((page) => page !== 'search' && !TAKEN_DOWN.has(page) && !shared.has(page))
   assert.deepEqual(missing, [])
 })
 

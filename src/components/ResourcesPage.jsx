@@ -192,7 +192,6 @@ export function ResourcesPage() {
       <nav className="guide-links icon-rows icon-rows-grid" aria-label={t("resources.jump")}>
         <h2 className="guide-links-title">{t("resources.jump")}</h2>
         <ul className="icon-rows-list">
-          <li><a className="icon-row" href="#/housing-connect"><span className="icon-row-icon" aria-hidden="true"><Icon name="home" size={18} /></span><span className="icon-row-label">{t("resources.link.hc")}</span><span className="icon-row-chev" aria-hidden="true"><Icon name="chevron" size={18} /></span></a></li>
           <li><a className="icon-row" href="#/listing-check"><span className="icon-row-icon" aria-hidden="true"><Icon name="search" size={18} /></span><span className="icon-row-label">{t("resources.link.check")}</span><span className="icon-row-chev" aria-hidden="true"><Icon name="chevron" size={18} /></span></a></li>
           <li><a className="icon-row" href="#/after-you-find#chap"><span className="icon-row-icon" aria-hidden="true"><Icon name="heart" size={18} /></span><span className="icon-row-label">{t("resources.chap")}</span><span className="icon-row-chev" aria-hidden="true"><Icon name="chevron" size={18} /></span></a></li>
           <li><a className="icon-row" href="#/after-you-find"><span className="icon-row-icon" aria-hidden="true"><Icon name="home" size={18} /></span><span className="icon-row-label">{t("resources.afterFind")}</span><span className="icon-row-chev" aria-hidden="true"><Icon name="chevron" size={18} /></span></a></li>

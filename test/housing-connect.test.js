@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import test from 'node:test'
 import {
   AMI_TIERS,
@@ -43,9 +43,6 @@ test('AMI tiers use official names and unit counts, never dollar figures', () =>
   for (const tier of AMI_TIERS) {
     assert.doesNotMatch(tier.label, /\$|dollar|AMI %|percent/i)
   }
-  const page = read('src/components/HousingConnectPage.jsx')
-  assert.doesNotMatch(page, /\$\d|max rent|income limit \$/i)
-  assert.match(page, /AMI tier/)
 })
 
 test('filter keeps rental lotteries with a future end date only', () => {
@@ -122,18 +119,22 @@ test('loadActiveLotteries joins addresses through the injected fetcher', async (
   assert.equal(calls.length, 2)
 })
 
-test('page voice: free apply scam line, you may qualify, Resources link, no medical/HIV', () => {
-  // Page copy moved into i18nPages.js (en + es); the component renders it through t().
-  const page = read('src/components/HousingConnectPage.jsx') + read('src/i18nPages.js')
-  assert.match(page, /Applying is always free\. Anyone who asks for a fee is a scam\./)
-  assert.match(page, /You may qualify/)
-  assert.match(page, /#\/resources/)
-  assert.doesNotMatch(page, /\bHIV\b|diagnosis|medical history/i)
-  const resources = read('src/components/ResourcesPage.jsx')
-  assert.match(resources, /href="#\/housing-connect"/)
+test('the Housing Connect and quiz pages are taken down: no route, no links, no share path, old links land on the home page', () => {
   const app = read('src/App.jsx')
-  assert.match(app, /housing-connect/)
-  assert.match(app, /HousingConnectPage/)
+  assert.doesNotMatch(app, /HousingConnectPage|QuickStartQuizPage|name: 'housing-connect'|name: 'quiz'/)
+  assert.match(app, /hash === '\/quiz' \|\| hash === '\/start' \|\| hash === '\/housing-connect'[\s\S]{0,120}replaceState\(null, '', '#\/'\)/)
+  for (const file of ['src/components/ResourcesPage.jsx', 'src/components/SearchEmptyState.jsx', 'src/components/LandingHero.jsx', 'server/searchPages.js']) {
+    assert.doesNotMatch(read(file), /#\/housing-connect|#\/quiz|href="\/housing-connect"/, file)
+  }
+  assert.doesNotMatch(read('worker/index.js'), /'housing-connect'|'quiz'|'start'/)
+  assert.doesNotMatch(read('wrangler.jsonc'), /"\/(housing-connect|quiz|start)"/)
+  assert.doesNotMatch(read('public/sitemap.xml'), /housing-connect|\/quiz|\/start/)
+  assert.equal(existsSync(new URL('../src/components/HousingConnectPage.jsx', import.meta.url)), false)
+  assert.equal(existsSync(new URL('../src/components/QuickStartQuizPage.jsx', import.meta.url)), false)
+  // These stay reachable by direct link, exactly as before.
+  for (const page of ['plan', 'list-unit', 'resources', 'sponsor', 'landlord-welcome']) {
+    assert.match(app, new RegExp(`\\/${page}'`), page)
+  }
 })
 
 test('unitSizesFromRow skips empty sizes', () => {

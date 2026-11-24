@@ -7,7 +7,7 @@ import { spawn } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 
 const root = fileURLToPath(new URL('..', import.meta.url))
-const ROUTES = ['/', '/resources', '/plan', '/match-alerts', '/income-check', '/housing-connect', '/install', '/rent-calculator', '/guides', '/scam-alerts', '/caseworker-pack', '/docs-tracker', '/know-your-rights', '/after-you-find', '/leasebot', '/nope-not-a-page']
+const ROUTES = ['/', '/resources', '/plan', '/match-alerts', '/income-check', '/install', '/rent-calculator', '/guides', '/scam-alerts', '/caseworker-pack', '/docs-tracker', '/know-your-rights', '/after-you-find', '/leasebot', '/nope-not-a-page']
 const WIDTHS = [[390, 844], [1440, 900]]
 const PORT = 4791
 

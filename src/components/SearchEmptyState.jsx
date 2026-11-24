@@ -43,12 +43,6 @@ export function SearchEmptyState({ filters }) {
         </>
       )}
 
-      <h3>{tx("Housing Connect lotteries")}</h3>
-      <p>{tx("NYC Housing Connect posts affordable lotteries across the five boroughs. Applying is always free.")}</p>
-      <div className="button-row">
-        <a className="button button-quiet" href="#/housing-connect">{tx("See open Housing Connect lotteries")}</a>
-      </div>
-
       <LandlordPitch compact headingId="search-empty-pitch-heading" />
     </section>
   )

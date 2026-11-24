@@ -47,14 +47,12 @@ const IncomeCheckPage = lazyNamed(() => import('./components/PlanToolPages.jsx')
 const MatchAlertsPage = lazyNamed(() => import('./components/PlanToolPages.jsx'), 'MatchAlertsPage')
 const PlanPage = lazyNamed(() => import('./components/PlanPage.jsx'), 'PlanPage')
 const ResourcesPage = lazyNamed(() => import('./components/ResourcesPage.jsx'), 'ResourcesPage')
-const HousingConnectPage = lazyNamed(() => import('./components/HousingConnectPage.jsx'), 'HousingConnectPage')
 const LeasebotPage = lazyNamed(() => import('./components/LeasebotPage.jsx'), 'LeasebotPage')
 const SponsorPage = lazyNamed(() => import('./components/SponsorPage.jsx'), 'SponsorPage')
 const ListingCheckerPage = lazyNamed(() => import('./components/ListingCheckerPage.jsx'), 'ListingCheckerPage')
 const BoroughGuidesIndex = lazyNamed(() => import('./components/BoroughGuidesPage.jsx'), 'BoroughGuidesIndex')
 const BoroughGuidePage = lazyNamed(() => import('./components/BoroughGuidesPage.jsx'), 'BoroughGuidePage')
 const PartnerDirectoryPage = lazyNamed(() => import('./components/PartnerDirectoryPage.jsx'), 'PartnerDirectoryPage')
-const QuickStartQuizPage = lazyNamed(() => import('./components/QuickStartQuizPage.jsx'), 'QuickStartQuizPage')
 const RentCalculatorPage = lazyNamed(() => import('./components/RentCalculatorPage.jsx'), 'RentCalculatorPage')
 const ShelterRoadmapPage = lazyNamed(() => import('./components/ShelterRoadmapPage.jsx'), 'ShelterRoadmapPage')
 const TenantRightsAfterMoveinPage = lazyNamed(() => import('./components/TenantRightsAfterMoveinPage.jsx'), 'TenantRightsAfterMoveinPage')
@@ -141,6 +139,11 @@ function loadChecks() {
 
 function parseHash() {
   const hash = window.location.hash.replace(/^#/, '') || '/'
+  // Taken down (the pages said "You may qualify"): old links land on the home page.
+  if (hash === '/quiz' || hash === '/start' || hash === '/housing-connect') {
+    window.history.replaceState(null, '', '#/')
+    return { name: LEASEBOT_ONLY ? 'leasebot' : 'search' }
+  }
   const match = hash.match(/^\/listing\/([a-z0-9-]+)$/)
   if (match) return { name: 'detail', id: match[1] }
   const post = hash.match(/^\/blog\/([a-z0-9-]+)$/)
@@ -158,7 +161,6 @@ function parseHash() {
   if (hash === '/moving-help') return { name: 'moving' }
   if (hash === '/know-your-rights') return { name: 'rights' }
   if (hash === '/landlord-welcome') return { name: 'landlord' }
-  if (hash === '/housing-connect') return { name: 'housing-connect' }
   if (hash === '/leasebot') return { name: 'leasebot' }
   if (hash === '/sponsor') return { name: 'sponsor' }
   if (hash === '/docs-tracker') return { name: 'docs' }
@@ -168,7 +170,6 @@ function parseHash() {
   if (hash === '/listings-admin') return { name: 'listings-admin' }
   if (hash === '/voucher-ready') return { name: 'voucher-ready' }
   if (hash === '/partners') return { name: 'partners' }
-  if (hash === '/quiz' || hash === '/start') return { name: 'quiz' }
   if (hash === '/match-alerts') return { name: 'match-alerts' }
   if (hash === '/income-check' || hash === '/income-prescreen') return { name: 'income-check' }
   if (hash === '/borough-guides') return { name: 'guides' }
@@ -801,11 +802,11 @@ export default function App() {
           ? 'steps'
           : route.name === 'pack' || route.name === 'prep' || route.name === 'docs' || route.name === 'roadmap'
             ? 'steps'
-            : route.name === 'scam' || route.name === 'moving' || route.name === 'rights' || route.name === 'landlord' || route.name === 'housing-connect' || route.name === 'sponsor' || route.name === 'listing-check' || route.name === 'guides' || route.name === 'guide' || route.name === 'partners' || route.name === 'rights-movein' || route.name === 'utility' || route.name === 'youth' || route.name === 'install'
+            : route.name === 'scam' || route.name === 'moving' || route.name === 'rights' || route.name === 'landlord' || route.name === 'sponsor' || route.name === 'listing-check' || route.name === 'guides' || route.name === 'guide' || route.name === 'partners' || route.name === 'rights-movein' || route.name === 'utility' || route.name === 'youth' || route.name === 'install'
               ? 'resources'
               : route.name === 'rent' || route.name === 'waitlist' || route.name === 'match-alerts' || route.name === 'income-check'
                 ? 'plan'
-              : route.name === 'list-unit' || route.name === 'voucher-ready' || route.name === 'listings-admin' || route.name === 'quiz' || route.name === 'viewing' || route.name === 'leasebot'
+              : route.name === 'list-unit' || route.name === 'voucher-ready' || route.name === 'listings-admin' || route.name === 'viewing' || route.name === 'leasebot'
                 ? 'search'
             : route.name
   const navSelect = (id) => {
@@ -902,7 +903,6 @@ export default function App() {
         {route.name === 'rights' && <KnowYourRightsPage />}
         {route.name === 'rights-movein' && <TenantRightsAfterMoveinPage />}
         {route.name === 'landlord' && <LandlordWelcomePage />}
-        {route.name === 'housing-connect' && <HousingConnectPage />}
         {route.name === 'leasebot' && <LeasebotPage />}
         {route.name === 'sponsor' && <SponsorPage />}
         {route.name === 'listing-check' && <ListingCheckerPage checks={checks} onChecks={updateChecks} />}
@@ -910,7 +910,6 @@ export default function App() {
         {route.name === 'guides' && <BoroughGuidesIndex />}
         {route.name === 'guide' && <BoroughGuidePage slug={route.id} />}
         {route.name === 'partners' && <PartnerDirectoryPage />}
-        {route.name === 'quiz' && <QuickStartQuizPage />}
         {route.name === 'rent' && <RentCalculatorPage />}
         {route.name === 'plan' && <PlanPage plan={plan} onChange={updatePlan} checks={checks} onChecks={updateChecks} signedIn={session.signedIn} onDeleteAccount={openDelete} />}
         {route.name === 'match-alerts' && <MatchAlertsPage prefs={matchPrefs} onPrefs={setMatchPrefs} seed={{ borough: filters.borough && filters.borough !== 'All' ? filters.borough : '', bedrooms: checks.voucherBedrooms || '', program: plan.program || '' }} />}

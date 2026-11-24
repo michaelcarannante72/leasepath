@@ -33,7 +33,7 @@ test('t() returns Spanish for page keys, and keeps {vars} the same in both', () 
 })
 
 test('translated pages carry no hard-coded English text between JSX tags', () => {
-  const files = ['src/components/PlanToolPages.jsx', 'src/components/ConsentBar.jsx', 'src/components/InstallAndSharePage.jsx', 'src/components/HousingConnectPage.jsx']
+  const files = ['src/components/PlanToolPages.jsx', 'src/components/ConsentBar.jsx', 'src/components/InstallAndSharePage.jsx']
   for (const file of files) {
     const src = read(file).replace(/\{\/\*[\s\S]*?\*\/\}/g, '')
     const hits = [...src.matchAll(/>([^<>{}]*[A-Za-z]{3,}[^<>{}]*)</g)]

@@ -619,8 +619,6 @@ export const UI_ES = {
   "Answers stay on this device only. We never send them to a server. You may qualify for help — a caseworker or program office decides.": "Las respuestas se quedan solo en este dispositivo. Nunca las enviamos a un servidor. Puede calificar para ayuda — un trabajador o la oficina del programa decide.",
   "Your next stop": "Su próxima parada",
   "Open": "Abrir",
-  "Retake quiz": "Repetir el cuestionario",
-  "Saved on this phone or computer. Clear it anytime with Retake quiz or your browser settings.": "Guardado en este teléfono o computadora. Bórrelo cuando quiera con Repetir el cuestionario o los ajustes del navegador.",
   "Question": "Pregunta",
   "of 3": "de 3",
   "What voucher or program are you working with?": "¿Con qué vale o programa está trabajando?",
